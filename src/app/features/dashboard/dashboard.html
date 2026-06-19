@@ -26,12 +26,16 @@
   <app-widget-card class="span-4" title="Velo Cash Flow" eyebrow="Forecast" accent="green">
     @if (velo(); as summary) {
       <app-source-badge [source]="summary.source" />
-      <p class="metric">{{ summary.forecastCashFlow | currency: summary.currency : 'symbol' : '1.0-0' }}</p>
+      <p class="metric">
+        {{ summary.forecastCashFlow | currency: summary.currency : 'symbol' : '1.0-0' }}
+      </p>
       <p class="muted">{{ summary.periodLabel }} forecast</p>
       <app-trend-line [points]="summary.trend" />
       <div class="split">
         <span>Current</span>
-        <strong>{{ summary.currentCashFlow | currency: summary.currency : 'symbol' : '1.0-0' }}</strong>
+        <strong>{{
+          summary.currentCashFlow | currency: summary.currency : 'symbol' : '1.0-0'
+        }}</strong>
       </div>
     }
   </app-widget-card>

@@ -42,9 +42,5 @@ function isVeloSummary(value: unknown): value is VeloSummary {
 }
 
 function isCashFlowPoint(value: unknown): value is CashFlowPoint {
-  return (
-    isRecord(value) &&
-    typeof value['date'] === 'string' &&
-    typeof value['value'] === 'number'
-  );
+  return isRecord(value) && typeof value['date'] === 'string' && typeof value['value'] === 'number';
 }

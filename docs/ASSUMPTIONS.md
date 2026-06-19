@@ -3,6 +3,7 @@
 Codex should update this file during implementation.
 
 Initial assumptions:
+
 - Mission Control is used by one person locally.
 - Velo runs in the local network or locally.
 - Dash runs in the local network or locally.
@@ -12,6 +13,7 @@ Initial assumptions:
 - Real integrations can be added later through adapters.
 
 Implementation assumptions:
+
 - External Velo, Dash, and sevDesk entries are launch shortcuts only.
 - Default URLs are `http://localhost:4201`, `http://localhost:4202`, and `https://my.sevdesk.de`.
 - Settings are stored only in browser LocalStorage.

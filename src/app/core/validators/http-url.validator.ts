@@ -4,9 +4,7 @@ interface HttpUrlValidatorOptions {
   optional?: boolean;
 }
 
-export function httpUrlValidator(
-  options: HttpUrlValidatorOptions = {},
-): ValidatorFn {
+export function httpUrlValidator(options: HttpUrlValidatorOptions = {}): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = String(control.value ?? '').trim();
 
@@ -16,9 +14,7 @@ export function httpUrlValidator(
 
     try {
       const url = new URL(value);
-      return url.protocol === 'http:' || url.protocol === 'https:'
-        ? null
-        : { httpUrl: true };
+      return url.protocol === 'http:' || url.protocol === 'https:' ? null : { httpUrl: true };
     } catch {
       return { httpUrl: true };
     }

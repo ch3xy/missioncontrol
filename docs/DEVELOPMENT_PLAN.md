@@ -6,6 +6,7 @@ Goal:
 Create a runnable Angular app with shell and routing.
 
 Deliverables:
+
 - App shell
 - Sidebar
 - Header
@@ -18,6 +19,7 @@ Goal:
 Implement the Visual 3-inspired dashboard.
 
 Deliverables:
+
 - Widget grid
 - Calendar card
 - Velo card
@@ -30,6 +32,7 @@ Goal:
 Use typed mock data through adapter services.
 
 Deliverables:
+
 - Interfaces
 - Mock adapters
 - Service methods
@@ -41,6 +44,7 @@ Goal:
 Make external app URLs configurable.
 
 Deliverables:
+
 - Settings page
 - LocalStorage persistence
 - Defaults
@@ -52,6 +56,7 @@ Goal:
 Add useful placeholder pages.
 
 Deliverables:
+
 - Calendar overview
 - Velo overview
 - Dash overview
@@ -62,6 +67,7 @@ Goal:
 Make MVP feel cohesive and robust.
 
 Deliverables:
+
 - Responsive layout
 - Empty/error states
 - Build fixes
@@ -71,6 +77,7 @@ Deliverables:
 ## Definition of Done
 
 The MVP is done when:
+
 - It runs locally
 - It builds without TypeScript errors
 - Dashboard is visually close to Visual 3

@@ -81,7 +81,10 @@ describe('local JSON adapters', () => {
   });
 
   it('should fall back to mock data when local JSON validation fails', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => Response.json({ invalid: true })));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json({ invalid: true })),
+    );
     TestBed.inject(SettingsService).updateSettings({
       ...DEFAULT_SETTINGS,
       calendarSource: 'local-json',

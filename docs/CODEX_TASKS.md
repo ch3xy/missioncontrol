@@ -6,6 +6,7 @@ If an Angular app already exists, reuse it.
 If not, create a new Angular 22 app.
 
 Acceptance:
+
 - App can be started locally
 - TypeScript strict mode enabled
 - Routing enabled
@@ -17,6 +18,7 @@ Acceptance:
 Create the core layout.
 
 Acceptance:
+
 - Dark app background
 - Sidebar navigation
 - Header/top bar
@@ -28,6 +30,7 @@ Acceptance:
 Implement global design tokens.
 
 Acceptance:
+
 - CSS variables for background, surface, border, text, accents
 - Reusable card styling
 - Responsive grid utilities
@@ -37,6 +40,7 @@ Acceptance:
 Implement Visual 3 dashboard.
 
 Acceptance:
+
 - Calendar widget
 - Velo cash-flow widget
 - Dash time widget
@@ -49,6 +53,7 @@ Acceptance:
 Implement typed mock services/adapters.
 
 Acceptance:
+
 - Calendar mock data
 - Velo mock summary
 - Dash mock summary
@@ -60,6 +65,7 @@ Acceptance:
 Implement settings page.
 
 Acceptance:
+
 - Edit Velo URL
 - Edit Dash URL
 - Edit sevDesk URL
@@ -71,6 +77,7 @@ Acceptance:
 Implement external app launch behavior.
 
 Acceptance:
+
 - Velo opens configured URL in new tab
 - Dash opens configured URL in new tab
 - sevDesk opens configured URL in new tab
@@ -81,6 +88,7 @@ Acceptance:
 Create simple internal pages.
 
 Acceptance:
+
 - Calendar page lists mock events
 - Velo page shows finance summary and trend data
 - Dash page shows time/customer summary
@@ -91,6 +99,7 @@ Acceptance:
 Add practical tests where feasible.
 
 Acceptance:
+
 - App builds
 - Main services tested if test setup exists
 - Components do not throw
@@ -101,6 +110,7 @@ Acceptance:
 Update docs.
 
 Acceptance:
+
 - `docs/ASSUMPTIONS.md` created or updated
 - Remaining limitations documented
 - Commands run documented in final summary

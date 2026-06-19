@@ -7,6 +7,7 @@ Mission Control should be implemented as a pure frontend application for the MVP
 ## Reasoning
 
 The app is primarily a local dashboard and launcher:
+
 - Velo and Dash already exist as local web apps
 - sevDesk can start as a shortcut
 - Calendar can start with mock data
@@ -24,6 +25,7 @@ The app is primarily a local dashboard and launcher:
 ## Limitations
 
 A frontend-only app cannot safely:
+
 - Store private API keys
 - Perform secure OAuth token exchange
 - Hide sevDesk credentials
@@ -33,6 +35,7 @@ A frontend-only app cannot safely:
 ## When to Add a Backend
 
 Add a backend only when one of these becomes necessary:
+
 - sevDesk API integration
 - Google/Microsoft calendar OAuth
 - Centralized sync across devices
@@ -44,6 +47,7 @@ Add a backend only when one of these becomes necessary:
 ## Recommended Future Backend
 
 If needed later:
+
 - Node.js/NestJS or lightweight Fastify
 - SQLite or PostgreSQL
 - Local deployment first

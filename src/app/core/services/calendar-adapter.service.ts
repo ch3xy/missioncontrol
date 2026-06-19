@@ -12,10 +12,7 @@ export class CalendarAdapterService implements CalendarAdapter {
     const settings = this.settingsService.settings();
     const localEvents =
       settings.calendarSource === 'local-json'
-        ? await readLocalJson(
-            settings.calendarSourceUrl,
-            isCalendarEventCollection,
-          )
+        ? await readLocalJson(settings.calendarSourceUrl, isCalendarEventCollection)
         : null;
 
     return this.sortEvents(localEvents ?? MOCK_CALENDAR_EVENTS);
@@ -23,8 +20,7 @@ export class CalendarAdapterService implements CalendarAdapter {
 
   private sortEvents(events: CalendarEvent[]): CalendarEvent[] {
     return [...events].sort(
-      (a, b) =>
-        new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime(),
+      (a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime(),
     );
   }
 }

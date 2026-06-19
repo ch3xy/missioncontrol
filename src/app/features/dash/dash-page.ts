@@ -27,9 +27,7 @@ export class DashPage {
 
     return Math.min(
       100,
-      Math.round(
-        (summary.trackedTodayMinutes / summary.targetTodayMinutes) * 100,
-      ),
+      Math.round((summary.trackedTodayMinutes / summary.targetTodayMinutes) * 100),
     );
   });
 
@@ -38,9 +36,7 @@ export class DashPage {
   }
 
   protected openDash(): void {
-    const shortcut = this.shortcutService
-      .shortcuts()
-      .find((candidate) => candidate.id === 'dash');
+    const shortcut = this.shortcutService.shortcuts().find((candidate) => candidate.id === 'dash');
     const didOpen = this.shortcutService.openExternal(shortcut?.url);
     this.launchError.set(didOpen ? null : 'Dash has no valid http(s) URL configured.');
   }

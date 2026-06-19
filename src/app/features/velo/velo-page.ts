@@ -25,9 +25,7 @@ export class VeloPage {
   }
 
   protected openVelo(): void {
-    const shortcut = this.shortcutService
-      .shortcuts()
-      .find((candidate) => candidate.id === 'velo');
+    const shortcut = this.shortcutService.shortcuts().find((candidate) => candidate.id === 'velo');
     const didOpen = this.shortcutService.openExternal(shortcut?.url);
     this.launchError.set(didOpen ? null : 'Velo has no valid http(s) URL configured.');
   }

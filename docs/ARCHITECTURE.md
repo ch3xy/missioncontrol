@@ -30,6 +30,7 @@ Angular App
 The MVP must not require a backend.
 
 Allowed:
+
 - Static mock data
 - Browser LocalStorage
 - Opening local web apps in new tabs
@@ -37,6 +38,7 @@ Allowed:
 - User-configurable URLs
 
 Not allowed:
+
 - Storing API secrets in frontend code
 - sevDesk API calls requiring private credentials
 - OAuth flows requiring a backend
@@ -47,6 +49,7 @@ Not allowed:
 ### Velo
 
 MVP:
+
 - Quick link
 - Mock cash-flow data
 - Optional later: fetch from local JSON endpoint if Velo exposes one with CORS enabled
@@ -54,6 +57,7 @@ MVP:
 ### Dash
 
 MVP:
+
 - Quick link
 - Mock time tracking and customer data
 - Optional later: fetch from local JSON endpoint if Dash exposes one with CORS enabled
@@ -61,6 +65,7 @@ MVP:
 ### Calendar
 
 MVP:
+
 - Mock calendar data
 - Optional import later:
   - ICS URL
@@ -70,14 +75,17 @@ MVP:
 ### sevDesk
 
 MVP:
+
 - Shortcut only
 
 Later:
+
 - Direct API only if a secure backend or token proxy exists
 
 ## State
 
 Use:
+
 - Angular signals for UI state
 - LocalStorage for user settings
 - Typed adapter services for data sources
@@ -85,6 +93,7 @@ Use:
 ## Routing
 
 Recommended routes:
+
 - `/` → Dashboard
 - `/calendar`
 - `/velo`
@@ -96,6 +105,7 @@ sevDesk should open externally, not as an internal route.
 ## Error Handling
 
 If an integration fails:
+
 - Show a non-blocking widget state
 - Keep dashboard usable
 - Provide a settings hint
@@ -103,6 +113,7 @@ If an integration fails:
 ## Performance
 
 The app should be lightweight and fast:
+
 - No heavy charting library for MVP unless necessary
 - CSS-based layout
 - Simple SVG or canvas charts acceptable

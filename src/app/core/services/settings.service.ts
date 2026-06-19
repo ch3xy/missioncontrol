@@ -1,16 +1,11 @@
 import { Injectable, computed, signal } from '@angular/core';
-import {
-  DEFAULT_SETTINGS,
-  MissionControlSettings,
-} from '../models/settings.model';
+import { DEFAULT_SETTINGS, MissionControlSettings } from '../models/settings.model';
 
 const STORAGE_KEY = 'mission-control.settings';
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  private readonly settingsState = signal<MissionControlSettings>(
-    this.readSettings(),
-  );
+  private readonly settingsState = signal<MissionControlSettings>(this.readSettings());
 
   readonly settings = this.settingsState.asReadonly();
   readonly externalUrls = computed(() => ({
@@ -58,9 +53,7 @@ export class SettingsService {
     }
   }
 
-  private normalizeSettings(
-    settings: MissionControlSettings,
-  ): MissionControlSettings {
+  private normalizeSettings(settings: MissionControlSettings): MissionControlSettings {
     return {
       ...DEFAULT_SETTINGS,
       ...settings,
@@ -68,11 +61,9 @@ export class SettingsService {
       dashUrl: settings.dashUrl.trim() || DEFAULT_SETTINGS.dashUrl,
       sevDeskUrl: settings.sevDeskUrl.trim() || DEFAULT_SETTINGS.sevDeskUrl,
       calendarSource: settings.calendarSource ?? DEFAULT_SETTINGS.calendarSource,
-      localTool1Label:
-        settings.localTool1Label.trim() || DEFAULT_SETTINGS.localTool1Label,
+      localTool1Label: settings.localTool1Label.trim() || DEFAULT_SETTINGS.localTool1Label,
       localTool1Url: settings.localTool1Url.trim(),
-      localTool2Label:
-        settings.localTool2Label.trim() || DEFAULT_SETTINGS.localTool2Label,
+      localTool2Label: settings.localTool2Label.trim() || DEFAULT_SETTINGS.localTool2Label,
       localTool2Url: settings.localTool2Url.trim(),
     };
   }

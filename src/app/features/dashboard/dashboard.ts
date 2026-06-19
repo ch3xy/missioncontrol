@@ -41,9 +41,7 @@ export class Dashboard {
   protected readonly launchError = signal<string | null>(null);
   protected readonly shortcuts = this.shortcutService.shortcuts;
   protected readonly nextEvents = computed(() => this.events().slice(0, 3));
-  protected readonly calendarSource = computed(
-    () => this.events()[0]?.source ?? 'mock',
-  );
+  protected readonly calendarSource = computed(() => this.events()[0]?.source ?? 'mock');
   protected readonly dashProgress = computed(() => {
     const summary = this.dash();
 
@@ -53,9 +51,7 @@ export class Dashboard {
 
     return Math.min(
       100,
-      Math.round(
-        (summary.trackedTodayMinutes / summary.targetTodayMinutes) * 100,
-      ),
+      Math.round((summary.trackedTodayMinutes / summary.targetTodayMinutes) * 100),
     );
   });
 
@@ -65,9 +61,7 @@ export class Dashboard {
 
   protected launch(shortcut: AppShortcut): void {
     const didOpen = this.shortcutService.openExternal(shortcut.url);
-    this.launchError.set(
-      didOpen ? null : `${shortcut.label} has no valid http(s) URL configured.`,
-    );
+    this.launchError.set(didOpen ? null : `${shortcut.label} has no valid http(s) URL configured.`);
   }
 
   private async load(): Promise<void> {

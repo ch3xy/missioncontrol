@@ -45,8 +45,6 @@ describe('SettingsService', () => {
       label: 'Docs',
       url: 'http://localhost:8080',
     });
-    expect(localStorage.getItem('mission-control.settings')).toContain(
-      'localhost:4301',
-    );
+    expect(localStorage.getItem('mission-control.settings')).toContain('localhost:4301');
   });
 });

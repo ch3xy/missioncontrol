@@ -33,9 +33,7 @@ describe('ShortcutService', () => {
     });
     const service = TestBed.inject(ShortcutService);
 
-    expect(service.shortcuts().map((shortcut) => shortcut.id)).toContain(
-      'local-tool-1',
-    );
+    expect(service.shortcuts().map((shortcut) => shortcut.id)).toContain('local-tool-1');
   });
 
   it('should reject non-http urls', () => {

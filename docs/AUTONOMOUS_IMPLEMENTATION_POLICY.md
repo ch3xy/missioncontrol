@@ -1,6 +1,7 @@
 # Autonomous Implementation Policy
 
 Codex should continue working without asking for user approval when:
+
 - Choosing component names
 - Creating folders
 - Adding missing Angular files
@@ -12,6 +13,7 @@ Codex should continue working without asking for user approval when:
 - Refactoring its own recent changes
 
 Codex should stop and ask only when:
+
 - A destructive command would remove user work
 - Credentials or tokens are required
 - A private API requires unavailable access
@@ -19,6 +21,7 @@ Codex should stop and ask only when:
 - There are conflicting instructions that cannot be resolved
 
 If blocked:
+
 - Implement the closest safe fallback
 - Document the limitation
 - Continue with other tasks if possible
