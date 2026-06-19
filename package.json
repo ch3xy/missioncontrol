@@ -12,8 +12,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.spec.json --noEmit",
-    "format": "prettier --write \"src/**/*.{ts,html,css}\" \"docs/**/*.md\" package.json",
-    "format:check": "prettier --check \"src/**/*.{ts,html,css}\" \"docs/**/*.md\" package.json",
+    "format": "prettier --write \"src/**/*.{ts,html,css}\" \"docs/**/*.md\" README.md package.json",
+    "format:check": "prettier --check \"src/**/*.{ts,html,css}\" \"docs/**/*.md\" README.md package.json",
     "lint": "npm run typecheck && npm run format:check"
   },
   "private": true,
