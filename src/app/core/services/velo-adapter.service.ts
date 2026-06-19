@@ -1,20 +1,47 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { IntegrationStatus, MOCK_STATUS } from '../models/integration-status.model';
 import { CashFlowPoint, VeloAdapter, VeloSummary } from '../models/velo.model';
 import { MOCK_VELO_SUMMARY } from '../mock-data/velo.mock';
-import { isRecord, readLocalJson } from './local-json-source';
+import { isRecord, readLocalJsonResult } from './local-json-source';
 import { SettingsService } from './settings.service';
 
 @Injectable({ providedIn: 'root' })
 export class VeloAdapterService implements VeloAdapter {
   private readonly settingsService = inject(SettingsService);
+  private readonly statusState = signal<IntegrationStatus>(MOCK_STATUS);
+
+  readonly status = this.statusState.asReadonly();
 
   async getSummary(): Promise<VeloSummary> {
-    const localSummary = await readLocalJson(
-      this.settingsService.settings().veloSourceUrl,
-      isVeloSummary,
-    );
+    const url = this.settingsService.settings().veloSourceUrl;
 
-    return cloneVeloSummary(localSummary ?? MOCK_VELO_SUMMARY);
+    if (!url?.trim()) {
+      this.statusState.set(MOCK_STATUS);
+      return cloneVeloSummary(MOCK_VELO_SUMMARY);
+    }
+
+    const result = await readLocalJsonResult(url, isVeloSummary);
+
+    if (result.data) {
+      this.statusState.set({
+        kind: 'local-json',
+        label: 'Local JSON',
+        message: 'Loaded Velo summary from the configured local JSON URL.',
+        requestedUrl: url,
+      });
+      return cloneVeloSummary(result.data);
+    }
+
+    this.statusState.set({
+      kind: 'fallback',
+      label: 'Mock fallback',
+      message:
+        result.error === 'invalid-shape'
+          ? 'Velo JSON did not match the expected shape; using mock data.'
+          : 'Velo JSON could not be loaded; using mock data.',
+      requestedUrl: url,
+    });
+    return cloneVeloSummary(MOCK_VELO_SUMMARY);
   }
 }
 

@@ -1,22 +1,35 @@
+export interface LocalJsonResult<T> {
+  data: T | null;
+  error?: 'empty-url' | 'network' | 'http' | 'invalid-shape';
+}
+
 export async function readLocalJson<T>(
   url: string | undefined,
   isValid: (value: unknown) => value is T,
 ): Promise<T | null> {
+  const result = await readLocalJsonResult(url, isValid);
+  return result.data;
+}
+
+export async function readLocalJsonResult<T>(
+  url: string | undefined,
+  isValid: (value: unknown) => value is T,
+): Promise<LocalJsonResult<T>> {
   if (!url?.trim()) {
-    return null;
+    return { data: null, error: 'empty-url' };
   }
 
   try {
     const response = await fetch(url);
 
     if (!response.ok) {
-      return null;
+      return { data: null, error: 'http' };
     }
 
     const payload: unknown = await response.json();
-    return isValid(payload) ? payload : null;
+    return isValid(payload) ? { data: payload } : { data: null, error: 'invalid-shape' };
   } catch {
-    return null;
+    return { data: null, error: 'network' };
   }
 }
 

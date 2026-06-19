@@ -4,7 +4,8 @@
   margin-top: 0.85rem;
 }
 
-app-source-badge + .metric {
+app-source-badge + .metric,
+app-integration-notice + .metric {
   display: block;
   margin-top: 0.85rem;
 }

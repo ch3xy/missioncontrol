@@ -9,6 +9,7 @@ import { CalendarAdapterService } from '../../core/services/calendar-adapter.ser
 import { DashAdapterService } from '../../core/services/dash-adapter.service';
 import { ShortcutService } from '../../core/services/shortcut.service';
 import { VeloAdapterService } from '../../core/services/velo-adapter.service';
+import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
 import { QuickAccessTile } from '../../shared/components/quick-access-tile/quick-access-tile';
 import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { TrendLine } from '../../shared/components/trend-line/trend-line';
@@ -20,6 +21,7 @@ import { WidgetCard } from '../../shared/components/widget-card/widget-card';
     CurrencyPipe,
     DatePipe,
     DecimalPipe,
+    IntegrationNotice,
     RouterLink,
     QuickAccessTile,
     SourceBadge,
@@ -39,6 +41,9 @@ export class Dashboard {
   protected readonly velo = signal<VeloSummary | null>(null);
   protected readonly dash = signal<DashSummary | null>(null);
   protected readonly launchError = signal<string | null>(null);
+  protected readonly calendarStatus = this.calendarAdapter.status;
+  protected readonly veloStatus = this.veloAdapter.status;
+  protected readonly dashStatus = this.dashAdapter.status;
   protected readonly shortcuts = this.shortcutService.shortcuts;
   protected readonly nextEvents = computed(() => this.events().slice(0, 3));
   protected readonly calendarSource = computed(() => this.events()[0]?.source ?? 'mock');

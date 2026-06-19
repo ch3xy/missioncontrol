@@ -9,6 +9,7 @@
 <section class="dashboard-grid">
   <app-widget-card class="span-4" title="Calendar" eyebrow="Today" accent="blue">
     <app-source-badge [source]="calendarSource()" />
+    <app-integration-notice [status]="calendarStatus()" />
     <div class="event-list">
       @for (event of nextEvents(); track event.id) {
         <article class="event">
@@ -26,6 +27,7 @@
   <app-widget-card class="span-4" title="Velo Cash Flow" eyebrow="Forecast" accent="green">
     @if (velo(); as summary) {
       <app-source-badge [source]="summary.source" />
+      <app-integration-notice [status]="veloStatus()" />
       <p class="metric">
         {{ summary.forecastCashFlow | currency: summary.currency : 'symbol' : '1.0-0' }}
       </p>
@@ -43,6 +45,7 @@
   <app-widget-card class="span-4" title="Dash Time" eyebrow="Today" accent="orange">
     @if (dash(); as summary) {
       <app-source-badge [source]="summary.source" />
+      <app-integration-notice [status]="dashStatus()" />
       <p class="metric">{{ summary.trackedTodayMinutes / 60 | number: '1.1-1' }}h</p>
       <p class="muted">of {{ summary.targetTodayMinutes / 60 | number: '1.0-1' }}h target</p>
       <div class="progress" aria-label="Daily time target progress">

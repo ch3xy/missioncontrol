@@ -1,0 +1,6 @@
+@if (isVisible()) {
+  <p class="notice" [class.notice--fallback]="status().kind === 'fallback'">
+    <strong>{{ status().label }}</strong>
+    <span>{{ status().message }}</span>
+  </p>
+}

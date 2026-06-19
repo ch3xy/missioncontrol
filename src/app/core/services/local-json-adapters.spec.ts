@@ -38,9 +38,11 @@ describe('local JSON adapters', () => {
     });
 
     const events = await TestBed.inject(CalendarAdapterService).getEvents();
+    const status = TestBed.inject(CalendarAdapterService).status();
 
     expect(events).toHaveLength(1);
     expect(events[0]?.id).toBe('json-event');
+    expect(status.kind).toBe('local-json');
   });
 
   it('should load Velo and Dash summaries from configured local JSON sources', async () => {
@@ -78,6 +80,8 @@ describe('local JSON adapters', () => {
 
     expect(velo.periodLabel).toBe('JSON forecast');
     expect(dash.openProjects).toBe(3);
+    expect(TestBed.inject(VeloAdapterService).status().kind).toBe('local-json');
+    expect(TestBed.inject(DashAdapterService).status().kind).toBe('local-json');
   });
 
   it('should fall back to mock data when local JSON validation fails', async () => {
@@ -92,8 +96,11 @@ describe('local JSON adapters', () => {
     });
 
     const events = await TestBed.inject(CalendarAdapterService).getEvents();
+    const status = TestBed.inject(CalendarAdapterService).status();
 
     expect(events).toHaveLength(MOCK_CALENDAR_EVENTS.length);
     expect(events[0]?.source).toBe('mock');
+    expect(status.kind).toBe('fallback');
+    expect(status.message).toContain('expected shape');
   });
 });

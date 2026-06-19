@@ -3,12 +3,13 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { DashSummary } from '../../core/models/dash.model';
 import { DashAdapterService } from '../../core/services/dash-adapter.service';
 import { ShortcutService } from '../../core/services/shortcut.service';
+import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
 import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
 @Component({
   selector: 'app-dash-page',
-  imports: [DecimalPipe, SourceBadge, WidgetCard],
+  imports: [DecimalPipe, IntegrationNotice, SourceBadge, WidgetCard],
   templateUrl: './dash-page.html',
   styleUrl: './dash-page.css',
 })
@@ -16,6 +17,7 @@ export class DashPage {
   private readonly dashAdapter = inject(DashAdapterService);
   private readonly shortcutService = inject(ShortcutService);
 
+  protected readonly status = this.dashAdapter.status;
   protected readonly summary = signal<DashSummary | null>(null);
   protected readonly launchError = signal<string | null>(null);
   protected readonly progress = computed(() => {

@@ -1,20 +1,47 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { IntegrationStatus, MOCK_STATUS } from '../models/integration-status.model';
 import { DashAdapter, DashSummary } from '../models/dash.model';
 import { MOCK_DASH_SUMMARY } from '../mock-data/dash.mock';
-import { isRecord, readLocalJson } from './local-json-source';
+import { isRecord, readLocalJsonResult } from './local-json-source';
 import { SettingsService } from './settings.service';
 
 @Injectable({ providedIn: 'root' })
 export class DashAdapterService implements DashAdapter {
   private readonly settingsService = inject(SettingsService);
+  private readonly statusState = signal<IntegrationStatus>(MOCK_STATUS);
+
+  readonly status = this.statusState.asReadonly();
 
   async getSummary(): Promise<DashSummary> {
-    const localSummary = await readLocalJson(
-      this.settingsService.settings().dashSourceUrl,
-      isDashSummary,
-    );
+    const url = this.settingsService.settings().dashSourceUrl;
 
-    return { ...(localSummary ?? MOCK_DASH_SUMMARY) };
+    if (!url?.trim()) {
+      this.statusState.set(MOCK_STATUS);
+      return { ...MOCK_DASH_SUMMARY };
+    }
+
+    const result = await readLocalJsonResult(url, isDashSummary);
+
+    if (result.data) {
+      this.statusState.set({
+        kind: 'local-json',
+        label: 'Local JSON',
+        message: 'Loaded Dash summary from the configured local JSON URL.',
+        requestedUrl: url,
+      });
+      return { ...result.data };
+    }
+
+    this.statusState.set({
+      kind: 'fallback',
+      label: 'Mock fallback',
+      message:
+        result.error === 'invalid-shape'
+          ? 'Dash JSON did not match the expected shape; using mock data.'
+          : 'Dash JSON could not be loaded; using mock data.',
+      requestedUrl: url,
+    });
+    return { ...MOCK_DASH_SUMMARY };
   }
 }
 
