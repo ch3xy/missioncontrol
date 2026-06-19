@@ -1,9 +1,22 @@
 <section class="page-heading">
   <div>
     <h2>Velo</h2>
-    <p>Cash-flow placeholder backed by a typed mock adapter.</p>
+    <p>Cash-flow summary from mock data or a browser-readable local JSON URL.</p>
+    @if (lastUpdated(); as updated) {
+      <p class="updated">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+    }
   </div>
-  <button class="button-link" type="button" (click)="openVelo()">Open Velo</button>
+  <div class="heading-actions">
+    <button
+      class="button-link secondary"
+      type="button"
+      [disabled]="isLoading()"
+      (click)="refresh()"
+    >
+      {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
+    </button>
+    <button class="button-link" type="button" (click)="openVelo()">Open Velo</button>
+  </div>
 </section>
 
 @if (summary(); as data) {

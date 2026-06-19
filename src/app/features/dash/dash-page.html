@@ -1,9 +1,22 @@
 <section class="page-heading">
   <div>
     <h2>Dash</h2>
-    <p>Time tracking, customers and projects represented by mock data for the MVP.</p>
+    <p>Time tracking, customers and projects from mock data or a local JSON URL.</p>
+    @if (lastUpdated(); as updated) {
+      <p class="updated">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+    }
   </div>
-  <button class="button-link" type="button" (click)="openDash()">Open Dash</button>
+  <div class="heading-actions">
+    <button
+      class="button-link secondary"
+      type="button"
+      [disabled]="isLoading()"
+      (click)="refresh()"
+    >
+      {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
+    </button>
+    <button class="button-link" type="button" (click)="openDash()">Open Dash</button>
+  </div>
 </section>
 
 @if (summary(); as data) {
