@@ -108,3 +108,15 @@
   <p class="saved">{{ savedMessage() }}</p>
   <p class="hint">{{ sourceHint() }}</p>
 </app-widget-card>
+
+<app-widget-card title="Shortcut Preview" eyebrow="Quick Access" accent="green">
+  <div class="shortcut-preview">
+    @for (shortcut of shortcuts(); track shortcut.id) {
+      <app-quick-access-tile [shortcut]="shortcut" (launch)="launch($event)" />
+    }
+  </div>
+
+  @if (launchError()) {
+    <p class="error">{{ launchError() }}</p>
+  }
+</app-widget-card>

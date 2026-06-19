@@ -1,21 +1,27 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AppShortcut } from '../../core/models/shortcut.model';
 import { MissionControlSettings } from '../../core/models/settings.model';
+import { ShortcutService } from '../../core/services/shortcut.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { httpUrlValidator } from '../../core/validators/http-url.validator';
+import { QuickAccessTile } from '../../shared/components/quick-access-tile/quick-access-tile';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
 @Component({
   selector: 'app-settings-page',
-  imports: [ReactiveFormsModule, WidgetCard],
+  imports: [ReactiveFormsModule, QuickAccessTile, WidgetCard],
   templateUrl: './settings-page.html',
   styleUrl: './settings-page.css',
 })
 export class SettingsPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly settingsService = inject(SettingsService);
+  private readonly shortcutService = inject(ShortcutService);
 
   protected readonly savedSettings = this.settingsService.settings;
+  protected readonly shortcuts = this.shortcutService.shortcuts;
+  protected readonly launchError = signal<string | null>(null);
   protected readonly savedMessage = computed(
     () =>
       `Configured launch URLs: Velo ${this.savedSettings().veloUrl}, Dash ${
@@ -66,5 +72,10 @@ export class SettingsPage {
   protected reset(): void {
     this.settingsService.resetSettings();
     this.form.reset(this.savedSettings());
+  }
+
+  protected launch(shortcut: AppShortcut): void {
+    const didOpen = this.shortcutService.openExternal(shortcut.url);
+    this.launchError.set(didOpen ? null : `${shortcut.label} has no valid http(s) URL configured.`);
   }
 }
