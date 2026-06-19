@@ -2,8 +2,21 @@
   <div>
     <h2>Overview</h2>
     <p>Appointments, cash flow, tracked time and shortcuts in one local workspace.</p>
+    @if (lastUpdated(); as updated) {
+      <p class="updated">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+    }
   </div>
-  <a class="button-link" routerLink="/settings">Settings</a>
+  <div class="heading-actions">
+    <button
+      class="button-link secondary"
+      type="button"
+      [disabled]="isLoading()"
+      (click)="refresh()"
+    >
+      {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
+    </button>
+    <a class="button-link" routerLink="/settings">Settings</a>
+  </div>
 </section>
 
 <section class="dashboard-grid">

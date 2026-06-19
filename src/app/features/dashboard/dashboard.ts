@@ -40,6 +40,8 @@ export class Dashboard {
   protected readonly events = signal<CalendarEvent[]>([]);
   protected readonly velo = signal<VeloSummary | null>(null);
   protected readonly dash = signal<DashSummary | null>(null);
+  protected readonly isLoading = signal(false);
+  protected readonly lastUpdated = signal<Date | null>(null);
   protected readonly launchError = signal<string | null>(null);
   protected readonly calendarStatus = this.calendarAdapter.status;
   protected readonly veloStatus = this.veloAdapter.status;
@@ -64,12 +66,18 @@ export class Dashboard {
     void this.load();
   }
 
+  protected refresh(): void {
+    void this.load();
+  }
+
   protected launch(shortcut: AppShortcut): void {
     const didOpen = this.shortcutService.openExternal(shortcut.url);
     this.launchError.set(didOpen ? null : `${shortcut.label} has no valid http(s) URL configured.`);
   }
 
   private async load(): Promise<void> {
+    this.isLoading.set(true);
+
     const [events, velo, dash] = await Promise.all([
       this.calendarAdapter.getEvents(),
       this.veloAdapter.getSummary(),
@@ -79,5 +87,7 @@ export class Dashboard {
     this.events.set(events);
     this.velo.set(velo);
     this.dash.set(dash);
+    this.lastUpdated.set(new Date());
+    this.isLoading.set(false);
   }
 }

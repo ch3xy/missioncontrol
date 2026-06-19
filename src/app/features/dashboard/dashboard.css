@@ -4,6 +4,22 @@
   margin-top: 0.85rem;
 }
 
+.heading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.updated {
+  margin-top: 0.25rem;
+  color: #93c5fd;
+  font-size: 0.85rem;
+}
+
+.secondary {
+  background: rgba(255, 255, 255, 0.04);
+}
+
 app-source-badge + .metric,
 app-integration-notice + .metric {
   display: block;
