@@ -10,16 +10,25 @@
     <label>
       <span>Velo URL</span>
       <input type="url" formControlName="veloUrl" />
+      @if (form.controls.veloUrl.touched && form.controls.veloUrl.invalid) {
+        <small>Use a valid http(s) URL.</small>
+      }
     </label>
 
     <label>
       <span>Dash URL</span>
       <input type="url" formControlName="dashUrl" />
+      @if (form.controls.dashUrl.touched && form.controls.dashUrl.invalid) {
+        <small>Use a valid http(s) URL.</small>
+      }
     </label>
 
     <label>
       <span>sevDesk URL</span>
       <input type="url" formControlName="sevDeskUrl" />
+      @if (form.controls.sevDeskUrl.touched && form.controls.sevDeskUrl.invalid) {
+        <small>Use a valid http(s) URL.</small>
+      }
     </label>
 
     <label>
@@ -34,23 +43,33 @@
     <label>
       <span>Calendar source URL</span>
       <input type="url" formControlName="calendarSourceUrl" placeholder="Optional placeholder" />
+      @if (form.controls.calendarSourceUrl.touched && form.controls.calendarSourceUrl.invalid) {
+        <small>Use a valid http(s) URL or leave this empty.</small>
+      }
     </label>
 
     <label>
       <span>Velo source URL</span>
       <input type="url" formControlName="veloSourceUrl" placeholder="Optional placeholder" />
+      @if (form.controls.veloSourceUrl.touched && form.controls.veloSourceUrl.invalid) {
+        <small>Use a valid http(s) URL or leave this empty.</small>
+      }
     </label>
 
     <label>
       <span>Dash source URL</span>
       <input type="url" formControlName="dashSourceUrl" placeholder="Optional placeholder" />
+      @if (form.controls.dashSourceUrl.touched && form.controls.dashSourceUrl.invalid) {
+        <small>Use a valid http(s) URL or leave this empty.</small>
+      }
     </label>
 
     <div class="actions">
-      <button class="button-link" type="submit">Save</button>
+      <button class="button-link" type="submit" [disabled]="form.invalid">Save</button>
       <button class="button-link secondary" type="button" (click)="reset()">Reset defaults</button>
     </div>
   </form>
 
   <p class="saved">{{ savedMessage() }}</p>
+  <p class="hint">{{ sourceHint() }}</p>
 </app-widget-card>

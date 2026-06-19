@@ -11,12 +11,12 @@ export class CalendarAdapterService implements CalendarAdapter {
   async getEvents(): Promise<CalendarEvent[]> {
     const settings = this.settingsService.settings();
     const localEvents =
-      settings.calendarSource === 'mock'
-        ? null
-        : await readLocalJson(
+      settings.calendarSource === 'local-json'
+        ? await readLocalJson(
             settings.calendarSourceUrl,
             isCalendarEventCollection,
-          );
+          )
+        : null;
 
     return this.sortEvents(localEvents ?? MOCK_CALENDAR_EVENTS);
   }
