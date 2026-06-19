@@ -10,3 +10,12 @@ Initial assumptions:
 - The MVP should not require a backend.
 - Calendar data starts as mock data.
 - Real integrations can be added later through adapters.
+
+Implementation assumptions:
+- External Velo, Dash, and sevDesk entries are launch shortcuts only.
+- Default URLs are `http://localhost:4201`, `http://localhost:4202`, and `https://my.sevdesk.de`.
+- Settings are stored only in browser LocalStorage.
+- Calendar, Velo, and Dash data are provided by typed mock adapters for now.
+- Placeholder source URL fields exist in Settings so later local JSON or ICS adapters can be added without changing the UI.
+- No API keys, tokens, OAuth flows, or sevDesk private API calls are part of the MVP.
+- Angular CLI builds require Node.js 22.22.3 or newer in this repository.
