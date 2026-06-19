@@ -14,6 +14,7 @@ Implemented:
 - Two optional configurable local tool shortcuts
 - Typed mock adapters for Calendar, Velo, and Dash
 - Optional local JSON source placeholders with validation and mock fallback
+- Example local JSON contracts under `public/examples/`
 - Source badges showing whether data comes from mock or local JSON sources
 - Unit tests for app bootstrapping, settings, shortcuts, validators, source badges, and local JSON adapters
 
@@ -51,6 +52,7 @@ Still intentionally placeholder-only:
 ## Next Useful Improvements
 
 - Add import adapters for ICS and stable local JSON schemas
+- Point Velo and Dash to real local JSON endpoints once those apps expose browser-readable data
 - Add richer calendar grouping and empty-state copy
 - Add visual regression checks once a browser automation setup is part of the project scripts
 - Add optional user-configurable quick access tiles

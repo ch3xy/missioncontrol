@@ -1,0 +1,21 @@
+[
+  {
+    "id": "json-planning",
+    "title": "JSON Planning",
+    "startsAt": "2026-06-19T08:30:00.000Z",
+    "endsAt": "2026-06-19T09:00:00.000Z",
+    "project": "Mission Control",
+    "customer": "Internal",
+    "location": "Local",
+    "source": "local-json"
+  },
+  {
+    "id": "json-client-sync",
+    "title": "Client Sync",
+    "startsAt": "2026-06-19T13:00:00.000Z",
+    "endsAt": "2026-06-19T13:45:00.000Z",
+    "project": "Client Portal",
+    "customer": "Helio Systems",
+    "source": "local-json"
+  }
+]
