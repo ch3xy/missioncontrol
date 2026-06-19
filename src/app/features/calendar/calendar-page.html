@@ -15,22 +15,29 @@
   <app-source-badge [source]="source()" />
   <app-integration-notice [status]="status()" />
   <div class="appointments">
-    @for (event of events(); track event.id) {
-      <article>
-        <time>
-          <span>{{ event.startsAt | date: 'HH:mm' }}</span>
-          @if (event.endsAt) {
-            <small>{{ event.endsAt | date: 'HH:mm' }}</small>
-          }
-        </time>
-        <div>
-          <h3>{{ event.title }}</h3>
-          <p>{{ event.customer || event.project || 'Personal' }}</p>
-          @if (event.location) {
-            <small>{{ event.location }}</small>
+    @for (group of eventGroups(); track group.dateKey) {
+      <section class="agenda-day">
+        <h3>{{ group.dateKey | date: 'EEEE, dd MMM yyyy' }}</h3>
+        <div class="agenda-day__events">
+          @for (event of group.events; track event.id) {
+            <article>
+              <time>
+                <span>{{ event.startsAt | date: 'HH:mm' }}</span>
+                @if (event.endsAt) {
+                  <small>{{ event.endsAt | date: 'HH:mm' }}</small>
+                }
+              </time>
+              <div>
+                <h4>{{ event.title }}</h4>
+                <p>{{ event.customer || event.project || 'Personal' }}</p>
+                @if (event.location) {
+                  <small>{{ event.location }}</small>
+                }
+              </div>
+            </article>
           }
         </div>
-      </article>
+      </section>
     } @empty {
       <p class="empty">No appointments available. Configure a source or use mock data.</p>
     }

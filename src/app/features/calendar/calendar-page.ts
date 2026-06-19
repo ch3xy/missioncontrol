@@ -1,10 +1,15 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CalendarEvent } from '../../core/models/calendar.model';
 import { CalendarAdapterService } from '../../core/services/calendar-adapter.service';
 import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
 import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
+
+interface CalendarEventGroup {
+  dateKey: string;
+  events: CalendarEvent[];
+}
 
 @Component({
   selector: 'app-calendar-page',
@@ -19,6 +24,19 @@ export class CalendarPage {
   protected readonly source = signal<CalendarEvent['source']>('mock');
   protected readonly isLoading = signal(false);
   protected readonly lastUpdated = signal<Date | null>(null);
+  protected readonly eventGroups = computed<CalendarEventGroup[]>(() => {
+    const groups = new Map<string, CalendarEvent[]>();
+
+    for (const event of this.events()) {
+      const key = event.startsAt.slice(0, 10);
+      groups.set(key, [...(groups.get(key) ?? []), event]);
+    }
+
+    return Array.from(groups.entries()).map(([dateKey, events]) => ({
+      dateKey,
+      events,
+    }));
+  });
 
   constructor() {
     void this.load();

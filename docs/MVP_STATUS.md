@@ -11,6 +11,7 @@ Implemented:
 - Dashboard refresh action with last-updated timestamp
 - Detail pages for Calendar, Velo, and Dash
 - Calendar detail refresh with event start/end time display
+- Calendar agenda groups appointments by date
 - Velo and Dash detail refresh actions with last-updated timestamps
 - Settings page with LocalStorage persistence and reset to defaults
 - Settings shortcut preview using the same Quick Access tiles as the dashboard
