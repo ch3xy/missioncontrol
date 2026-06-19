@@ -3,11 +3,16 @@ form {
   gap: 1rem;
 }
 
+.backup-actions,
 .shortcut-preview,
 .tool-grid {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.backup-actions {
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
 }
 
 .shortcut-preview {
@@ -38,6 +43,29 @@ select {
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
   color: var(--mc-text);
+}
+
+.file-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--mc-text);
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+}
+
+.file-button input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .section-label {
@@ -104,6 +132,7 @@ button:disabled {
 }
 
 @media (max-width: 760px) {
+  .backup-actions,
   .shortcut-preview,
   .tool-grid {
     grid-template-columns: 1fr;

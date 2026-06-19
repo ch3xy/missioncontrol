@@ -118,6 +118,20 @@
   <p class="hint">{{ sourceHint() }}</p>
 </app-widget-card>
 
+<app-widget-card title="Backup" eyebrow="Local file" accent="orange">
+  <div class="backup-actions">
+    <button class="button-link" type="button" (click)="exportSettings()">Export settings</button>
+    <label class="file-button">
+      <span>Import settings</span>
+      <input type="file" accept="application/json,.json" (change)="importSettings($event)" />
+    </label>
+  </div>
+
+  @if (backupMessage()) {
+    <p class="saved">{{ backupMessage() }}</p>
+  }
+</app-widget-card>
+
 <app-widget-card title="Shortcut Preview" eyebrow="Quick Access" accent="green">
   <div class="shortcut-preview">
     @for (shortcut of shortcuts(); track shortcut.id) {

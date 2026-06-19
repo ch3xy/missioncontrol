@@ -34,6 +34,20 @@ export class SettingsService {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
   }
 
+  exportSettings(): string {
+    return JSON.stringify(this.settingsState(), null, 2);
+  }
+
+  importSettings(rawSettings: string): boolean {
+    try {
+      const parsed = JSON.parse(rawSettings) as Partial<MissionControlSettings>;
+      this.updateSettings({ ...DEFAULT_SETTINGS, ...parsed });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   resetSettings(): void {
     this.updateSettings(DEFAULT_SETTINGS);
   }

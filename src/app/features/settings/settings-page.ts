@@ -22,6 +22,7 @@ export class SettingsPage {
   protected readonly savedSettings = this.settingsService.settings;
   protected readonly shortcuts = this.shortcutService.shortcuts;
   protected readonly launchError = signal<string | null>(null);
+  protected readonly backupMessage = signal<string | null>(null);
   protected readonly savedMessage = computed(
     () =>
       `Configured launch URLs: Velo ${this.savedSettings().veloUrl}, Dash ${
@@ -72,6 +73,41 @@ export class SettingsPage {
   protected reset(): void {
     this.settingsService.resetSettings();
     this.form.reset(this.savedSettings());
+  }
+
+  protected exportSettings(): void {
+    const blob = new Blob([this.settingsService.exportSettings()], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'mission-control-settings.json';
+    link.click();
+    URL.revokeObjectURL(url);
+    this.backupMessage.set('Settings export created.');
+  }
+
+  protected importSettings(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const didImport = this.settingsService.importSettings(String(reader.result ?? ''));
+      this.form.reset(this.savedSettings());
+      this.backupMessage.set(didImport ? 'Settings imported.' : 'Settings import failed.');
+      input.value = '';
+    };
+    reader.onerror = () => {
+      this.backupMessage.set('Settings import failed.');
+      input.value = '';
+    };
+    reader.readAsText(file);
   }
 
   protected useBundledJsonExamples(): void {

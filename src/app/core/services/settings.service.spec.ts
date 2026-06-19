@@ -47,4 +47,24 @@ describe('SettingsService', () => {
     });
     expect(localStorage.getItem('mission-control.settings')).toContain('localhost:4301');
   });
+
+  it('should export and import settings JSON', () => {
+    const service = TestBed.inject(SettingsService);
+
+    service.updateSettings({
+      ...DEFAULT_SETTINGS,
+      veloUrl: 'http://localhost:4401',
+      localTool1Label: 'NAS',
+      localTool1Url: 'http://localhost:8080',
+    });
+    const exportedSettings = service.exportSettings();
+
+    service.resetSettings();
+    expect(service.settings().veloUrl).toBe(DEFAULT_SETTINGS.veloUrl);
+
+    expect(service.importSettings(exportedSettings)).toBe(true);
+    expect(service.settings().veloUrl).toBe('http://localhost:4401');
+    expect(service.settings().localTool1Label).toBe('NAS');
+    expect(service.importSettings('{broken')).toBe(false);
+  });
 });

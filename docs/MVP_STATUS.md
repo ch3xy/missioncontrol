@@ -15,6 +15,7 @@ Implemented:
 - Settings page with LocalStorage persistence and reset to defaults
 - Settings shortcut preview using the same Quick Access tiles as the dashboard
 - Settings presets for bundled JSON and ICS example sources
+- Settings export/import for local backup and restore
 - Configurable Velo, Dash, and sevDesk launch URLs
 - Two optional configurable local tool shortcuts
 - Typed mock adapters for Calendar, Velo, and Dash
@@ -57,7 +58,7 @@ Still intentionally placeholder-only:
 
 ## Next Useful Improvements
 
-- Add import adapters for ICS and stable local JSON schemas
+- Harden ICS parsing for recurring events and timezone edge cases
 - Point Velo and Dash to real local JSON endpoints once those apps expose browser-readable data
 - Add richer calendar grouping and empty-state copy
 - Add visual regression checks once a browser automation setup is part of the project scripts
