@@ -25,7 +25,7 @@ Implemented:
 - Example local JSON contracts under `public/examples/`
 - Basic frontend-only ICS calendar loading with mock fallback
 - Source badges showing whether data comes from mock or local JSON sources
-- Unit tests for app bootstrapping, settings, shortcuts, validators, source badges, and local JSON adapters
+- Unit tests for app bootstrapping, feature pages, settings, shortcuts, validators, source badges, and local JSON adapters
 
 ## Runtime
 
