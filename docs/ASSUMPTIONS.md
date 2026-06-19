@@ -18,4 +18,4 @@ Implementation assumptions:
 - Calendar, Velo, and Dash data are provided by typed mock adapters for now.
 - Placeholder source URL fields exist in Settings so later local JSON or ICS adapters can be added without changing the UI.
 - No API keys, tokens, OAuth flows, or sevDesk private API calls are part of the MVP.
-- Angular CLI builds require Node.js 22.22.3 or newer in this repository.
+- Angular CLI builds use Node.js 26 for this repository; `.nvmrc` pins `26.3.1`.

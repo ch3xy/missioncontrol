@@ -1,6 +1,10 @@
 {
   "name": "missioncontrol",
   "version": "0.0.0",
+  "engines": {
+    "node": ">=26.0.0",
+    "npm": ">=11.0.0"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

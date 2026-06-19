@@ -1,11 +1,16 @@
 import { TestBed } from '@angular/core/testing';
+import { createMemoryStorage } from '../../testing/memory-storage';
 import { DEFAULT_SETTINGS } from '../models/settings.model';
 import { SettingsService } from './settings.service';
 
 describe('SettingsService', () => {
   beforeEach(() => {
-    localStorage.clear();
+    vi.stubGlobal('localStorage', createMemoryStorage());
     TestBed.configureTestingModule({});
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('should expose default external urls', () => {

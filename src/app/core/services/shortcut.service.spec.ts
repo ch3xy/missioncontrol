@@ -1,10 +1,15 @@
 import { TestBed } from '@angular/core/testing';
+import { createMemoryStorage } from '../../testing/memory-storage';
 import { ShortcutService } from './shortcut.service';
 
 describe('ShortcutService', () => {
   beforeEach(() => {
-    localStorage.clear();
+    vi.stubGlobal('localStorage', createMemoryStorage());
     TestBed.configureTestingModule({});
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('should expose MVP shortcuts', () => {
