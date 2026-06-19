@@ -1,6 +1,12 @@
 .event-list {
   display: grid;
   gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+app-source-badge + .metric {
+  display: block;
+  margin-top: 0.85rem;
 }
 
 .event {

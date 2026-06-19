@@ -10,6 +10,7 @@ import { DashAdapterService } from '../../core/services/dash-adapter.service';
 import { ShortcutService } from '../../core/services/shortcut.service';
 import { VeloAdapterService } from '../../core/services/velo-adapter.service';
 import { QuickAccessTile } from '../../shared/components/quick-access-tile/quick-access-tile';
+import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { TrendLine } from '../../shared/components/trend-line/trend-line';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
@@ -21,6 +22,7 @@ import { WidgetCard } from '../../shared/components/widget-card/widget-card';
     DecimalPipe,
     RouterLink,
     QuickAccessTile,
+    SourceBadge,
     TrendLine,
     WidgetCard,
   ],
@@ -39,6 +41,9 @@ export class Dashboard {
   protected readonly launchError = signal<string | null>(null);
   protected readonly shortcuts = this.shortcutService.shortcuts;
   protected readonly nextEvents = computed(() => this.events().slice(0, 3));
+  protected readonly calendarSource = computed(
+    () => this.events()[0]?.source ?? 'mock',
+  );
   protected readonly dashProgress = computed(() => {
     const summary = this.dash();
 

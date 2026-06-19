@@ -6,6 +6,7 @@
 </section>
 
 <app-widget-card title="Upcoming Appointments" eyebrow="Mock data" accent="blue">
+  <app-source-badge [source]="source()" />
   <div class="appointments">
     @for (event of events(); track event.id) {
       <article>

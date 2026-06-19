@@ -3,11 +3,12 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { DashSummary } from '../../core/models/dash.model';
 import { DashAdapterService } from '../../core/services/dash-adapter.service';
 import { ShortcutService } from '../../core/services/shortcut.service';
+import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
 @Component({
   selector: 'app-dash-page',
-  imports: [DecimalPipe, WidgetCard],
+  imports: [DecimalPipe, SourceBadge, WidgetCard],
   templateUrl: './dash-page.html',
   styleUrl: './dash-page.css',
 })

@@ -1,6 +1,7 @@
 .appointments {
   display: grid;
   gap: 0.75rem;
+  margin-top: 0.85rem;
 }
 
 article {
