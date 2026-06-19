@@ -44,6 +44,10 @@ export class SettingsPage {
     calendarSourceUrl: ['', [httpUrlValidator({ optional: true })]],
     veloSourceUrl: ['', [httpUrlValidator({ optional: true })]],
     dashSourceUrl: ['', [httpUrlValidator({ optional: true })]],
+    localTool1Label: ['Local Tool 1', [Validators.required]],
+    localTool1Url: ['', [httpUrlValidator({ optional: true })]],
+    localTool2Label: ['Local Tool 2', [Validators.required]],
+    localTool2Url: ['', [httpUrlValidator({ optional: true })]],
   });
 
   constructor() {

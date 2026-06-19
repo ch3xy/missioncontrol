@@ -10,6 +10,7 @@ Implemented:
 - Detail pages for Calendar, Velo, and Dash
 - Settings page with LocalStorage persistence and reset to defaults
 - Configurable Velo, Dash, and sevDesk launch URLs
+- Two optional configurable local tool shortcuts
 - Typed mock adapters for Calendar, Velo, and Dash
 - Optional local JSON source placeholders with validation and mock fallback
 - Source badges showing whether data comes from mock or local JSON sources
@@ -51,3 +52,4 @@ Still intentionally placeholder-only:
 - Add richer calendar grouping and empty-state copy
 - Add visual regression checks once a browser automation setup is part of the project scripts
 - Add optional user-configurable quick access tiles
+- Expand the two local tool slots into a full shortcut editor if more links are needed

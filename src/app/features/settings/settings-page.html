@@ -64,6 +64,39 @@
       }
     </label>
 
+    <div class="section-label">
+      <h3>Local tools</h3>
+      <p>Configured tools appear in Quick Access when a valid URL is set.</p>
+    </div>
+
+    <div class="tool-grid">
+      <label>
+        <span>Tool 1 label</span>
+        <input type="text" formControlName="localTool1Label" />
+      </label>
+
+      <label>
+        <span>Tool 1 URL</span>
+        <input type="url" formControlName="localTool1Url" placeholder="Optional local URL" />
+        @if (form.controls.localTool1Url.touched && form.controls.localTool1Url.invalid) {
+          <small>Use a valid http(s) URL or leave this empty.</small>
+        }
+      </label>
+
+      <label>
+        <span>Tool 2 label</span>
+        <input type="text" formControlName="localTool2Label" />
+      </label>
+
+      <label>
+        <span>Tool 2 URL</span>
+        <input type="url" formControlName="localTool2Url" placeholder="Optional local URL" />
+        @if (form.controls.localTool2Url.touched && form.controls.localTool2Url.invalid) {
+          <small>Use a valid http(s) URL or leave this empty.</small>
+        }
+      </label>
+    </div>
+
     <div class="actions">
       <button class="button-link" type="submit" [disabled]="form.invalid">Save</button>
       <button class="button-link secondary" type="button" (click)="reset()">Reset defaults</button>

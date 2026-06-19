@@ -3,6 +3,12 @@ form {
   gap: 1rem;
 }
 
+.tool-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 label {
   display: grid;
   gap: 0.45rem;
@@ -27,6 +33,27 @@ select {
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
   color: var(--mc-text);
+}
+
+.section-label {
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--mc-border);
+}
+
+.section-label h3,
+.section-label p {
+  margin: 0;
+}
+
+.section-label h3 {
+  font-size: 1rem;
+}
+
+.section-label p {
+  margin-top: 0.25rem;
+  color: var(--mc-muted);
+  line-height: 1.5;
 }
 
 input.ng-invalid.ng-touched {
@@ -58,4 +85,10 @@ button:disabled {
 .hint {
   margin-top: 0.5rem;
   color: #93c5fd;
+}
+
+@media (max-width: 760px) {
+  .tool-grid {
+    grid-template-columns: 1fr;
+  }
 }

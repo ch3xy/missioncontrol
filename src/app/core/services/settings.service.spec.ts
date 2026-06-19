@@ -21,6 +21,8 @@ describe('SettingsService', () => {
       velo: DEFAULT_SETTINGS.veloUrl,
       dash: DEFAULT_SETTINGS.dashUrl,
       sevdesk: DEFAULT_SETTINGS.sevDeskUrl,
+      localTool1: DEFAULT_SETTINGS.localTool1Url,
+      localTool2: DEFAULT_SETTINGS.localTool2Url,
     });
   });
 
@@ -32,10 +34,17 @@ describe('SettingsService', () => {
       veloUrl: 'http://localhost:4301',
       dashUrl: 'http://localhost:4302',
       sevDeskUrl: 'https://example.test',
+      localTool1Label: 'Docs',
+      localTool1Url: 'http://localhost:8080',
     });
 
     const freshService = TestBed.inject(SettingsService);
     expect(freshService.settings().veloUrl).toBe('http://localhost:4301');
+    expect(freshService.localTools()[0]).toEqual({
+      id: 'local-tool-1',
+      label: 'Docs',
+      url: 'http://localhost:8080',
+    });
     expect(localStorage.getItem('mission-control.settings')).toContain(
       'localhost:4301',
     );

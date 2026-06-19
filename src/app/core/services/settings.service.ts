@@ -17,7 +17,21 @@ export class SettingsService {
     velo: this.settingsState().veloUrl,
     dash: this.settingsState().dashUrl,
     sevdesk: this.settingsState().sevDeskUrl,
+    localTool1: this.settingsState().localTool1Url,
+    localTool2: this.settingsState().localTool2Url,
   }));
+  readonly localTools = computed(() => [
+    {
+      id: 'local-tool-1' as const,
+      label: this.settingsState().localTool1Label,
+      url: this.settingsState().localTool1Url,
+    },
+    {
+      id: 'local-tool-2' as const,
+      label: this.settingsState().localTool2Label,
+      url: this.settingsState().localTool2Url,
+    },
+  ]);
 
   updateSettings(settings: MissionControlSettings): void {
     const normalized = this.normalizeSettings(settings);
@@ -54,6 +68,12 @@ export class SettingsService {
       dashUrl: settings.dashUrl.trim() || DEFAULT_SETTINGS.dashUrl,
       sevDeskUrl: settings.sevDeskUrl.trim() || DEFAULT_SETTINGS.sevDeskUrl,
       calendarSource: settings.calendarSource ?? DEFAULT_SETTINGS.calendarSource,
+      localTool1Label:
+        settings.localTool1Label.trim() || DEFAULT_SETTINGS.localTool1Label,
+      localTool1Url: settings.localTool1Url.trim(),
+      localTool2Label:
+        settings.localTool2Label.trim() || DEFAULT_SETTINGS.localTool2Label,
+      localTool2Url: settings.localTool2Url.trim(),
     };
   }
 }

@@ -9,7 +9,7 @@ export class ShortcutService {
   readonly shortcuts = computed<AppShortcut[]>(() => {
     const urls = this.settingsService.externalUrls();
 
-    return [
+    const baseShortcuts: AppShortcut[] = [
       {
         id: 'velo',
         label: 'Velo',
@@ -43,6 +43,20 @@ export class ShortcutService {
         external: false,
       },
     ];
+
+    const localShortcuts: AppShortcut[] = this.settingsService
+      .localTools()
+      .filter((tool) => this.canOpenUrl(tool.url))
+      .map((tool, index) => ({
+        id: tool.id,
+        label: tool.label,
+        description: 'Configurable local network shortcut',
+        url: tool.url,
+        icon: String(index + 1),
+        external: true,
+      }));
+
+    return [...baseShortcuts, ...localShortcuts];
   });
 
   canOpenUrl(url: string | undefined): url is string {

@@ -18,5 +18,6 @@ Implementation assumptions:
 - Calendar, Velo, and Dash data are provided by typed mock adapters for now.
 - Placeholder source URL fields exist in Settings so later local JSON or ICS adapters can be added without changing the UI.
 - Local JSON source URLs are optional placeholders and fall back to mock data when a request fails or the response shape is invalid.
+- Two optional local tool shortcuts can be configured in Settings and are hidden until a valid http(s) URL is set.
 - No API keys, tokens, OAuth flows, or sevDesk private API calls are part of the MVP.
 - Angular CLI builds use Node.js 26 for this repository; `.nvmrc` pins `26.3.1`.
