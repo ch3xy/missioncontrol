@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { IntegrationStatus, MOCK_STATUS } from '../models/integration-status.model';
 import { CalendarAdapter, CalendarEvent } from '../models/calendar.model';
 import { MOCK_CALENDAR_EVENTS } from '../mock-data/calendar.mock';
+import { parseIcsEvents } from './ics-parser';
 import { readLocalJsonResult, isRecord } from './local-json-source';
 import { SettingsService } from './settings.service';
 
@@ -15,14 +16,12 @@ export class CalendarAdapterService implements CalendarAdapter {
   async getEvents(): Promise<CalendarEvent[]> {
     const settings = this.settingsService.settings();
 
+    if (settings.calendarSource === 'ics') {
+      return this.loadIcsEvents(settings.calendarSourceUrl);
+    }
+
     if (settings.calendarSource !== 'local-json') {
-      this.statusState.set({
-        ...MOCK_STATUS,
-        message:
-          settings.calendarSource === 'ics'
-            ? 'ICS is configured as a placeholder; using mock data until the ICS adapter is added.'
-            : MOCK_STATUS.message,
-      });
+      this.statusState.set(MOCK_STATUS);
       return this.sortEvents(MOCK_CALENDAR_EVENTS);
     }
 
@@ -45,6 +44,59 @@ export class CalendarAdapterService implements CalendarAdapter {
       requestedUrl: settings.calendarSourceUrl,
     });
     return this.sortEvents(MOCK_CALENDAR_EVENTS);
+  }
+
+  private async loadIcsEvents(url: string | undefined): Promise<CalendarEvent[]> {
+    if (!url?.trim()) {
+      this.statusState.set({
+        kind: 'fallback',
+        label: 'Mock fallback',
+        message: 'No ICS URL is configured; using mock data.',
+      });
+      return this.sortEvents(MOCK_CALENDAR_EVENTS);
+    }
+
+    try {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        this.statusState.set({
+          kind: 'fallback',
+          label: 'Mock fallback',
+          message: 'ICS calendar could not be loaded; using mock data.',
+          requestedUrl: url,
+        });
+        return this.sortEvents(MOCK_CALENDAR_EVENTS);
+      }
+
+      const events = parseIcsEvents(await response.text());
+
+      if (events.length === 0) {
+        this.statusState.set({
+          kind: 'fallback',
+          label: 'Mock fallback',
+          message: 'ICS calendar did not contain readable events; using mock data.',
+          requestedUrl: url,
+        });
+        return this.sortEvents(MOCK_CALENDAR_EVENTS);
+      }
+
+      this.statusState.set({
+        kind: 'ics',
+        label: 'ICS',
+        message: 'Loaded calendar events from the configured ICS URL.',
+        requestedUrl: url,
+      });
+      return this.sortEvents(events);
+    } catch {
+      this.statusState.set({
+        kind: 'fallback',
+        label: 'Mock fallback',
+        message: 'ICS calendar could not be loaded; using mock data.',
+        requestedUrl: url,
+      });
+      return this.sortEvents(MOCK_CALENDAR_EVENTS);
+    }
   }
 
   private sortEvents(events: CalendarEvent[]): CalendarEvent[] {

@@ -1,4 +1,4 @@
-export type IntegrationStatusKind = 'mock' | 'local-json' | 'fallback';
+export type IntegrationStatusKind = 'mock' | 'local-json' | 'ics' | 'fallback';
 
 export interface IntegrationStatus {
   kind: IntegrationStatusKind;

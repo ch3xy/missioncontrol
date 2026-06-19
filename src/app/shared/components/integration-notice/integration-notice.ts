@@ -9,5 +9,7 @@ import { IntegrationStatus } from '../../../core/models/integration-status.model
 export class IntegrationNotice {
   readonly status = input.required<IntegrationStatus>();
 
-  protected readonly isVisible = computed(() => this.status().kind !== 'local-json');
+  protected readonly isVisible = computed(
+    () => this.status().kind !== 'local-json' && this.status().kind !== 'ics',
+  );
 }

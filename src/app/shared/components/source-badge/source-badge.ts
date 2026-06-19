@@ -16,7 +16,7 @@ export class SourceBadge {
       case 'local-json':
         return 'Local JSON';
       case 'ics':
-        return 'ICS placeholder';
+        return 'ICS';
       case 'mock':
         return 'Mock';
     }

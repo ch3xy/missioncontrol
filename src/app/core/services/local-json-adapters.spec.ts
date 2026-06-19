@@ -103,4 +103,35 @@ describe('local JSON adapters', () => {
     expect(status.kind).toBe('fallback');
     expect(status.message).toContain('expected shape');
   });
+
+  it('should load calendar events from a configured ICS source', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(`
+BEGIN:VCALENDAR
+BEGIN:VEVENT
+UID:ics-event
+SUMMARY:ICS Planning
+DTSTART:20260619T090000Z
+END:VEVENT
+END:VCALENDAR
+`),
+      ),
+    );
+    TestBed.inject(SettingsService).updateSettings({
+      ...DEFAULT_SETTINGS,
+      calendarSource: 'ics',
+      calendarSourceUrl: 'http://localhost:4500/calendar.ics',
+    });
+
+    const events = await TestBed.inject(CalendarAdapterService).getEvents();
+    const status = TestBed.inject(CalendarAdapterService).status();
+
+    expect(events).toHaveLength(1);
+    expect(events[0]?.title).toBe('ICS Planning');
+    expect(events[0]?.source).toBe('ics');
+    expect(status.kind).toBe('ics');
+  });
 });

@@ -15,6 +15,7 @@ Implemented:
 - Typed mock adapters for Calendar, Velo, and Dash
 - Optional local JSON source placeholders with validation and mock fallback
 - Example local JSON contracts under `public/examples/`
+- Basic frontend-only ICS calendar loading with mock fallback
 - Source badges showing whether data comes from mock or local JSON sources
 - Unit tests for app bootstrapping, settings, shortcuts, validators, source badges, and local JSON adapters
 
@@ -46,7 +47,7 @@ Still intentionally placeholder-only:
 
 - sevDesk remains an external shortcut only
 - Velo and Dash use mock data unless a local JSON URL is configured and CORS allows access
-- ICS import is represented in Settings but not implemented as a parser yet
+- ICS import supports basic `VEVENT` parsing from a browser-readable URL
 - No backend, authentication, cloud sync, OAuth, or secret storage is included
 
 ## Next Useful Improvements
