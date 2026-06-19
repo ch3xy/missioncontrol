@@ -1,0 +1,33 @@
+.appointments {
+  display: grid;
+  gap: 0.75rem;
+}
+
+article {
+  display: grid;
+  grid-template-columns: 4rem 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--mc-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+time {
+  color: #93c5fd;
+  font-weight: 800;
+}
+
+h3,
+p {
+  margin: 0;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+p,
+small {
+  color: var(--mc-muted);
+}

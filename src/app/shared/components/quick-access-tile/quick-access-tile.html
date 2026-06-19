@@ -1,0 +1,17 @@
+@if (shortcut().external) {
+  <button class="tile" type="button" (click)="launch.emit(shortcut())">
+    <span class="tile__icon">{{ shortcut().icon }}</span>
+    <span>
+      <strong>{{ shortcut().label }}</strong>
+      <small>{{ shortcut().description }}</small>
+    </span>
+  </button>
+} @else {
+  <a class="tile" [routerLink]="shortcut().route">
+    <span class="tile__icon">{{ shortcut().icon }}</span>
+    <span>
+      <strong>{{ shortcut().label }}</strong>
+      <small>{{ shortcut().description }}</small>
+    </span>
+  </a>
+}

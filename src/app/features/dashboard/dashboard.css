@@ -1,0 +1,98 @@
+.event-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.event {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--mc-border);
+}
+
+.event:last-child {
+  border-bottom: 0;
+}
+
+.event time {
+  color: #93c5fd;
+  font-weight: 800;
+}
+
+.event strong,
+.event small {
+  display: block;
+}
+
+.event small {
+  margin-top: 0.15rem;
+  color: var(--mc-muted);
+}
+
+.card-link {
+  display: inline-flex;
+  margin-top: 1rem;
+  color: #93c5fd;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.split {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.85rem;
+  color: var(--mc-muted);
+}
+
+.split strong {
+  color: var(--mc-text);
+}
+
+.progress {
+  height: 0.65rem;
+  margin-top: 1.25rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--mc-orange);
+}
+
+.customer-grid,
+.quick-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.customer-grid > div {
+  min-height: 8rem;
+  padding: 1rem;
+  border: 1px solid var(--mc-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.customer-grid span {
+  color: var(--mc-muted);
+}
+
+.error {
+  margin: 0.75rem 0 0;
+  color: #fca5a5;
+}
+
+@media (max-width: 560px) {
+  .customer-grid,
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,16 @@
+import { VeloSummary } from '../models/velo.model';
+
+export const MOCK_VELO_SUMMARY: VeloSummary = {
+  currentCashFlow: 18450,
+  forecastCashFlow: 22780,
+  currency: 'EUR',
+  periodLabel: 'Next 30 days',
+  source: 'mock',
+  trend: [
+    { date: '2026-06-01', value: 11800 },
+    { date: '2026-06-08', value: 14200 },
+    { date: '2026-06-15', value: 18450 },
+    { date: '2026-06-22', value: 20500 },
+    { date: '2026-06-29', value: 22780 },
+  ],
+};

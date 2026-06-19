@@ -1,0 +1,13 @@
+<section class="widget-card" [class]="'accent-' + accent()">
+  <header class="widget-card__header">
+    <div>
+      @if (eyebrow()) {
+        <p class="widget-card__eyebrow">{{ eyebrow() }}</p>
+      }
+      <h2>{{ title() }}</h2>
+    </div>
+    <span class="widget-card__accent"></span>
+  </header>
+
+  <ng-content />
+</section>

@@ -1,0 +1,25 @@
+<section class="page-heading">
+  <div>
+    <h2>Velo</h2>
+    <p>Cash-flow placeholder backed by a typed mock adapter.</p>
+  </div>
+  <button class="button-link" type="button" (click)="openVelo()">Open Velo</button>
+</section>
+
+@if (summary(); as data) {
+  <section class="dashboard-grid">
+    <app-widget-card class="span-6" title="Cash Flow" eyebrow="Current" accent="green">
+      <p class="metric">{{ data.currentCashFlow | currency: data.currency : 'symbol' : '1.0-0' }}</p>
+      <p class="muted">Current cash-flow snapshot from {{ data.source }} source.</p>
+    </app-widget-card>
+
+    <app-widget-card class="span-6" title="Forecast" [eyebrow]="data.periodLabel" accent="blue">
+      <p class="metric">{{ data.forecastCashFlow | currency: data.currency : 'symbol' : '1.0-0' }}</p>
+      <app-trend-line [points]="data.trend" />
+    </app-widget-card>
+  </section>
+}
+
+@if (launchError()) {
+  <p class="error">{{ launchError() }}</p>
+}

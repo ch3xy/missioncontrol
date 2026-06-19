@@ -1,0 +1,32 @@
+<aside class="sidebar" aria-label="Primary navigation">
+  <a class="sidebar__brand" routerLink="/" aria-label="Mission Control overview">
+    <span>MC</span>
+  </a>
+
+  <nav class="sidebar__nav">
+    @for (item of items; track item.label) {
+      @if (item.route) {
+        <a
+          class="sidebar__item"
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+          [attr.aria-label]="item.label"
+          [title]="item.label"
+        >
+          <span>{{ item.icon }}</span>
+        </a>
+      } @else {
+        <button
+          class="sidebar__item"
+          type="button"
+          [attr.aria-label]="item.label"
+          [title]="item.label"
+          (click)="openExternal(item)"
+        >
+          <span>{{ item.icon }}</span>
+        </button>
+      }
+    }
+  </nav>
+</aside>

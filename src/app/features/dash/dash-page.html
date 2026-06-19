@@ -1,0 +1,33 @@
+<section class="page-heading">
+  <div>
+    <h2>Dash</h2>
+    <p>Time tracking, customers and projects represented by mock data for the MVP.</p>
+  </div>
+  <button class="button-link" type="button" (click)="openDash()">Open Dash</button>
+</section>
+
+@if (summary(); as data) {
+  <section class="dashboard-grid">
+    <app-widget-card class="span-4" title="Tracked Today" eyebrow="Time" accent="orange">
+      <p class="metric">{{ data.trackedTodayMinutes / 60 | number: '1.1-1' }}h</p>
+      <div class="progress">
+        <span [style.width.%]="progress()"></span>
+      </div>
+      <p class="muted">{{ progress() }}% of target</p>
+    </app-widget-card>
+
+    <app-widget-card class="span-4" title="Customers" eyebrow="Active" accent="blue">
+      <p class="metric">{{ data.activeCustomers }}</p>
+      <p class="muted">Customers with current work.</p>
+    </app-widget-card>
+
+    <app-widget-card class="span-4" title="Projects" eyebrow="Open" accent="green">
+      <p class="metric">{{ data.openProjects }}</p>
+      <p class="muted">Projects visible in the mock adapter.</p>
+    </app-widget-card>
+  </section>
+}
+
+@if (launchError()) {
+  <p class="error">{{ launchError() }}</p>
+}

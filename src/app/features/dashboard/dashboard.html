@@ -1,0 +1,77 @@
+<section class="page-heading">
+  <div>
+    <h2>Overview</h2>
+    <p>Appointments, cash flow, tracked time and shortcuts in one local workspace.</p>
+  </div>
+  <a class="button-link" routerLink="/settings">Settings</a>
+</section>
+
+<section class="dashboard-grid">
+  <app-widget-card class="span-4" title="Calendar" eyebrow="Today" accent="blue">
+    <div class="event-list">
+      @for (event of nextEvents(); track event.id) {
+        <article class="event">
+          <time>{{ event.startsAt | date: 'HH:mm' }}</time>
+          <div>
+            <strong>{{ event.title }}</strong>
+            <small>{{ event.customer || event.project || 'Personal' }}</small>
+          </div>
+        </article>
+      }
+    </div>
+    <a class="card-link" routerLink="/calendar">Open calendar</a>
+  </app-widget-card>
+
+  <app-widget-card class="span-4" title="Velo Cash Flow" eyebrow="Forecast" accent="green">
+    @if (velo(); as summary) {
+      <p class="metric">{{ summary.forecastCashFlow | currency: summary.currency : 'symbol' : '1.0-0' }}</p>
+      <p class="muted">{{ summary.periodLabel }} forecast</p>
+      <app-trend-line [points]="summary.trend" />
+      <div class="split">
+        <span>Current</span>
+        <strong>{{ summary.currentCashFlow | currency: summary.currency : 'symbol' : '1.0-0' }}</strong>
+      </div>
+    }
+  </app-widget-card>
+
+  <app-widget-card class="span-4" title="Dash Time" eyebrow="Today" accent="orange">
+    @if (dash(); as summary) {
+      <p class="metric">{{ summary.trackedTodayMinutes / 60 | number: '1.1-1' }}h</p>
+      <p class="muted">of {{ summary.targetTodayMinutes / 60 | number: '1.0-1' }}h target</p>
+      <div class="progress" aria-label="Daily time target progress">
+        <span [style.width.%]="dashProgress()"></span>
+      </div>
+      <div class="split">
+        <span>Progress</span>
+        <strong>{{ dashProgress() }}%</strong>
+      </div>
+    }
+  </app-widget-card>
+
+  <app-widget-card class="span-6" title="Dash Customers" eyebrow="Pipeline" accent="red">
+    @if (dash(); as summary) {
+      <div class="customer-grid">
+        <div>
+          <p class="metric">{{ summary.activeCustomers }}</p>
+          <span>Active customers</span>
+        </div>
+        <div>
+          <p class="metric">{{ summary.openProjects }}</p>
+          <span>Open projects</span>
+        </div>
+      </div>
+      <a class="card-link" routerLink="/dash">Open Dash overview</a>
+    }
+  </app-widget-card>
+
+  <app-widget-card class="span-6" title="Quick Access" eyebrow="Launch" accent="blue">
+    <div class="quick-grid">
+      @for (shortcut of shortcuts(); track shortcut.id) {
+        <app-quick-access-tile [shortcut]="shortcut" (launch)="launch($event)" />
+      }
+    </div>
+    @if (launchError()) {
+      <p class="error">{{ launchError() }}</p>
+    }
+  </app-widget-card>
+</section>

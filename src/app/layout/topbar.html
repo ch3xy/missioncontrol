@@ -1,0 +1,9 @@
+<header class="topbar">
+  <div>
+    <p>Local-first dashboard</p>
+    <h1>Mission Control</h1>
+  </div>
+  <time [attr.datetime]="today().toISOString()">
+    {{ today() | date: 'EEE, dd MMM yyyy' }}
+  </time>
+</header>

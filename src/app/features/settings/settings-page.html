@@ -1,0 +1,56 @@
+<section class="page-heading">
+  <div>
+    <h2>Settings</h2>
+    <p>Configure local shortcuts and placeholder source URLs. Values stay in browser LocalStorage.</p>
+  </div>
+</section>
+
+<app-widget-card title="External Applications" eyebrow="LocalStorage" accent="blue">
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <label>
+      <span>Velo URL</span>
+      <input type="url" formControlName="veloUrl" />
+    </label>
+
+    <label>
+      <span>Dash URL</span>
+      <input type="url" formControlName="dashUrl" />
+    </label>
+
+    <label>
+      <span>sevDesk URL</span>
+      <input type="url" formControlName="sevDeskUrl" />
+    </label>
+
+    <label>
+      <span>Calendar source</span>
+      <select formControlName="calendarSource">
+        <option value="mock">Mock</option>
+        <option value="ics">ICS URL</option>
+        <option value="local-json">Local JSON</option>
+      </select>
+    </label>
+
+    <label>
+      <span>Calendar source URL</span>
+      <input type="url" formControlName="calendarSourceUrl" placeholder="Optional placeholder" />
+    </label>
+
+    <label>
+      <span>Velo source URL</span>
+      <input type="url" formControlName="veloSourceUrl" placeholder="Optional placeholder" />
+    </label>
+
+    <label>
+      <span>Dash source URL</span>
+      <input type="url" formControlName="dashSourceUrl" placeholder="Optional placeholder" />
+    </label>
+
+    <div class="actions">
+      <button class="button-link" type="submit">Save</button>
+      <button class="button-link secondary" type="button" (click)="reset()">Reset defaults</button>
+    </div>
+  </form>
+
+  <p class="saved">{{ savedMessage() }}</p>
+</app-widget-card>
