@@ -16,6 +16,10 @@
   cursor: pointer;
 }
 
+.tile > span:last-child {
+  min-width: 0;
+}
+
 .tile:hover {
   border-color: rgba(96, 165, 250, 0.55);
   background: rgba(37, 99, 235, 0.12);
@@ -35,6 +39,7 @@
 strong,
 small {
   display: block;
+  overflow-wrap: anywhere;
 }
 
 small {

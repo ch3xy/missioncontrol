@@ -39,5 +39,10 @@ time {
   .topbar {
     align-items: flex-start;
     flex-direction: column;
+    padding-inline: 1rem;
+  }
+
+  time {
+    font-size: 0.82rem;
   }
 }

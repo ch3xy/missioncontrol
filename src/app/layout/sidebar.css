@@ -59,11 +59,13 @@
 
   .sidebar__nav {
     display: flex;
+    min-width: 0;
     overflow-x: auto;
   }
 
   .sidebar__brand,
   .sidebar__item {
+    flex: 0 0 auto;
     width: 2.5rem;
     height: 2.5rem;
   }

@@ -35,6 +35,7 @@ body {
   background: var(--mc-bg);
   color: var(--mc-text);
   font-family: inherit;
+  overflow-x: hidden;
 }
 
 button,
@@ -90,9 +91,10 @@ select {
 .metric {
   margin: 0;
   color: var(--mc-text);
-  font-size: 2rem;
+  font-size: clamp(1.6rem, 4vw, 2rem);
   font-weight: 800;
   line-height: 1;
+  overflow-wrap: anywhere;
 }
 
 .muted {
@@ -110,7 +112,9 @@ select {
   background: rgba(37, 99, 235, 0.14);
   color: var(--mc-text);
   font-weight: 700;
+  text-align: center;
   text-decoration: none;
+  overflow-wrap: anywhere;
   cursor: pointer;
 }
 
@@ -141,5 +145,9 @@ select {
   .page-heading {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .page-heading .button-link {
+    width: 100%;
   }
 }
