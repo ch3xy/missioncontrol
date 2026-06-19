@@ -15,8 +15,15 @@ article {
 }
 
 time {
+  display: grid;
+  gap: 0.25rem;
   color: #93c5fd;
   font-weight: 800;
+}
+
+time small {
+  color: var(--mc-muted);
+  font-weight: 700;
 }
 
 h3,
@@ -31,4 +38,25 @@ h3 {
 p,
 small {
   color: var(--mc-muted);
+}
+
+.empty {
+  padding: 1rem;
+  border: 1px dashed var(--mc-border);
+  border-radius: 8px;
+}
+
+.updated {
+  margin-top: 0.25rem;
+  color: #93c5fd;
+  font-size: 0.85rem;
+}
+
+.secondary {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }

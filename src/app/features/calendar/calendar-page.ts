@@ -17,11 +17,23 @@ export class CalendarPage {
   protected readonly status = this.calendarAdapter.status;
   protected readonly events = signal<CalendarEvent[]>([]);
   protected readonly source = signal<CalendarEvent['source']>('mock');
+  protected readonly isLoading = signal(false);
+  protected readonly lastUpdated = signal<Date | null>(null);
 
   constructor() {
-    void this.calendarAdapter.getEvents().then((events) => {
-      this.events.set(events);
-      this.source.set(events[0]?.source ?? 'mock');
-    });
+    void this.load();
+  }
+
+  protected refresh(): void {
+    void this.load();
+  }
+
+  private async load(): Promise<void> {
+    this.isLoading.set(true);
+    const events = await this.calendarAdapter.getEvents();
+    this.events.set(events);
+    this.source.set(events[0]?.source ?? 'mock');
+    this.lastUpdated.set(new Date());
+    this.isLoading.set(false);
   }
 }

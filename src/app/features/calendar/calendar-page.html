@@ -1,8 +1,14 @@
 <section class="page-heading">
   <div>
     <h2>Calendar</h2>
-    <p>Mock appointments for the MVP. ICS and local JSON sources can replace this adapter later.</p>
+    <p>Appointments from mock data, local JSON, or a browser-readable ICS URL.</p>
+    @if (lastUpdated(); as updated) {
+      <p class="updated">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+    }
   </div>
+  <button class="button-link secondary" type="button" [disabled]="isLoading()" (click)="refresh()">
+    {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
+  </button>
 </section>
 
 <app-widget-card title="Upcoming Appointments" eyebrow="Mock data" accent="blue">
@@ -11,7 +17,12 @@
   <div class="appointments">
     @for (event of events(); track event.id) {
       <article>
-        <time>{{ event.startsAt | date: 'HH:mm' }}</time>
+        <time>
+          <span>{{ event.startsAt | date: 'HH:mm' }}</span>
+          @if (event.endsAt) {
+            <small>{{ event.endsAt | date: 'HH:mm' }}</small>
+          }
+        </time>
         <div>
           <h3>{{ event.title }}</h3>
           <p>{{ event.customer || event.project || 'Personal' }}</p>
@@ -20,6 +31,8 @@
           }
         </div>
       </article>
+    } @empty {
+      <p class="empty">No appointments available. Configure a source or use mock data.</p>
     }
   </div>
 </app-widget-card>
