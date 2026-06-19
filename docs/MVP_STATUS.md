@@ -7,6 +7,7 @@ Mission Control is a runnable frontend-only Angular 22 MVP.
 Implemented:
 
 - Visual 3 app shell with dark sidebar, compact header, and responsive widget grid
+- Keyboard skip link and visible focus states
 - Dashboard widgets for Calendar, Velo, Dash time, Dash customers, and Quick Access
 - Dashboard refresh action with last-updated timestamp
 - Detail pages for Calendar, Velo, and Dash

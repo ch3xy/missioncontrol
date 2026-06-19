@@ -1,8 +1,9 @@
 <div class="shell">
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <app-sidebar />
   <div class="shell__workspace">
     <app-topbar />
-    <main class="shell__main">
+    <main id="main-content" class="shell__main" tabindex="-1">
       <router-outlet />
     </main>
   </div>

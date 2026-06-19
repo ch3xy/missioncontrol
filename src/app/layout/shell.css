@@ -6,6 +6,24 @@
   color: var(--mc-text);
 }
 
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10;
+  padding: 0.65rem 0.8rem;
+  border-radius: 8px;
+  background: var(--mc-blue);
+  color: white;
+  font-weight: 800;
+  text-decoration: none;
+  transform: translateY(-150%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 .shell__workspace {
   min-width: 0;
   border-left: 1px solid var(--mc-border);
@@ -15,6 +33,7 @@
   width: min(100%, 92rem);
   margin: 0 auto;
   padding: 1.25rem;
+  outline: none;
 }
 
 @media (max-width: 720px) {
