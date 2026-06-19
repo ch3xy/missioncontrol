@@ -36,7 +36,7 @@ export class SettingsPage {
     }
 
     if (settings.calendarSource === 'ics') {
-      return 'ICS import is planned; the MVP keeps using mock data until an ICS adapter is added.';
+      return 'Calendar attempts the configured ICS URL and falls back to mock data if it fails.';
     }
 
     return 'Calendar attempts the configured local JSON URL and falls back to mock data if it fails.';
@@ -74,8 +74,36 @@ export class SettingsPage {
     this.form.reset(this.savedSettings());
   }
 
+  protected useBundledJsonExamples(): void {
+    this.applyAndSave({
+      calendarSource: 'local-json',
+      calendarSourceUrl: `${location.origin}/examples/calendar.json`,
+      veloSourceUrl: `${location.origin}/examples/velo.json`,
+      dashSourceUrl: `${location.origin}/examples/dash.json`,
+    });
+  }
+
+  protected useBundledIcsExample(): void {
+    this.applyAndSave({
+      calendarSource: 'ics',
+      calendarSourceUrl: `${location.origin}/examples/calendar.ics`,
+    });
+  }
+
   protected launch(shortcut: AppShortcut): void {
     const didOpen = this.shortcutService.openExternal(shortcut.url);
     this.launchError.set(didOpen ? null : `${shortcut.label} has no valid http(s) URL configured.`);
+  }
+
+  private applyAndSave(settings: Partial<MissionControlSettings>): void {
+    this.form.patchValue(settings);
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.settingsService.updateSettings(this.form.getRawValue());
+    this.form.reset(this.savedSettings());
   }
 }

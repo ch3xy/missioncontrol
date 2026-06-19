@@ -11,6 +11,7 @@ Implemented:
 - Detail pages for Calendar, Velo, and Dash
 - Settings page with LocalStorage persistence and reset to defaults
 - Settings shortcut preview using the same Quick Access tiles as the dashboard
+- Settings presets for bundled JSON and ICS example sources
 - Configurable Velo, Dash, and sevDesk launch URLs
 - Two optional configurable local tool shortcuts
 - Typed mock adapters for Calendar, Velo, and Dash
