@@ -52,7 +52,19 @@ The dev server proxies `/velo/api` and `/dash/api` the same way (`proxy.conf.mjs
 VELO_API_TARGET=http://localhost:8081 DASH_API_TARGET=http://localhost:8080 npm run start
 ```
 
-Defaults are `http://localhost:8081` (velo) and `http://localhost:8080` (dash). Details: [docs/LOCAL_JSON_CONTRACTS.md](docs/LOCAL_JSON_CONTRACTS.md#velo-and-dash-rest-apis).
+Defaults are `http://localhost:8081` (velo) and `http://localhost:8080` (dash). To develop against the apps on the server, use their public addresses as targets (`VELO_API_TARGET=http://arrow.local/velo DASH_API_TARGET=http://arrow.local/dash`) and keep `http://localhost:4200/velo` / `/dash` in Settings. Entering `http://arrow.local/velo` in Settings directly fails with a CORS error, because velo has no CORS configuration (dash only allows `http://localhost:4200`). Details: [docs/LOCAL_JSON_CONTRACTS.md](docs/LOCAL_JSON_CONTRACTS.md#velo-and-dash-rest-apis).
+
+## Deployment (arrow-pi)
+
+mission control runs on the Pi as a static build served by Caddy under `/missioncontrol/`, next to velo (`/velo`) and dash (`/dash`). The deploy script and Caddy configuration live in the `pi-ops` repository.
+
+```bash
+npm ci
+npm run build:pi    # ng build --base-href /missioncontrol/
+MISSIONCONTROL_LOCAL_PATH=$PWD ../pi-ops/scripts/deploy-missioncontrol.sh
+```
+
+On the server, open `http://arrow.local/missioncontrol/` and use Settings → **APIs dieses Servers verwenden**; requests to velo and dash are then same-origin.
 
 ## Quality Checks
 

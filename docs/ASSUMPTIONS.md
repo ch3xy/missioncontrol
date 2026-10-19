@@ -64,3 +64,11 @@ No mock data (2026-10-19):
 - Without a configured source a card shows "Nicht konfiguriert" with a hint to Settings; if a configured source is unreachable or returns invalid data it shows "Warnung" and no numbers. Showing invented numbers next to real ones was considered misleading.
 - The calendar source `mock` became `none` (the default). Stored settings or imported backups with `mock` are normalized to `none`.
 - Adapters return `null` (Velo, Dash) or an empty list (Calendar) instead of data; their status signal is `null` while loading so no notice flashes before the first result.
+
+Deployment on arrow-pi (2026-10-19):
+
+- mission control is served by the existing Caddy container as static files under `/missioncontrol/` (no own container, no Node on the Pi); `/` redirects there. Configuration and deploy script are in `pi-ops`.
+- The path prefix avoids the collision of mission control's own `/velo` and `/dash` routes with Caddy's `handle_path /velo*` and `/dash*`.
+- The build is made locally with `npm run build:pi` (`--base-href /missioncontrol/`); the deploy script refuses builds with another base href.
+- Bundled example presets in Settings resolve against `<base href>` instead of the origin root.
+- External launch URLs (Velo, Dash) keep their localhost defaults; on the server they are set in Settings (e.g. `http://arrow.local/velo/`).

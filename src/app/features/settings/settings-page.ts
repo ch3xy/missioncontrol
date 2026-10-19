@@ -13,6 +13,9 @@ import { httpUrlValidator } from '../../core/validators/http-url.validator';
 import { QuickAccessTile } from '../../shared/components/quick-access-tile/quick-access-tile';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
+/** Resolved against <base href>, so the presets also work when the app is served under /missioncontrol/. */
+const bundledExample = (file: string): string => new URL(`examples/${file}`, document.baseURI).href;
+
 @Component({
   selector: 'app-settings-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -141,16 +144,16 @@ export class SettingsPage {
   protected useBundledJsonExamples(): void {
     this.applyAndSave({
       calendarSource: 'local-json',
-      calendarSourceUrl: `${location.origin}/examples/calendar.json`,
-      veloSourceUrl: `${location.origin}/examples/velo.json`,
-      dashSourceUrl: `${location.origin}/examples/dash.json`,
+      calendarSourceUrl: bundledExample('calendar.json'),
+      veloSourceUrl: bundledExample('velo.json'),
+      dashSourceUrl: bundledExample('dash.json'),
     });
   }
 
   protected useBundledIcsExample(): void {
     this.applyAndSave({
       calendarSource: 'ics',
-      calendarSourceUrl: `${location.origin}/examples/calendar.ics`,
+      calendarSourceUrl: bundledExample('calendar.ics'),
     });
   }
 
