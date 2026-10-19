@@ -11,6 +11,7 @@ demselben Vorgehen weiterentwickelt werden können. Einstieg für Agents: [`../C
 |---|---|
 | [stack.md](stack.md) | Tech-Stack mit Versionen und Konfiguration |
 | [comparison.md](comparison.md) | Vergleich velo / dash / mission control (Stack, Design, Architektur) |
+| [decisions.md](decisions.md) | Protokoll von Produkt- und Architekturentscheidungen |
 
 ### Frontend (`frontend/`)
 

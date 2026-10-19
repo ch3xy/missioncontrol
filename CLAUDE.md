@@ -9,6 +9,7 @@ Projekt-Regeln und Prioritäten stehen in [AGENTS.md](AGENTS.md) — sie gelten 
 | [.ai/README.md](.ai/README.md) | Index aller `.ai`-Dateien |
 | [.ai/stack.md](.ai/stack.md) | Tech-Stack, Versionen, Konfiguration, Befehle |
 | [.ai/comparison.md](.ai/comparison.md) | Vergleich velo / dash / mission control |
+| [.ai/decisions.md](.ai/decisions.md) | Entscheidungsprotokoll (z. B. KI-Nutzungskarte zurückgestellt) |
 | [.ai/frontend/architecture.md](.ai/frontend/architecture.md) | Angular-Struktur, Routing, State, Adapter |
 | [.ai/frontend/design-system.md](.ai/frontend/design-system.md) | Tokens, App-Shell, Komponentenklassen, Icons |
 | [.ai/rules/coding-standards.md](.ai/rules/coding-standards.md) | Coding-Richtlinien |
