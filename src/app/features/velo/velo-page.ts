@@ -1,5 +1,6 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { LucideExternalLink, LucideRefreshCw } from '@lucide/angular';
 import { VeloSummary } from '../../core/models/velo.model';
 import { ShortcutService } from '../../core/services/shortcut.service';
 import { VeloAdapterService } from '../../core/services/velo-adapter.service';
@@ -10,9 +11,19 @@ import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
 @Component({
   selector: 'app-velo-page',
-  imports: [CurrencyPipe, DatePipe, IntegrationNotice, SourceBadge, TrendLine, WidgetCard],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    IntegrationNotice,
+    SourceBadge,
+    TrendLine,
+    WidgetCard,
+    LucideExternalLink,
+    LucideRefreshCw,
+  ],
   templateUrl: './velo-page.html',
-  styleUrl: './velo-page.css',
+  styleUrl: './velo-page.scss',
 })
 export class VeloPage {
   private readonly veloAdapter = inject(VeloAdapterService);

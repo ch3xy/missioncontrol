@@ -1,6 +1,15 @@
 @if (isVisible()) {
   <p class="notice" [class.notice--fallback]="status().kind === 'fallback'">
-    <strong>{{ status().label }}</strong>
-    <span>{{ status().message }}</span>
+    <span class="notice__icon" aria-hidden="true">
+      @if (status().kind === 'fallback') {
+        <svg lucideTriangleAlert></svg>
+      } @else {
+        <svg lucideInfo></svg>
+      }
+    </span>
+    <span class="notice__body">
+      <strong>{{ status().label }}</strong>
+      <span>{{ status().message }}</span>
+    </span>
   </p>
 }

@@ -1,5 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { LucideExternalLink, LucideRefreshCw } from '@lucide/angular';
 import { DashSummary } from '../../core/models/dash.model';
 import { DashAdapterService } from '../../core/services/dash-adapter.service';
 import { ShortcutService } from '../../core/services/shortcut.service';
@@ -9,9 +10,18 @@ import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
 @Component({
   selector: 'app-dash-page',
-  imports: [DatePipe, DecimalPipe, IntegrationNotice, SourceBadge, WidgetCard],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    DatePipe,
+    DecimalPipe,
+    IntegrationNotice,
+    SourceBadge,
+    WidgetCard,
+    LucideExternalLink,
+    LucideRefreshCw,
+  ],
   templateUrl: './dash-page.html',
-  styleUrl: './dash-page.css',
+  styleUrl: './dash-page.scss',
 })
 export class DashPage {
   private readonly dashAdapter = inject(DashAdapterService);

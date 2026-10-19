@@ -1,6 +1,7 @@
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LucideRefreshCw, LucideSettings } from '@lucide/angular';
 import { CalendarEvent } from '../../core/models/calendar.model';
 import { DashSummary } from '../../core/models/dash.model';
 import { AppShortcut } from '../../core/models/shortcut.model';
@@ -17,6 +18,7 @@ import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
 @Component({
   selector: 'app-dashboard',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe,
     DatePipe,
@@ -27,9 +29,11 @@ import { WidgetCard } from '../../shared/components/widget-card/widget-card';
     SourceBadge,
     TrendLine,
     WidgetCard,
+    LucideRefreshCw,
+    LucideSettings,
   ],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css',
+  styleUrl: './dashboard.scss',
 })
 export class Dashboard {
   private readonly calendarAdapter = inject(CalendarAdapterService);

@@ -1,0 +1,13 @@
+.progress {
+  margin: var(--sp-5) 0 var(--sp-3);
+}
+
+app-source-badge + .metric,
+app-integration-notice + .metric {
+  display: block;
+  margin-top: var(--sp-3);
+}
+
+.text-error {
+  margin-top: var(--sp-4);
+}

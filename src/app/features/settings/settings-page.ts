@@ -1,23 +1,38 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LucideDownload, LucideRotateCcw, LucideSave, LucideUpload } from '@lucide/angular';
 import { AppShortcut } from '../../core/models/shortcut.model';
 import { MissionControlSettings } from '../../core/models/settings.model';
 import { ShortcutService } from '../../core/services/shortcut.service';
 import { SettingsService } from '../../core/services/settings.service';
+import { THEME_MODE_LABELS, ThemeMode, ThemeService } from '../../core/services/theme.service';
 import { httpUrlValidator } from '../../core/validators/http-url.validator';
 import { QuickAccessTile } from '../../shared/components/quick-access-tile/quick-access-tile';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
 @Component({
   selector: 'app-settings-page',
-  imports: [ReactiveFormsModule, QuickAccessTile, WidgetCard],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ReactiveFormsModule,
+    QuickAccessTile,
+    WidgetCard,
+    LucideDownload,
+    LucideRotateCcw,
+    LucideSave,
+    LucideUpload,
+  ],
   templateUrl: './settings-page.html',
-  styleUrl: './settings-page.css',
+  styleUrl: './settings-page.scss',
 })
 export class SettingsPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly settingsService = inject(SettingsService);
   private readonly shortcutService = inject(ShortcutService);
+  protected readonly theme = inject(ThemeService);
+
+  protected readonly themeModes: ThemeMode[] = ['light', 'dark', 'system'];
+  protected readonly themeLabels = THEME_MODE_LABELS;
 
   protected readonly savedSettings = this.settingsService.settings;
   protected readonly shortcuts = this.shortcutService.shortcuts;

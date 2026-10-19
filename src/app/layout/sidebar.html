@@ -1,32 +1,93 @@
-<aside class="sidebar" aria-label="Primary navigation">
-  <a class="sidebar__brand" routerLink="/" aria-label="Mission Control overview">
-    <span>MC</span>
-  </a>
-
-  <nav class="sidebar__nav">
-    @for (item of items; track item.label) {
-      @if (item.route) {
-        <a
-          class="sidebar__item"
-          [routerLink]="item.route"
-          routerLinkActive="is-active"
-          [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-          [attr.aria-label]="item.label"
-          [title]="item.label"
-        >
-          <span>{{ item.icon }}</span>
-        </a>
+<aside
+  class="sidenav"
+  id="sidenav"
+  [class.collapsed]="collapsed()"
+  [class.open]="open()"
+  aria-label="Primary navigation"
+>
+  <div class="nav-header">
+    <a
+      class="nav-logo"
+      routerLink="/"
+      (click)="navigate.emit()"
+      aria-label="mission control – go to dashboard"
+    >
+      <img
+        [src]="theme.theme() === 'dark' ? 'logo-sidebar-dark.svg' : 'logo-sidebar.svg'"
+        alt=""
+        class="logo logo-full"
+      />
+      <img
+        [src]="theme.theme() === 'dark' ? 'sidebar-min-dark.svg' : 'sidebar-min.svg'"
+        alt=""
+        class="logo logo-min"
+      />
+    </a>
+    <button
+      type="button"
+      class="icon-btn collapse-btn"
+      (click)="toggleCollapsed.emit()"
+      [attr.aria-label]="collapsed() ? 'Expand navigation' : 'Collapse navigation'"
+      [attr.aria-expanded]="!collapsed()"
+      [title]="collapsed() ? 'Expand' : 'Collapse'"
+    >
+      @if (collapsed()) {
+        <svg lucideChevronRight [size]="20"></svg>
       } @else {
-        <button
-          class="sidebar__item"
-          type="button"
-          [attr.aria-label]="item.label"
-          [title]="item.label"
-          (click)="openExternal(item)"
-        >
-          <span>{{ item.icon }}</span>
-        </button>
+        <svg lucideChevronLeft [size]="20"></svg>
       }
+    </button>
+  </div>
+
+  <nav class="nav-body">
+    @for (group of groups; track group.label) {
+      <div class="nav-group">
+        <div class="nav-group-label">{{ group.label }}</div>
+        @for (item of group.items; track item.label) {
+          @if (item.route) {
+            <a
+              class="nav-item"
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+              [attr.aria-label]="collapsed() ? item.label : null"
+              [title]="collapsed() ? item.label : ''"
+              (click)="navigate.emit()"
+            >
+              <span class="nav-icon"><svg [lucideIcon]="item.icon" [size]="20"></svg></span>
+              <span class="nav-label">{{ item.label }}</span>
+            </a>
+          } @else {
+            <button
+              type="button"
+              class="nav-item"
+              [attr.aria-label]="item.label + ' (opens in a new tab)'"
+              [title]="collapsed() ? item.label : ''"
+              (click)="openExternal(item)"
+            >
+              <span class="nav-icon"><svg [lucideIcon]="item.icon" [size]="20"></svg></span>
+              <span class="nav-label">{{ item.label }}</span>
+              <span class="nav-external"><svg lucideExternalLink [size]="14"></svg></span>
+            </button>
+          }
+        }
+      </div>
     }
   </nav>
+
+  <div class="nav-footer">
+    <a
+      class="nav-item nav-settings"
+      routerLink="/settings"
+      routerLinkActive="active"
+      [attr.aria-label]="collapsed() ? 'Settings' : null"
+      [title]="collapsed() ? 'Settings' : ''"
+      (click)="navigate.emit()"
+    >
+      <span class="nav-icon"><svg lucideSettings [size]="20"></svg></span>
+      <span class="nav-label">Settings</span>
+    </a>
+  </div>
+
+  <div class="nav-version">v{{ version }}</div>
 </aside>

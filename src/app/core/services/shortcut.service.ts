@@ -1,4 +1,11 @@
 import { Injectable, computed, inject } from '@angular/core';
+import {
+  LucideCalendarDays,
+  LucideReceipt,
+  LucideServer,
+  LucideTimer,
+  LucideWallet,
+} from '@lucide/angular';
 import { AppShortcut } from '../models/shortcut.model';
 import { SettingsService } from './settings.service';
 
@@ -12,18 +19,18 @@ export class ShortcutService {
     const baseShortcuts: AppShortcut[] = [
       {
         id: 'velo',
-        label: 'Velo',
+        label: 'velo',
         description: 'Cash flow and forecast',
         url: urls.velo,
-        icon: 'V',
+        icon: LucideWallet,
         external: true,
       },
       {
         id: 'dash',
-        label: 'Dash',
+        label: 'dash',
         description: 'Time and customer management',
         url: urls.dash,
-        icon: 'D',
+        icon: LucideTimer,
         external: true,
       },
       {
@@ -31,7 +38,7 @@ export class ShortcutService {
         label: 'sevDesk',
         description: 'Accounting workspace',
         url: urls.sevdesk,
-        icon: 'S',
+        icon: LucideReceipt,
         external: true,
       },
       {
@@ -39,7 +46,7 @@ export class ShortcutService {
         label: 'Calendar',
         description: 'Appointments and focus blocks',
         route: '/calendar',
-        icon: 'C',
+        icon: LucideCalendarDays,
         external: false,
       },
     ];
@@ -47,12 +54,12 @@ export class ShortcutService {
     const localShortcuts: AppShortcut[] = this.settingsService
       .localTools()
       .filter((tool) => this.canOpenUrl(tool.url))
-      .map((tool, index) => ({
+      .map((tool) => ({
         id: tool.id,
         label: tool.label,
         description: 'Configurable local network shortcut',
         url: tool.url,
-        icon: String(index + 1),
+        icon: LucideServer,
         external: true,
       }));
 

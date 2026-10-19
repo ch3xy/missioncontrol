@@ -2,14 +2,19 @@
 
 ## Visual Direction
 
-Base implementation on Visual 3:
+Visual 3 layout (sidebar, compact header, widget grid) rendered in the shared **Arrow product design**
+used by velo and dash. Binding sources:
 
-- Dark, focused workspace
-- Left vertical sidebar with icons
-- Compact header
-- Modular widget grid
-- Clear hierarchy
-- Developer productivity cockpit feeling
+- `docs/arrow-corporate-design.md` (copy; master lives in dash)
+- `.ai/frontend/design-system.md` (tokens, shell measurements, component classes, icons)
+
+Principles:
+
+- Light, dark and system theme (`missioncontrol-theme`), toggle in the top bar and in Settings → Appearance
+- Left sidebar with logo, grouped navigation and Lucide icons
+- Compact 64px top bar
+- Modular widget grid on shared `.card` surfaces
+- Clear hierarchy, developer productivity cockpit feeling
 
 ## Layout
 
@@ -28,17 +33,17 @@ Desktop layout:
 
 ## Sidebar
 
-Items:
+Groups and items:
 
-- Overview
-- Calendar
-- Velo
-- Dash
-- sevDesk
-- Settings
+- Overview: Dashboard, Calendar
+- Apps: velo, dash, sevDesk (external)
+- Footer: Settings
+- Bottom: version `v{version}`
 
 Behavior:
 
+- 240px wide, collapsible to 72px (`missioncontrol-nav-collapsed`)
+- Mobile (≤ 640px): off-canvas drawer with backdrop, opened from the top-bar menu button, closed by Escape
 - Internal items use Angular routing
 - sevDesk opens configured external URL in a new tab
 - Active route is visually highlighted
@@ -89,53 +94,33 @@ Shows tiles:
 
 ## Colors
 
-Suggested tokens:
+Arrow tokens from `src/styles.scss` (identical names and values to dash):
 
-```css
---mc-bg: #0d1117;
---mc-surface: #121a28;
---mc-surface-2: #172133;
---mc-border: rgba(255, 255, 255, 0.08);
---mc-text: #e5e7eb;
---mc-muted: #9ca3af;
---mc-blue: #2563eb;
---mc-green: #22c55e;
---mc-red: #ef4444;
---mc-orange: #f97316;
-```
+- Primary Indigo: `--brand` (`#4F46E5` light / `#6366F1` dark), `--brand-soft`, `--brand-hover`
+- Slate neutrals: `--bg`, `--surface`, `--surface-2`, `--border`, `--text`, `--text-muted`, `--text-faint`
+- Semantic status only: `--ok`, `--warn`, `--danger`, `--info` with `-bg` variants
+- Charts: `--chart-main`
 
 ## Typography
 
-Use system font stack:
-
-```css
-font-family:
-  Inter,
-  ui-sans-serif,
-  system-ui,
-  -apple-system,
-  BlinkMacSystemFont,
-  'Segoe UI',
-  sans-serif;
-```
+Inter Variable, self-hosted through `@fontsource-variable/inter` (no font CDN). Sizes via `--fs-*` tokens.
 
 ## Responsiveness
 
 Desktop:
 
-- Sidebar fixed left
-- 2–3 column widget grid
+- Sidebar 240px (collapsible to 72px)
+- 3 column widget grid (12-column base)
 
-Tablet:
+Tablet (≤ 1080px):
 
-- Sidebar remains compact
 - Widget grid becomes 2 columns
 
-Mobile:
+Mobile (≤ 760px / ≤ 640px):
 
-- Optional for MVP
-- Stack widgets vertically
-- Sidebar may collapse
+- Widgets stack vertically
+- Sidebar becomes an off-canvas drawer (≤ 640px)
+- Touch targets at least 44px
 
 ## UX Principles
 

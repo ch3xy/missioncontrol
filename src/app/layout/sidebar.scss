@@ -1,0 +1,305 @@
+/* Arrow product sidebar — mirrors dash/velo (docs/arrow-corporate-design.md, section 7) */
+.sidenav {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 240px;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  transition: width 0.2s ease;
+}
+
+.nav-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-4) var(--sp-4) var(--sp-3);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.nav-logo:hover {
+  text-decoration: none;
+}
+
+.logo {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 48px;
+}
+
+.logo-min {
+  display: none;
+}
+
+.icon-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.icon-btn:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+/* Not flex: 1 — the footer sits directly below the list, only the version goes to the bottom */
+.nav-body {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.nav-group {
+  margin-bottom: var(--sp-1);
+  padding: 0 var(--sp-2);
+}
+
+.nav-group-label {
+  padding: var(--sp-3) var(--sp-2) var(--sp-1);
+  color: var(--text-faint);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  width: 100%;
+  min-height: 48px;
+  margin: 1px 0;
+  padding: 0 var(--sp-4);
+  overflow: hidden;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text);
+  font-size: var(--fs-md);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.nav-item:hover {
+  background: var(--hover);
+  text-decoration: none;
+}
+
+.nav-item.active {
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.nav-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  width: 24px;
+  color: var(--text-muted);
+}
+
+.nav-item.active .nav-icon {
+  color: var(--brand);
+}
+
+.nav-external {
+  display: inline-flex;
+  margin-left: auto;
+  color: var(--text-faint);
+}
+
+.nav-footer {
+  flex-shrink: 0;
+  padding: var(--sp-2);
+  border-top: 1px solid var(--border);
+}
+
+/* Settings is a secondary entry: muted, regular weight */
+.nav-settings {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.nav-settings .nav-icon {
+  color: inherit;
+}
+
+.nav-settings:hover {
+  color: var(--text);
+}
+
+.nav-version {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: var(--sp-2) var(--sp-4) var(--sp-3) calc(var(--sp-2) + var(--sp-4));
+  color: var(--text-faint);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  opacity: 0.55;
+}
+
+/* Collapsed (desktop only) */
+.sidenav.collapsed {
+  width: 72px;
+
+  .nav-header {
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--sp-1);
+    padding: var(--sp-3) 0 var(--sp-2);
+  }
+
+  .nav-group-label,
+  .nav-label,
+  .nav-external,
+  .nav-version,
+  .logo-full {
+    display: none;
+  }
+
+  .logo-min {
+    display: block;
+  }
+
+  .nav-group {
+    padding: 0 var(--sp-1);
+  }
+
+  .nav-group + .nav-group {
+    margin-top: var(--sp-1);
+    padding-top: var(--sp-1);
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .nav-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--sp-2) 0;
+  }
+
+  .nav-settings {
+    width: 40px;
+    min-height: 40px;
+    margin: 0;
+    border-radius: 50%;
+  }
+}
+
+/* Mobile (≤ 640px): off-canvas drawer, always in the full layout */
+@media (max-width: 640px) {
+  .sidenav,
+  .sidenav.collapsed {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 60;
+    width: 280px;
+    max-width: 85vw;
+    padding-top: env(safe-area-inset-top);
+    box-shadow: none;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+  }
+
+  .sidenav.open {
+    box-shadow: var(--shadow-lg);
+    transform: none;
+  }
+
+  .sidenav.collapsed {
+    .nav-header {
+      flex-direction: row;
+      justify-content: space-between;
+      padding: var(--sp-4) var(--sp-4) var(--sp-3);
+    }
+
+    .nav-label {
+      display: inline;
+    }
+
+    .nav-external {
+      display: inline-flex;
+    }
+
+    .nav-group-label,
+    .nav-version,
+    .logo-full {
+      display: block;
+    }
+
+    .logo-min {
+      display: none;
+    }
+
+    .nav-group {
+      padding: 0 var(--sp-2);
+    }
+
+    .nav-group + .nav-group {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+
+    .nav-item {
+      justify-content: flex-start;
+      padding: 0 var(--sp-4);
+    }
+
+    .nav-footer {
+      display: block;
+      padding: var(--sp-2);
+    }
+
+    .nav-settings {
+      width: 100%;
+      min-height: 48px;
+      margin: 1px 0;
+      border-radius: var(--radius);
+    }
+  }
+
+  .collapse-btn {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidenav,
+  .nav-item,
+  .icon-btn {
+    transition: none;
+  }
+}

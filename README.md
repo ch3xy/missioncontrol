@@ -6,7 +6,7 @@ It is intentionally frontend-only for the MVP. There is no backend, authenticati
 
 ## Features
 
-- Dark Visual 3 app shell with left sidebar and compact top bar
+- App shell in the shared Arrow product design (velo/dash): collapsible sidebar, compact top bar, light/dark/system theme
 - Dashboard widgets for Calendar, Velo cash flow, Dash time tracking, Dash customers, and Quick Access
 - Detail pages for Calendar, Velo, and Dash
 - Configurable external app URLs for Velo, Dash, and sevDesk

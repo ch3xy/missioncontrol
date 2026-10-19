@@ -17,7 +17,8 @@ src/
 │   │   │   ├── calendar-adapter.service.ts
 │   │   │   ├── velo-adapter.service.ts
 │   │   │   ├── dash-adapter.service.ts
-│   │   │   └── shortcut.service.ts
+│   │   │   ├── shortcut.service.ts
+│   │   │   └── theme.service.ts
 │   │   └── mock-data/
 │   │       ├── calendar.mock.ts
 │   │       ├── velo.mock.ts
@@ -38,8 +39,11 @@ src/
 │       │   ├── trend-line/
 │       │   └── quick-access-tile/
 │       └── utils/
-├── styles.css
+├── styles.scss          # Arrow design tokens + shared component classes
 └── main.ts
 ```
+
+Logo set and favicons live in `public/` (see `.ai/frontend/design-system.md`).
+The current, authoritative structure is documented in `.ai/frontend/architecture.md`.
 
 Codex may adapt this structure to the existing repository if necessary.

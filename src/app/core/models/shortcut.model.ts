@@ -1,3 +1,5 @@
+import { LucideIcon } from '@lucide/angular';
+
 export type ShortcutId = 'velo' | 'dash' | 'sevdesk' | 'calendar' | 'local-tool-1' | 'local-tool-2';
 
 export interface AppShortcut {
@@ -6,6 +8,6 @@ export interface AppShortcut {
   description: string;
   url?: string;
   route?: string;
-  icon: string;
+  icon: LucideIcon;
   external: boolean;
 }

@@ -1,78 +1,91 @@
-<section class="page-heading">
+<header class="page-header">
   <div>
-    <h2>Settings</h2>
+    <h1>Settings</h1>
     <p>
       Configure local shortcuts and placeholder source URLs. Values stay in browser LocalStorage.
     </p>
   </div>
-</section>
+</header>
 
-<app-widget-card title="External Applications" eyebrow="LocalStorage" accent="blue">
+<app-widget-card title="External Applications" eyebrow="LocalStorage">
   <form [formGroup]="form" (ngSubmit)="save()">
-    <label>
+    <label class="field">
       <span>Velo URL</span>
-      <input type="url" formControlName="veloUrl" />
+      <input class="input" type="url" formControlName="veloUrl" />
       @if (form.controls.veloUrl.touched && form.controls.veloUrl.invalid) {
-        <small>Use a valid http(s) URL.</small>
+        <small class="field-error">Use a valid http(s) URL.</small>
       }
     </label>
 
-    <label>
+    <label class="field">
       <span>Dash URL</span>
-      <input type="url" formControlName="dashUrl" />
+      <input class="input" type="url" formControlName="dashUrl" />
       @if (form.controls.dashUrl.touched && form.controls.dashUrl.invalid) {
-        <small>Use a valid http(s) URL.</small>
+        <small class="field-error">Use a valid http(s) URL.</small>
       }
     </label>
 
-    <label>
+    <label class="field">
       <span>sevDesk URL</span>
-      <input type="url" formControlName="sevDeskUrl" />
+      <input class="input" type="url" formControlName="sevDeskUrl" />
       @if (form.controls.sevDeskUrl.touched && form.controls.sevDeskUrl.invalid) {
-        <small>Use a valid http(s) URL.</small>
+        <small class="field-error">Use a valid http(s) URL.</small>
       }
     </label>
 
-    <label>
+    <label class="field">
       <span>Calendar source</span>
-      <select formControlName="calendarSource">
+      <select class="select" formControlName="calendarSource">
         <option value="mock">Mock</option>
         <option value="ics">ICS URL</option>
         <option value="local-json">Local JSON</option>
       </select>
     </label>
 
-    <label>
+    <label class="field">
       <span>Calendar source URL</span>
-      <input type="url" formControlName="calendarSourceUrl" placeholder="Optional placeholder" />
+      <input
+        class="input"
+        type="url"
+        formControlName="calendarSourceUrl"
+        placeholder="Optional placeholder"
+      />
       @if (form.controls.calendarSourceUrl.touched && form.controls.calendarSourceUrl.invalid) {
-        <small>Use a valid http(s) URL or leave this empty.</small>
+        <small class="field-error">Use a valid http(s) URL or leave this empty.</small>
       }
     </label>
 
-    <label>
+    <label class="field">
       <span>Velo source URL</span>
-      <input type="url" formControlName="veloSourceUrl" placeholder="Optional placeholder" />
+      <input
+        class="input"
+        type="url"
+        formControlName="veloSourceUrl"
+        placeholder="Optional placeholder"
+      />
       @if (form.controls.veloSourceUrl.touched && form.controls.veloSourceUrl.invalid) {
-        <small>Use a valid http(s) URL or leave this empty.</small>
+        <small class="field-error">Use a valid http(s) URL or leave this empty.</small>
       }
     </label>
 
-    <label>
+    <label class="field">
       <span>Dash source URL</span>
-      <input type="url" formControlName="dashSourceUrl" placeholder="Optional placeholder" />
+      <input
+        class="input"
+        type="url"
+        formControlName="dashSourceUrl"
+        placeholder="Optional placeholder"
+      />
       @if (form.controls.dashSourceUrl.touched && form.controls.dashSourceUrl.invalid) {
-        <small>Use a valid http(s) URL or leave this empty.</small>
+        <small class="field-error">Use a valid http(s) URL or leave this empty.</small>
       }
     </label>
 
     <div class="preset-actions">
-      <button class="button-link secondary" type="button" (click)="useBundledJsonExamples()">
+      <button class="btn" type="button" (click)="useBundledJsonExamples()">
         Use JSON examples
       </button>
-      <button class="button-link secondary" type="button" (click)="useBundledIcsExample()">
-        Use ICS example
-      </button>
+      <button class="btn" type="button" (click)="useBundledIcsExample()">Use ICS example</button>
     </div>
 
     <div class="section-label">
@@ -81,36 +94,52 @@
     </div>
 
     <div class="tool-grid">
-      <label>
+      <label class="field">
         <span>Tool 1 label</span>
-        <input type="text" formControlName="localTool1Label" />
+        <input class="input" type="text" formControlName="localTool1Label" />
       </label>
 
-      <label>
+      <label class="field">
         <span>Tool 1 URL</span>
-        <input type="url" formControlName="localTool1Url" placeholder="Optional local URL" />
+        <input
+          class="input"
+          type="url"
+          formControlName="localTool1Url"
+          placeholder="Optional local URL"
+        />
         @if (form.controls.localTool1Url.touched && form.controls.localTool1Url.invalid) {
-          <small>Use a valid http(s) URL or leave this empty.</small>
+          <small class="field-error">Use a valid http(s) URL or leave this empty.</small>
         }
       </label>
 
-      <label>
+      <label class="field">
         <span>Tool 2 label</span>
-        <input type="text" formControlName="localTool2Label" />
+        <input class="input" type="text" formControlName="localTool2Label" />
       </label>
 
-      <label>
+      <label class="field">
         <span>Tool 2 URL</span>
-        <input type="url" formControlName="localTool2Url" placeholder="Optional local URL" />
+        <input
+          class="input"
+          type="url"
+          formControlName="localTool2Url"
+          placeholder="Optional local URL"
+        />
         @if (form.controls.localTool2Url.touched && form.controls.localTool2Url.invalid) {
-          <small>Use a valid http(s) URL or leave this empty.</small>
+          <small class="field-error">Use a valid http(s) URL or leave this empty.</small>
         }
       </label>
     </div>
 
     <div class="actions">
-      <button class="button-link" type="submit" [disabled]="form.invalid">Save</button>
-      <button class="button-link secondary" type="button" (click)="reset()">Reset defaults</button>
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+        <svg lucideSave></svg>
+        Save
+      </button>
+      <button class="btn" type="button" (click)="reset()">
+        <svg lucideRotateCcw></svg>
+        Reset defaults
+      </button>
     </div>
   </form>
 
@@ -118,10 +147,32 @@
   <p class="hint">{{ sourceHint() }}</p>
 </app-widget-card>
 
-<app-widget-card title="Backup" eyebrow="Local file" accent="orange">
+<app-widget-card title="Appearance" eyebrow="Theme">
+  <div class="theme-options" role="radiogroup" aria-label="Theme">
+    @for (mode of themeModes; track mode) {
+      <button
+        type="button"
+        class="btn"
+        role="radio"
+        [class.is-active]="theme.mode() === mode"
+        [attr.aria-checked]="theme.mode() === mode"
+        (click)="theme.setMode(mode)"
+      >
+        {{ themeLabels[mode] }}
+      </button>
+    }
+  </div>
+  <p class="hint">Stored in this browser. "System" follows the operating system setting.</p>
+</app-widget-card>
+
+<app-widget-card title="Backup" eyebrow="Local file">
   <div class="backup-actions">
-    <button class="button-link" type="button" (click)="exportSettings()">Export settings</button>
-    <label class="file-button">
+    <button class="btn btn-primary" type="button" (click)="exportSettings()">
+      <svg lucideDownload></svg>
+      Export settings
+    </button>
+    <label class="btn file-button">
+      <svg lucideUpload></svg>
       <span>Import settings</span>
       <input type="file" accept="application/json,.json" (change)="importSettings($event)" />
     </label>
@@ -132,7 +183,7 @@
   }
 </app-widget-card>
 
-<app-widget-card title="Shortcut Preview" eyebrow="Quick Access" accent="green">
+<app-widget-card title="Shortcut Preview" eyebrow="Quick Access">
   <div class="shortcut-preview">
     @for (shortcut of shortcuts(); track shortcut.id) {
       <app-quick-access-tile [shortcut]="shortcut" (launch)="launch($event)" />
@@ -140,6 +191,6 @@
   </div>
 
   @if (launchError()) {
-    <p class="error">{{ launchError() }}</p>
+    <p class="text-error">{{ launchError() }}</p>
   }
 </app-widget-card>

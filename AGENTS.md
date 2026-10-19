@@ -89,15 +89,17 @@ Priority order:
 
 ## UI Direction
 
-Use Visual 3:
-- Dark theme
-- Left icon sidebar
+Visual 3 layout in the shared Arrow product design of velo and dash:
+- Light, dark and system theme (Indigo primary, Slate neutrals)
+- Left sidebar with logo and grouped navigation, collapsible
 - Compact top bar
 - Dashboard widget grid
 - Cards with subtle borders
-- Blue, green, red accent colors
-- Desktop-first, tablet-friendly
+- Semantic colors (ok/warn/danger/info) only for status
+- Desktop-first, tablet-friendly, mobile drawer
 - Minimal visual noise
+
+Binding references: `docs/arrow-corporate-design.md` and `.ai/frontend/design-system.md`.
 
 ## Commands
 

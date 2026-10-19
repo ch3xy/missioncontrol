@@ -1,9 +1,20 @@
 <div class="shell">
   <a class="skip-link" href="#main-content">Skip to content</a>
-  <app-sidebar />
-  <div class="shell__workspace">
-    <app-topbar />
-    <main id="main-content" class="shell__main" tabindex="-1">
+
+  @if (drawerOpen()) {
+    <div class="drawer-backdrop" (click)="drawerOpen.set(false)"></div>
+  }
+
+  <app-sidebar
+    [collapsed]="collapsed()"
+    [open]="drawerOpen()"
+    (toggleCollapsed)="toggleCollapsed()"
+    (navigate)="drawerOpen.set(false)"
+  />
+
+  <div class="shell__main">
+    <app-topbar [drawerOpen]="drawerOpen()" (openMenu)="drawerOpen.set(true)" />
+    <main id="main-content" class="shell__content" tabindex="-1">
       <router-outlet />
     </main>
   </div>

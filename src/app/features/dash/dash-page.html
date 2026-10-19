@@ -1,44 +1,43 @@
-<section class="page-heading">
+<header class="page-header">
   <div>
-    <h2>Dash</h2>
+    <h1>Dash</h1>
     <p>Time tracking, customers and projects from mock data or a local JSON URL.</p>
     @if (lastUpdated(); as updated) {
-      <p class="updated">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+      <p class="page-meta">Updated {{ updated | date: 'HH:mm:ss' }}</p>
     }
   </div>
-  <div class="heading-actions">
-    <button
-      class="button-link secondary"
-      type="button"
-      [disabled]="isLoading()"
-      (click)="refresh()"
-    >
+  <div class="page-controls">
+    <button class="btn" type="button" [disabled]="isLoading()" (click)="refresh()">
+      <svg lucideRefreshCw></svg>
       {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
     </button>
-    <button class="button-link" type="button" (click)="openDash()">Open Dash</button>
+    <button class="btn btn-primary" type="button" (click)="openDash()">
+      <svg lucideExternalLink></svg>
+      Open dash
+    </button>
   </div>
-</section>
+</header>
 
 @if (summary(); as data) {
   <section class="dashboard-grid">
-    <app-widget-card class="span-4" title="Tracked Today" eyebrow="Time" accent="orange">
+    <app-widget-card class="span-4" title="Tracked Today" eyebrow="Time">
       <app-source-badge [source]="data.source" />
       <app-integration-notice [status]="status()" />
       <p class="metric">{{ data.trackedTodayMinutes / 60 | number: '1.1-1' }}h</p>
-      <div class="progress">
+      <div class="progress" aria-label="Daily time target progress">
         <span [style.width.%]="progress()"></span>
       </div>
       <p class="muted">{{ progress() }}% of target</p>
     </app-widget-card>
 
-    <app-widget-card class="span-4" title="Customers" eyebrow="Active" accent="blue">
+    <app-widget-card class="span-4" title="Customers" eyebrow="Active">
       <app-source-badge [source]="data.source" />
       <app-integration-notice [status]="status()" />
       <p class="metric">{{ data.activeCustomers }}</p>
       <p class="muted">Customers with current work.</p>
     </app-widget-card>
 
-    <app-widget-card class="span-4" title="Projects" eyebrow="Open" accent="green">
+    <app-widget-card class="span-4" title="Projects" eyebrow="Open">
       <app-source-badge [source]="data.source" />
       <app-integration-notice [status]="status()" />
       <p class="metric">{{ data.openProjects }}</p>
@@ -48,5 +47,5 @@
 }
 
 @if (launchError()) {
-  <p class="error">{{ launchError() }}</p>
+  <p class="text-error">{{ launchError() }}</p>
 }

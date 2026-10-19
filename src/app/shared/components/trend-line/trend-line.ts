@@ -1,10 +1,11 @@
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CashFlowPoint } from '../../../core/models/velo.model';
 
 @Component({
   selector: 'app-trend-line',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './trend-line.html',
-  styleUrl: './trend-line.css',
+  styleUrl: './trend-line.scss',
 })
 export class TrendLine {
   readonly points = input.required<CashFlowPoint[]>();

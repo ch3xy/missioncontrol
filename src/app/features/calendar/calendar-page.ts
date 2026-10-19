@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { LucideRefreshCw } from '@lucide/angular';
 import { CalendarEvent } from '../../core/models/calendar.model';
 import { CalendarAdapterService } from '../../core/services/calendar-adapter.service';
 import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
@@ -13,9 +14,10 @@ interface CalendarEventGroup {
 
 @Component({
   selector: 'app-calendar-page',
-  imports: [DatePipe, IntegrationNotice, SourceBadge, WidgetCard],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [DatePipe, IntegrationNotice, SourceBadge, WidgetCard, LucideRefreshCw],
   templateUrl: './calendar-page.html',
-  styleUrl: './calendar-page.css',
+  styleUrl: './calendar-page.scss',
 })
 export class CalendarPage {
   private readonly calendarAdapter = inject(CalendarAdapterService);

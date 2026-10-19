@@ -1,27 +1,26 @@
-<section class="page-heading">
+<header class="page-header">
   <div>
-    <h2>Velo</h2>
+    <h1>Velo</h1>
     <p>Cash-flow summary from mock data or a browser-readable local JSON URL.</p>
     @if (lastUpdated(); as updated) {
-      <p class="updated">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+      <p class="page-meta">Updated {{ updated | date: 'HH:mm:ss' }}</p>
     }
   </div>
-  <div class="heading-actions">
-    <button
-      class="button-link secondary"
-      type="button"
-      [disabled]="isLoading()"
-      (click)="refresh()"
-    >
+  <div class="page-controls">
+    <button class="btn" type="button" [disabled]="isLoading()" (click)="refresh()">
+      <svg lucideRefreshCw></svg>
       {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
     </button>
-    <button class="button-link" type="button" (click)="openVelo()">Open Velo</button>
+    <button class="btn btn-primary" type="button" (click)="openVelo()">
+      <svg lucideExternalLink></svg>
+      Open velo
+    </button>
   </div>
-</section>
+</header>
 
 @if (summary(); as data) {
   <section class="dashboard-grid">
-    <app-widget-card class="span-6" title="Cash Flow" eyebrow="Current" accent="green">
+    <app-widget-card class="span-6" title="Cash Flow" eyebrow="Current">
       <app-source-badge [source]="data.source" />
       <app-integration-notice [status]="status()" />
       <p class="metric">
@@ -30,7 +29,7 @@
       <p class="muted">Current cash-flow snapshot from {{ data.source }} source.</p>
     </app-widget-card>
 
-    <app-widget-card class="span-6" title="Forecast" [eyebrow]="data.periodLabel" accent="blue">
+    <app-widget-card class="span-6" title="Forecast" [eyebrow]="data.periodLabel">
       <app-source-badge [source]="data.source" />
       <app-integration-notice [status]="status()" />
       <p class="metric">
@@ -42,5 +41,5 @@
 }
 
 @if (launchError()) {
-  <p class="error">{{ launchError() }}</p>
+  <p class="text-error">{{ launchError() }}</p>
 }

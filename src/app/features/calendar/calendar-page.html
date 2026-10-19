@@ -1,17 +1,20 @@
-<section class="page-heading">
+<header class="page-header">
   <div>
-    <h2>Calendar</h2>
+    <h1>Calendar</h1>
     <p>Appointments from mock data, local JSON, or a browser-readable ICS URL.</p>
     @if (lastUpdated(); as updated) {
-      <p class="updated">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+      <p class="page-meta">Updated {{ updated | date: 'HH:mm:ss' }}</p>
     }
   </div>
-  <button class="button-link secondary" type="button" [disabled]="isLoading()" (click)="refresh()">
-    {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
-  </button>
-</section>
+  <div class="page-controls">
+    <button class="btn" type="button" [disabled]="isLoading()" (click)="refresh()">
+      <svg lucideRefreshCw></svg>
+      {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
+    </button>
+  </div>
+</header>
 
-<app-widget-card title="Upcoming Appointments" eyebrow="Mock data" accent="blue">
+<app-widget-card title="Upcoming Appointments" eyebrow="Mock data">
   <app-source-badge [source]="source()" />
   <app-integration-notice [status]="status()" />
   <div class="appointments">

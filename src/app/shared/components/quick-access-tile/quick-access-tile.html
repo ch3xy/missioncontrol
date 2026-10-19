@@ -1,15 +1,18 @@
 @if (shortcut().external) {
   <button class="tile" type="button" (click)="launch.emit(shortcut())">
-    <span class="tile__icon">{{ shortcut().icon }}</span>
-    <span>
+    <span class="tile__icon"><svg [lucideIcon]="shortcut().icon" [size]="20"></svg></span>
+    <span class="tile__text">
       <strong>{{ shortcut().label }}</strong>
       <small>{{ shortcut().description }}</small>
     </span>
+    <span class="tile__external" aria-hidden="true"
+      ><svg lucideExternalLink [size]="14"></svg
+    ></span>
   </button>
 } @else {
   <a class="tile" [routerLink]="shortcut().route">
-    <span class="tile__icon">{{ shortcut().icon }}</span>
-    <span>
+    <span class="tile__icon"><svg [lucideIcon]="shortcut().icon" [size]="20"></svg></span>
+    <span class="tile__text">
       <strong>{{ shortcut().label }}</strong>
       <small>{{ shortcut().description }}</small>
     </span>

@@ -1,0 +1,97 @@
+.event-list {
+  display: grid;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+}
+
+app-source-badge + .metric,
+app-integration-notice + .metric {
+  display: block;
+  margin-top: var(--sp-3);
+}
+
+.event {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: var(--sp-3);
+  align-items: start;
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.event:last-child {
+  border-bottom: 0;
+}
+
+.event time {
+  color: var(--brand);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.event strong,
+.event small {
+  display: block;
+}
+
+.event strong {
+  font-weight: 600;
+}
+
+.event small {
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.card-link {
+  display: inline-flex;
+  margin-top: var(--sp-4);
+  font-weight: 600;
+}
+
+.split {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-top: var(--sp-3);
+  color: var(--text-muted);
+}
+
+.split strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.progress {
+  margin-top: var(--sp-5);
+}
+
+.customer-grid,
+.quick-grid {
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.customer-grid > div {
+  min-height: 8rem;
+  padding: var(--sp-4);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.customer-grid span {
+  color: var(--text-muted);
+}
+
+.text-error {
+  margin-top: var(--sp-3);
+}
+
+@media (max-width: 560px) {
+  .customer-grid,
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+}
