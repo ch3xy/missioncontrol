@@ -14,6 +14,7 @@ It is intentionally frontend-only for the MVP. There is no backend, authenticati
 - Optional local tool shortcuts
 - LocalStorage-backed settings with export/import backup
 - Mock data adapters for all data widgets
+- Live data from the velo and dash REST APIs (read-only)
 - Optional browser-readable local JSON sources for Calendar, Velo, and Dash
 - Basic browser-readable ICS calendar source support
 - Fallback notices when configured sources are missing or invalid
@@ -41,6 +42,18 @@ Open:
 ```text
 http://localhost:4200
 ```
+
+### Live data from velo and dash
+
+Settings → **Live-Daten (API)** takes the address of each app (for example `https://arrow.local/velo`); mission control then reads `/api/...` below it. **APIs dieses Servers verwenden** fills in `<origin>/velo` and `<origin>/dash`, which matches the Caddy setup on the server.
+
+The dev server proxies `/velo/api` and `/dash/api` the same way (`proxy.conf.mjs`), so no CORS configuration is needed in velo or dash. Point it at the running backends:
+
+```bash
+VELO_API_TARGET=http://localhost:8081 DASH_API_TARGET=http://localhost:8080 npm run start
+```
+
+Defaults are `http://localhost:8081` (velo) and `http://localhost:8080` (dash). Details: [docs/LOCAL_JSON_CONTRACTS.md](docs/LOCAL_JSON_CONTRACTS.md#velo-and-dash-rest-apis).
 
 ## Quality Checks
 
@@ -78,6 +91,6 @@ These values are configurable in Settings.
 ## MVP Boundaries
 
 - sevDesk is an external shortcut only.
-- Velo and Dash use mock data unless local JSON URLs are configured and readable by the browser.
+- Velo and Dash use mock data unless an API URL or a local JSON URL is configured and readable by the browser.
 - ICS support covers basic `VEVENT` parsing and does not yet handle recurrence rules or advanced timezone behavior.
 - No secrets, tokens, API keys, or private URLs should be committed.

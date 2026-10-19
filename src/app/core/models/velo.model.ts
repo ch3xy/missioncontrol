@@ -9,7 +9,7 @@ export interface VeloSummary {
   currency: 'EUR';
   periodLabel: string;
   trend: CashFlowPoint[];
-  source: 'mock' | 'local-json';
+  source: 'mock' | 'local-json' | 'api';
 }
 
 export interface VeloAdapter {

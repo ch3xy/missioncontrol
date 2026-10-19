@@ -75,10 +75,17 @@ export class SettingsService {
       dashUrl: settings.dashUrl.trim() || DEFAULT_SETTINGS.dashUrl,
       sevDeskUrl: settings.sevDeskUrl.trim() || DEFAULT_SETTINGS.sevDeskUrl,
       calendarSource: settings.calendarSource ?? DEFAULT_SETTINGS.calendarSource,
+      dailyTargetHours: isValidTargetHours(settings.dailyTargetHours)
+        ? settings.dailyTargetHours
+        : DEFAULT_SETTINGS.dailyTargetHours,
       localTool1Label: settings.localTool1Label.trim() || DEFAULT_SETTINGS.localTool1Label,
       localTool1Url: settings.localTool1Url.trim(),
       localTool2Label: settings.localTool2Label.trim() || DEFAULT_SETTINGS.localTool2Label,
       localTool2Url: settings.localTool2Url.trim(),
     };
   }
+}
+
+function isValidTargetHours(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 && value <= 24;
 }

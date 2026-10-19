@@ -21,6 +21,7 @@ Implemented:
 - Configurable Velo, Dash, and sevDesk launch URLs
 - Two optional configurable local tool shortcuts
 - Typed mock adapters for Calendar, Velo, and Dash
+- Read-only live data from the velo and dash REST APIs, with a dev proxy mirroring the server setup
 - Optional local JSON source placeholders with validation and mock fallback
 - Example local JSON contracts under `public/examples/`
 - Basic frontend-only ICS calendar loading with mock fallback
@@ -54,14 +55,13 @@ Additional type checks used during implementation:
 Still intentionally placeholder-only:
 
 - sevDesk remains an external shortcut only
-- Velo and Dash use mock data unless a local JSON URL is configured and CORS allows access
+- Velo and Dash use mock data unless an API URL or a local JSON URL is configured and readable
 - ICS import supports basic `VEVENT` parsing from a browser-readable URL
 - No backend, authentication, cloud sync, OAuth, or secret storage is included
 
 ## Next Useful Improvements
 
 - Harden ICS parsing for recurring events and timezone edge cases
-- Point Velo and Dash to real local JSON endpoints once those apps expose browser-readable data
 - Add richer calendar grouping and empty-state copy
 - Add visual regression checks once a browser automation setup is part of the project scripts
 - Add optional user-configurable quick access tiles

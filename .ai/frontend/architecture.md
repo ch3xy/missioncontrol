@@ -81,8 +81,15 @@ Jeder Zugriff ist in `try/catch` gekapselt (Private Mode, blockierter Storage).
 ## Adapter
 
 Externe Integrationen liegen hinter typisierten Adapter-Services (`calendar-adapter`, `velo-adapter`,
-`dash-adapter`). Reihenfolge: konfigurierte Quelle (Local JSON / ICS) → bei Fehler Mock-Fallback mit
-`IntegrationStatus`. Verträge: `docs/LOCAL_JSON_CONTRACTS.md`. Keine Secrets, keine privaten URLs im Code.
+`dash-adapter`). Reihenfolge: REST-API von velo/dash (`velo-api.ts`, `dash-api.ts`, nur lesend) →
+Local JSON / ICS → Mock-Fallback mit `IntegrationStatus`. Verträge: `docs/LOCAL_JSON_CONTRACTS.md`. Keine Secrets, keine privaten URLs im Code.
+
+API-URLs sind die Basis-URLs der Apps (`https://arrow.local/velo`). Auf dem Server liegen alle Apps hinter
+Caddy auf einem Host (same-origin, kein CORS); im Dev-Server spiegelt `proxy.conf.mjs` das
+(`/velo/api`, `/dash/api`, Ziele über `VELO_API_TARGET` / `DASH_API_TARGET`). Die API-Typen in
+`velo-api.ts` / `dash-api.ts` bilden nur die genutzten Felder der Java-DTOs ab (`AccountTO`,
+`ForecastResultTO`, `DashboardResponse`); bei DTO-Änderungen in velo/dash dort und in
+`api-adapters.spec.ts` nachziehen.
 
 ## Tests
 

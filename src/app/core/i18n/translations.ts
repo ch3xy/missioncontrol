@@ -48,11 +48,13 @@ export const EN = {
   'common.noValidUrl': '{name} has no valid http(s) URL configured.',
 
   // Data sources and integration status
+  'source.api': 'API',
   'source.localJson': 'Local JSON',
   'source.ics': 'ICS',
   'source.mock': 'Mock',
   'status.mock': 'Mock data',
   'status.local-json': 'Local JSON',
+  'status.api': 'API',
   'status.ics': 'ICS',
   'status.fallback': 'Mock fallback',
   'status.mockMessage': 'Using built-in mock data.',
@@ -71,6 +73,13 @@ export const EN = {
   'status.dash.loaded': 'Loaded Dash summary from the configured local JSON URL.',
   'status.dash.invalidShape': 'Dash JSON did not match the expected shape; using mock data.',
   'status.dash.failed': 'Dash JSON could not be loaded; using mock data.',
+  'status.velo.apiLoaded': 'Loaded live data from the velo API.',
+  'status.velo.apiFailed': 'The velo API is not reachable; using mock data.',
+  'status.velo.apiInvalidShape': 'The velo API returned unexpected data; using mock data.',
+  'status.velo.apiNoAccounts': 'velo has no EUR account yet; using mock data.',
+  'status.dash.apiLoaded': 'Loaded live data from the dash API.',
+  'status.dash.apiFailed': 'The dash API is not reachable; using mock data.',
+  'status.dash.apiInvalidShape': 'The dash API returned unexpected data; using mock data.',
 
   // Shortcuts
   'shortcut.velo': 'Cash flow and forecast',
@@ -107,6 +116,7 @@ export const EN = {
   'velo.open': 'Open velo',
   'velo.cashFlow': 'Cash Flow',
   'velo.snapshot': 'Current cash-flow snapshot from {source} source.',
+  'velo.nextDays': 'Next {days} days',
 
   // Dash
   'dash.lead': 'Time tracking, customers and projects from mock data or a local JSON URL.',
@@ -140,6 +150,14 @@ export const EN = {
   'settings.dashSourceUrl': 'Dash source URL',
   'settings.optionalPlaceholder': 'Optional placeholder',
   'settings.useJsonExamples': 'Use JSON examples',
+  'settings.liveData': 'Live data (API)',
+  'settings.liveDataHint':
+    'Reads velo and dash directly through their REST APIs. Takes precedence over the source URLs above; use the app address, e.g. https://arrow.local/velo.',
+  'settings.veloApiUrl': 'velo API URL',
+  'settings.dashApiUrl': 'dash API URL',
+  'settings.dailyTargetHours': 'Daily target (hours)',
+  'settings.invalidTargetHours': 'Enter a value between 0.5 and 24.',
+  'settings.useServerApis': 'Use APIs on this server',
   'settings.useIcsExample': 'Use ICS example',
   'settings.localTools': 'Local tools',
   'settings.localToolsHint': 'Configured tools appear in Quick Access when a valid URL is set.',
@@ -219,11 +237,13 @@ export const DE: Dictionary = {
   'common.timeProgress': 'Fortschritt zum Tagesziel',
   'common.noValidUrl': 'Für {name} ist keine gültige http(s)-URL konfiguriert.',
 
+  'source.api': 'API',
   'source.localJson': 'Lokales JSON',
   'source.ics': 'ICS',
   'source.mock': 'Mock',
   'status.mock': 'Mock-Daten',
   'status.local-json': 'Lokales JSON',
+  'status.api': 'API',
   'status.ics': 'ICS',
   'status.fallback': 'Mock-Fallback',
   'status.mockMessage': 'Es werden integrierte Mock-Daten verwendet.',
@@ -248,6 +268,15 @@ export const DE: Dictionary = {
   'status.dash.invalidShape':
     'Dash-JSON entspricht nicht dem erwarteten Format; es werden Mock-Daten verwendet.',
   'status.dash.failed': 'Dash-JSON konnte nicht geladen werden; es werden Mock-Daten verwendet.',
+  'status.velo.apiLoaded': 'Live-Daten aus der velo-API geladen.',
+  'status.velo.apiFailed': 'Die velo-API ist nicht erreichbar; es werden Mock-Daten verwendet.',
+  'status.velo.apiInvalidShape':
+    'Die velo-API hat unerwartete Daten geliefert; es werden Mock-Daten verwendet.',
+  'status.velo.apiNoAccounts': 'velo hat noch kein EUR-Konto; es werden Mock-Daten verwendet.',
+  'status.dash.apiLoaded': 'Live-Daten aus der dash-API geladen.',
+  'status.dash.apiFailed': 'Die dash-API ist nicht erreichbar; es werden Mock-Daten verwendet.',
+  'status.dash.apiInvalidShape':
+    'Die dash-API hat unerwartete Daten geliefert; es werden Mock-Daten verwendet.',
 
   'shortcut.velo': 'Cashflow und Prognose',
   'shortcut.dash': 'Zeiterfassung und Kunden',
@@ -281,6 +310,7 @@ export const DE: Dictionary = {
   'velo.open': 'velo öffnen',
   'velo.cashFlow': 'Cashflow',
   'velo.snapshot': 'Aktueller Cashflow-Stand aus Quelle „{source}“.',
+  'velo.nextDays': 'Nächste {days} Tage',
 
   'dash.lead': 'Zeiterfassung, Kunden und Projekte aus Mock-Daten oder einer lokalen JSON-URL.',
   'dash.open': 'dash öffnen',
@@ -312,6 +342,14 @@ export const DE: Dictionary = {
   'settings.dashSourceUrl': 'Dash-Quell-URL',
   'settings.optionalPlaceholder': 'Optional',
   'settings.useJsonExamples': 'JSON-Beispiele verwenden',
+  'settings.liveData': 'Live-Daten (API)',
+  'settings.liveDataHint':
+    'Liest velo und dash direkt über deren REST-API. Hat Vorrang vor den Quell-URLs oben; einzutragen ist die Adresse der App, z. B. https://arrow.local/velo.',
+  'settings.veloApiUrl': 'velo-API-URL',
+  'settings.dashApiUrl': 'dash-API-URL',
+  'settings.dailyTargetHours': 'Tagesziel (Stunden)',
+  'settings.invalidTargetHours': 'Bitte einen Wert zwischen 0,5 und 24 eingeben.',
+  'settings.useServerApis': 'APIs dieses Servers verwenden',
   'settings.useIcsExample': 'ICS-Beispiel verwenden',
   'settings.localTools': 'Lokale Tools',
   'settings.localToolsHint':

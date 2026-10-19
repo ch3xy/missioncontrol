@@ -89,6 +89,58 @@
     </div>
 
     <div class="section-label">
+      <h3>{{ 'settings.liveData' | t }}</h3>
+      <p>{{ 'settings.liveDataHint' | t }}</p>
+    </div>
+
+    <label class="field">
+      <span>{{ 'settings.veloApiUrl' | t }}</span>
+      <input
+        class="input"
+        type="url"
+        formControlName="veloApiUrl"
+        [placeholder]="'settings.optionalPlaceholder' | t"
+      />
+      @if (form.controls.veloApiUrl.touched && form.controls.veloApiUrl.invalid) {
+        <small class="field-error">{{ 'settings.invalidOptionalUrl' | t }}</small>
+      }
+    </label>
+
+    <label class="field">
+      <span>{{ 'settings.dashApiUrl' | t }}</span>
+      <input
+        class="input"
+        type="url"
+        formControlName="dashApiUrl"
+        [placeholder]="'settings.optionalPlaceholder' | t"
+      />
+      @if (form.controls.dashApiUrl.touched && form.controls.dashApiUrl.invalid) {
+        <small class="field-error">{{ 'settings.invalidOptionalUrl' | t }}</small>
+      }
+    </label>
+
+    <label class="field">
+      <span>{{ 'settings.dailyTargetHours' | t }}</span>
+      <input
+        class="input"
+        type="number"
+        min="0.5"
+        max="24"
+        step="0.5"
+        formControlName="dailyTargetHours"
+      />
+      @if (form.controls.dailyTargetHours.touched && form.controls.dailyTargetHours.invalid) {
+        <small class="field-error">{{ 'settings.invalidTargetHours' | t }}</small>
+      }
+    </label>
+
+    <div class="preset-actions">
+      <button class="btn" type="button" (click)="useServerApis()">
+        {{ 'settings.useServerApis' | t }}
+      </button>
+    </div>
+
+    <div class="section-label">
       <h3>{{ 'settings.localTools' | t }}</h3>
       <p>{{ 'settings.localToolsHint' | t }}</p>
     </div>

@@ -76,6 +76,9 @@ export class SettingsPage {
     calendarSourceUrl: ['', [httpUrlValidator({ optional: true })]],
     veloSourceUrl: ['', [httpUrlValidator({ optional: true })]],
     dashSourceUrl: ['', [httpUrlValidator({ optional: true })]],
+    veloApiUrl: ['', [httpUrlValidator({ optional: true })]],
+    dashApiUrl: ['', [httpUrlValidator({ optional: true })]],
+    dailyTargetHours: [8, [Validators.required, Validators.min(0.5), Validators.max(24)]],
     localTool1Label: ['Local Tool 1', [Validators.required]],
     localTool1Url: ['', [httpUrlValidator({ optional: true })]],
     localTool2Label: ['Local Tool 2', [Validators.required]],
@@ -148,6 +151,14 @@ export class SettingsPage {
     this.applyAndSave({
       calendarSource: 'ics',
       calendarSourceUrl: `${location.origin}/examples/calendar.ics`,
+    });
+  }
+
+  /** On the server, velo and dash run on the same host as mission control under /velo and /dash. */
+  protected useServerApis(): void {
+    this.applyAndSave({
+      veloApiUrl: `${location.origin}/velo`,
+      dashApiUrl: `${location.origin}/dash`,
     });
   }
 

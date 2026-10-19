@@ -7,7 +7,7 @@ import { VeloSummary } from '../../core/models/velo.model';
 import { ShortcutService } from '../../core/services/shortcut.service';
 import { VeloAdapterService } from '../../core/services/velo-adapter.service';
 import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
-import { SourceBadge } from '../../shared/components/source-badge/source-badge';
+import { SOURCE_LABELS, SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { TrendLine } from '../../shared/components/trend-line/trend-line';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
@@ -34,6 +34,7 @@ export class VeloPage {
   private readonly shortcutService = inject(ShortcutService);
 
   protected readonly status = this.veloAdapter.status;
+  protected readonly sourceLabels = SOURCE_LABELS;
   protected readonly summary = signal<VeloSummary | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly lastUpdated = signal<Date | null>(null);

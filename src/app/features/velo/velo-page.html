@@ -31,7 +31,7 @@
       <p class="metric">
         {{ data.currentCashFlow | currency: data.currency : 'symbol' : '1.0-0' : i18n.locale() }}
       </p>
-      <p class="muted">{{ 'velo.snapshot' | t: { source: data.source } }}</p>
+      <p class="muted">{{ 'velo.snapshot' | t: { source: sourceLabels[data.source] | t } }}</p>
     </app-widget-card>
 
     <app-widget-card class="span-6" [title]="'common.forecast' | t" [eyebrow]="data.periodLabel">

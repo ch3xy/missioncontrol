@@ -1,8 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { I18nService } from '../../../core/i18n/i18n.service';
+import { TranslationKey } from '../../../core/i18n/translations';
 import { CalendarSource } from '../../../core/models/calendar.model';
 
-type DataSource = CalendarSource | 'local-json';
+export type DataSource = CalendarSource | 'local-json' | 'api';
+
+export const SOURCE_LABELS: Record<DataSource, TranslationKey> = {
+  api: 'source.api',
+  'local-json': 'source.localJson',
+  ics: 'source.ics',
+  mock: 'source.mock',
+};
+
+/** Semantic badge tone: real data → ok, calendar feed → info, mock → muted. */
+const SOURCE_TONES: Record<DataSource, string> = {
+  api: 'badge ok',
+  'local-json': 'badge ok',
+  ics: 'badge info',
+  mock: 'badge muted',
+};
 
 @Component({
   selector: 'app-source-badge',
@@ -15,26 +31,6 @@ export class SourceBadge {
 
   readonly source = input.required<DataSource>();
 
-  protected readonly label = computed(() => {
-    switch (this.source()) {
-      case 'local-json':
-        return this.i18n.t('source.localJson');
-      case 'ics':
-        return this.i18n.t('source.ics');
-      case 'mock':
-        return this.i18n.t('source.mock');
-    }
-  });
-
-  /** Semantic badge tone: real data → ok, calendar feed → info, mock → muted. */
-  protected readonly tone = computed(() => {
-    switch (this.source()) {
-      case 'local-json':
-        return 'badge ok';
-      case 'ics':
-        return 'badge info';
-      case 'mock':
-        return 'badge muted';
-    }
-  });
+  protected readonly label = computed(() => this.i18n.t(SOURCE_LABELS[this.source()]));
+  protected readonly tone = computed(() => SOURCE_TONES[this.source()]);
 }

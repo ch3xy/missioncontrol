@@ -87,7 +87,27 @@ Required fields:
 
 See `public/examples/dash.json`.
 
+## Velo and Dash REST APIs
+
+Instead of a JSON file, mission control can read the existing REST APIs of velo and dash directly (Settings → Live-Daten (API)). The configured value is the app's base URL, for example `https://arrow.local/velo`. An API URL takes precedence over the local JSON URL; if the API fails, mock data is shown.
+
+Velo (all accounts in EUR are summed; other currencies are skipped):
+
+- `GET {base}/api/accounts` → `currentBalance` per account becomes `currentCashFlow`
+- `GET {base}/api/accounts/{id}/forecast?horizon=30` → `dailyBalances` summed per day become `trend`; the last day is `forecastCashFlow`
+
+Dash:
+
+- `GET {base}/api/v1/dashboard` → `today.durationSeconds` becomes `trackedTodayMinutes`
+- `GET {base}/api/v1/clients` → non-archived clients become `activeCustomers`
+- `GET {base}/api/v1/projects?status=ACTIVE` → count becomes `openProjects`
+- `targetTodayMinutes` comes from mission control's setting "Tagesziel" (default 8 h), because dash has no daily target.
+
+Only the fields listed here are validated; additional fields in the responses are ignored.
+
 ## CORS
+
+On the server, velo, dash and mission control share one host behind Caddy, so API requests are same-origin and need no CORS. The dev server achieves the same through `proxy.conf.mjs`.
 
 If JSON is served from another local app or port, that app must allow browser requests from the Mission Control origin.
 

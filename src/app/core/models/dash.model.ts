@@ -3,7 +3,7 @@ export interface DashSummary {
   targetTodayMinutes: number;
   activeCustomers: number;
   openProjects: number;
-  source: 'mock' | 'local-json';
+  source: 'mock' | 'local-json' | 'api';
 }
 
 export interface DashAdapter {
