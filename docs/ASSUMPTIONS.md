@@ -43,7 +43,7 @@ UI language (2026-10-19):
 - Translation is a small signal-based `I18nService` with typed dictionaries (`src/app/core/i18n/translations.ts`) instead of Angular's build-time `@angular/localize`, because the language must switch at runtime without a reload or one build per locale.
 - German uses the `de-AT` locale for dates, numbers and currency (as in velo/dash); English uses `en-US`. `LOCALE_ID` stays at its default; templates pass `i18n.locale()` to the date/number/currency pipes.
 - Route titles are translation keys, resolved by `I18nTitleStrategy`.
-- Data stays untranslated: mock event titles, customer names and the `periodLabel` from Velo data (mock: "Next 30 days") are shown as delivered, as are user-defined tool labels and the ICS fallback title "Untitled event".
+- Data stays untranslated: event titles, customer names and the `periodLabel` from local Velo JSON are shown as delivered, as are user-defined tool labels and the ICS fallback title "Untitled event".
 
 Live data from velo and dash (2026-10-19):
 
@@ -53,7 +53,14 @@ Live data from velo and dash (2026-10-19):
 - If mission control itself is served at the root of that host, its own routes `/velo` and `/dash` collide with Caddy's `handle_path /velo*` and `/dash*`; it should get its own path prefix (e.g. `/missioncontrol`).
 - velo: all EUR accounts are summed (balance and 30-day forecast); accounts in other currencies are skipped because the card shows one EUR amount. The forecast horizon is fixed at 30 days.
 - dash: "today" is dash's own `today.durationSeconds`; a running timer is not added. Active customers are non-archived clients, open projects are projects with status `ACTIVE`.
-- dash has no daily target, so mission control keeps one as a setting (default 8 h; the mock data keeps its 7 h).
-- An API URL takes precedence over a local JSON URL; on any API error the card falls back to mock data with a notice.
+- dash has no daily target, so mission control keeps one as a setting (default 8 h).
+- An API URL takes precedence over a local JSON URL; on any API error the card shows a warning and no data.
 - velo and dash have no authentication; if they get one, the adapters need to send credentials (cookies work same-origin).
 - Dev proxy targets default to `http://localhost:8081` (velo) and `http://localhost:8080` (dash), because both backends default to port 8080 and cannot run side by side without changing one.
+
+No mock data (2026-10-19):
+
+- The built-in mock data was removed at the user's request; it superseded the earlier assumptions "Calendar data starts as mock data" and "fall back to mock data" above.
+- Without a configured source a card shows "Nicht konfiguriert" with a hint to Settings; if a configured source is unreachable or returns invalid data it shows "Warnung" and no numbers. Showing invented numbers next to real ones was considered misleading.
+- The calendar source `mock` became `none` (the default). Stored settings or imported backups with `mock` are normalized to `none`.
+- Adapters return `null` (Velo, Dash) or an empty list (Calendar) instead of data; their status signal is `null` while loading so no notice flashes before the first result.

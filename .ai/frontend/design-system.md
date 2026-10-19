@@ -77,7 +77,7 @@ mit `LucideDynamicIcon` und Typ `LucideIcon`.
 | Aktualisieren | `LucideRefreshCw` |
 | Speichern / Zurücksetzen | `LucideSave` / `LucideRotateCcw` |
 | Export / Import | `LucideDownload` / `LucideUpload` |
-| Hinweis / Fallback | `LucideInfo` / `LucideTriangleAlert` |
+| Hinweis / Warnung | `LucideInfo` / `LucideTriangleAlert` |
 | Theme | `LucideSun` / `LucideMoon` |
 | Menü / Collapse | `LucideMenu` / `LucideChevronLeft` / `LucideChevronRight` |
 
@@ -86,8 +86,8 @@ mit `LucideDynamicIcon` und Typ `LucideIcon`.
 | Komponente | Darstellung |
 |---|---|
 | `app-widget-card` | `.card.card-pad`, `eyebrow` als `.card-title`, Titel `h2` 16px |
-| `app-source-badge` | `.badge` — Local JSON → `ok`, ICS → `info`, Mock → `muted` |
-| `app-integration-notice` | Info-Box: Fallback → `--warn-bg` + Warn-Icon, sonst `--info-bg` + Info-Icon |
+| `app-source-badge` | `.badge` — API / Local JSON → `ok`, ICS → `info` |
+| `app-integration-notice` | nur bei Problemen sichtbar: `error` → `--warn-bg` + Warn-Icon, `unconfigured` → `--info-bg` + Info-Icon |
 | `app-quick-access-tile` | Kachel mit Icon-Box (`--brand-soft`), extern mit External-Link-Icon |
 | `app-trend-line` | SVG-Polyline in `--chart-main` |
 

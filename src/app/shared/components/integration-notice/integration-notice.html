@@ -1,15 +1,15 @@
-@if (isVisible()) {
-  <p class="notice" [class.notice--fallback]="status().kind === 'fallback'">
+@if (visibleStatus(); as status) {
+  <p class="notice" [class.notice--error]="status.kind === 'error'" role="status">
     <span class="notice__icon" aria-hidden="true">
-      @if (status().kind === 'fallback') {
+      @if (status.kind === 'error') {
         <svg lucideTriangleAlert></svg>
       } @else {
         <svg lucideInfo></svg>
       }
     </span>
     <span class="notice__body">
-      <strong>{{ label() | t }}</strong>
-      <span>{{ status().message | t }}</span>
+      <strong>{{ label() ?? status.message | t }}</strong>
+      <span>{{ status.message | t }}</span>
     </span>
   </p>
 }

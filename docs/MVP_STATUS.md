@@ -20,12 +20,12 @@ Implemented:
 - Settings export/import for local backup and restore
 - Configurable Velo, Dash, and sevDesk launch URLs
 - Two optional configurable local tool shortcuts
-- Typed mock adapters for Calendar, Velo, and Dash
+- Typed adapters for Calendar, Velo, and Dash (no built-in mock data)
 - Read-only live data from the velo and dash REST APIs, with a dev proxy mirroring the server setup
-- Optional local JSON source placeholders with validation and mock fallback
+- Optional local JSON sources with validation; warnings instead of data when they fail
 - Example local JSON contracts under `public/examples/`
-- Basic frontend-only ICS calendar loading with mock fallback
-- Source badges showing whether data comes from mock or local JSON sources
+- Basic frontend-only ICS calendar loading
+- Source badges showing whether data comes from the API, local JSON or ICS
 - Unit tests for app bootstrapping, feature pages, settings, shortcuts, validators, source badges, and local JSON adapters
 
 ## Runtime
@@ -55,7 +55,7 @@ Additional type checks used during implementation:
 Still intentionally placeholder-only:
 
 - sevDesk remains an external shortcut only
-- Velo and Dash use mock data unless an API URL or a local JSON URL is configured and readable
+- Without a configured, reachable source a card shows a notice instead of data
 - ICS import supports basic `VEVENT` parsing from a browser-readable URL
 - No backend, authentication, cloud sync, OAuth, or secret storage is included
 

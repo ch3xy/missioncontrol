@@ -9,9 +9,10 @@ export interface VeloSummary {
   currency: 'EUR';
   periodLabel: string;
   trend: CashFlowPoint[];
-  source: 'mock' | 'local-json' | 'api';
+  source: 'local-json' | 'api';
 }
 
 export interface VeloAdapter {
-  getSummary(): Promise<VeloSummary>;
+  /** `null` when no source is configured or the source failed; see the adapter's status. */
+  getSummary(): Promise<VeloSummary | null>;
 }

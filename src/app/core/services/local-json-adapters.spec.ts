@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { createMemoryStorage } from '../../testing/memory-storage';
-import { MOCK_CALENDAR_EVENTS } from '../mock-data/calendar.mock';
 import { DEFAULT_SETTINGS } from '../models/settings.model';
 import { CalendarAdapterService } from './calendar-adapter.service';
 import { DashAdapterService } from './dash-adapter.service';
@@ -42,7 +41,7 @@ describe('local JSON adapters', () => {
 
     expect(events).toHaveLength(1);
     expect(events[0]?.id).toBe('json-event');
-    expect(status.kind).toBe('local-json');
+    expect(status?.kind).toBe('local-json');
   });
 
   it('should load Velo and Dash summaries from configured local JSON sources', async () => {
@@ -78,13 +77,13 @@ describe('local JSON adapters', () => {
     const velo = await TestBed.inject(VeloAdapterService).getSummary();
     const dash = await TestBed.inject(DashAdapterService).getSummary();
 
-    expect(velo.periodLabel).toBe('JSON forecast');
-    expect(dash.openProjects).toBe(3);
-    expect(TestBed.inject(VeloAdapterService).status().kind).toBe('local-json');
-    expect(TestBed.inject(DashAdapterService).status().kind).toBe('local-json');
+    expect(velo?.periodLabel).toBe('JSON forecast');
+    expect(dash?.openProjects).toBe(3);
+    expect(TestBed.inject(VeloAdapterService).status()?.kind).toBe('local-json');
+    expect(TestBed.inject(DashAdapterService).status()?.kind).toBe('local-json');
   });
 
-  it('should fall back to mock data when local JSON validation fails', async () => {
+  it('should show no events and a warning when local JSON validation fails', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(async () => Response.json({ invalid: true })),
@@ -98,10 +97,9 @@ describe('local JSON adapters', () => {
     const events = await TestBed.inject(CalendarAdapterService).getEvents();
     const status = TestBed.inject(CalendarAdapterService).status();
 
-    expect(events).toHaveLength(MOCK_CALENDAR_EVENTS.length);
-    expect(events[0]?.source).toBe('mock');
-    expect(status.kind).toBe('fallback');
-    expect(status.message).toBe('status.calendar.jsonInvalidShape');
+    expect(events).toEqual([]);
+    expect(status?.kind).toBe('error');
+    expect(status?.message).toBe('status.calendar.jsonInvalidShape');
   });
 
   it('should load calendar events from a configured ICS source', async () => {
@@ -132,6 +130,23 @@ END:VCALENDAR
     expect(events).toHaveLength(1);
     expect(events[0]?.title).toBe('ICS Planning');
     expect(events[0]?.source).toBe('ics');
-    expect(status.kind).toBe('ics');
+    expect(status?.kind).toBe('ics');
+  });
+
+  it('should report unconfigured sources instead of showing data', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    const events = await TestBed.inject(CalendarAdapterService).getEvents();
+    const velo = await TestBed.inject(VeloAdapterService).getSummary();
+    const dash = await TestBed.inject(DashAdapterService).getSummary();
+
+    expect(events).toEqual([]);
+    expect(velo).toBeNull();
+    expect(dash).toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(TestBed.inject(CalendarAdapterService).status()?.kind).toBe('unconfigured');
+    expect(TestBed.inject(VeloAdapterService).status()?.message).toBe('status.velo.unconfigured');
+    expect(TestBed.inject(DashAdapterService).status()?.message).toBe('status.dash.unconfigured');
   });
 });

@@ -1,23 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { TranslationKey } from '../../../core/i18n/translations';
-import { CalendarSource } from '../../../core/models/calendar.model';
-
-export type DataSource = CalendarSource | 'local-json' | 'api';
+export type DataSource = 'api' | 'local-json' | 'ics';
 
 export const SOURCE_LABELS: Record<DataSource, TranslationKey> = {
   api: 'source.api',
   'local-json': 'source.localJson',
   ics: 'source.ics',
-  mock: 'source.mock',
 };
 
-/** Semantic badge tone: real data → ok, calendar feed → info, mock → muted. */
+/** Semantic badge tone: app data → ok, calendar feed → info. */
 const SOURCE_TONES: Record<DataSource, string> = {
   api: 'badge ok',
   'local-json': 'badge ok',
   ics: 'badge info',
-  mock: 'badge muted',
 };
 
 @Component({

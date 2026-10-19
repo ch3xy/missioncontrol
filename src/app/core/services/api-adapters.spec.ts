@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { createMemoryStorage } from '../../testing/memory-storage';
-import { MOCK_DASH_SUMMARY } from '../mock-data/dash.mock';
 import { DEFAULT_SETTINGS } from '../models/settings.model';
 import { DashAdapterService } from './dash-adapter.service';
 import { SettingsService } from './settings.service';
@@ -90,11 +89,11 @@ describe('REST API adapters', () => {
       periodLabel: 'Nächste 30 Tage',
       source: 'api',
     });
-    expect(summary.trend).toEqual([
+    expect(summary?.trend).toEqual([
       { date: '2026-10-19', value: 1500.5 },
       { date: '2026-10-20', value: 1650 },
     ]);
-    expect(adapter.status().kind).toBe('api');
+    expect(adapter.status()?.kind).toBe('api');
   });
 
   it('should prefer the API over a configured local JSON source', async () => {
@@ -109,21 +108,21 @@ describe('REST API adapters', () => {
     expect(fetchMock).not.toHaveBeenCalledWith(expect.stringContaining('velo.json'));
   });
 
-  it('should fall back to mock data when velo has no EUR account', async () => {
+  it('should show no data and a warning when velo has no EUR account', async () => {
     stubApi({ '/api/accounts': [{ id: 'a3', currentBalance: 1, currency: 'USD' }] });
     configure({ veloApiUrl: 'https://arrow.local/velo' });
     const adapter = TestBed.inject(VeloAdapterService);
 
     const summary = await adapter.getSummary();
 
-    expect(summary.source).toBe('mock');
+    expect(summary).toBeNull();
     expect(adapter.status()).toMatchObject({
-      kind: 'fallback',
+      kind: 'error',
       message: 'status.velo.apiNoAccounts',
     });
   });
 
-  it('should fall back to mock data when the velo API is unreachable', async () => {
+  it('should show no data and a warning when the velo API is unreachable', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(async () => {
@@ -133,9 +132,10 @@ describe('REST API adapters', () => {
     configure({ veloApiUrl: 'https://arrow.local/velo' });
     const adapter = TestBed.inject(VeloAdapterService);
 
-    await adapter.getSummary();
+    const summary = await adapter.getSummary();
 
-    expect(adapter.status().message).toBe('status.velo.apiFailed');
+    expect(summary).toBeNull();
+    expect(adapter.status()).toMatchObject({ kind: 'error', message: 'status.velo.apiFailed' });
   });
 
   it('should read time, clients and projects from the dash API', async () => {
@@ -152,17 +152,17 @@ describe('REST API adapters', () => {
       openProjects: 3,
       source: 'api',
     });
-    expect(adapter.status().kind).toBe('api');
+    expect(adapter.status()?.kind).toBe('api');
   });
 
-  it('should fall back to mock data when the dash API returns an unexpected shape', async () => {
+  it('should show no data and a warning when the dash API returns an unexpected shape', async () => {
     stubApi({ ...DASH_ROUTES, '/api/v1/dashboard': { today: null } });
     configure({ dashApiUrl: 'https://arrow.local/dash' });
     const adapter = TestBed.inject(DashAdapterService);
 
     const summary = await adapter.getSummary();
 
-    expect(summary).toEqual(MOCK_DASH_SUMMARY);
-    expect(adapter.status().message).toBe('status.dash.apiInvalidShape');
+    expect(summary).toBeNull();
+    expect(adapter.status()?.message).toBe('status.dash.apiInvalidShape');
   });
 });

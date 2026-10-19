@@ -25,7 +25,9 @@
 
 <section class="dashboard-grid">
   <app-widget-card class="span-4" [title]="'dashboard.calendar' | t" [eyebrow]="'common.today' | t">
-    <app-source-badge [source]="calendarSource()" />
+    @if (calendarSource(); as source) {
+      <app-source-badge [source]="source" />
+    }
     <app-integration-notice [status]="calendarStatus()" />
     <div class="event-list">
       @for (event of nextEvents(); track event.id) {
@@ -46,9 +48,9 @@
     [title]="'dashboard.veloCashFlow' | t"
     [eyebrow]="'common.forecast' | t"
   >
+    <app-integration-notice [status]="veloStatus()" />
     @if (velo(); as summary) {
       <app-source-badge [source]="summary.source" />
-      <app-integration-notice [status]="veloStatus()" />
       <p class="metric">
         {{
           summary.forecastCashFlow | currency: summary.currency : 'symbol' : '1.0-0' : i18n.locale()
@@ -66,9 +68,9 @@
   </app-widget-card>
 
   <app-widget-card class="span-4" [title]="'dashboard.dashTime' | t" [eyebrow]="'common.today' | t">
+    <app-integration-notice [status]="dashStatus()" />
     @if (dash(); as summary) {
       <app-source-badge [source]="summary.source" />
-      <app-integration-notice [status]="dashStatus()" />
       <p class="metric">
         {{ summary.trackedTodayMinutes / 60 | number: '1.1-1' : i18n.locale() }} h
       </p>
@@ -93,6 +95,7 @@
     [title]="'dashboard.dashCustomers' | t"
     [eyebrow]="'dashboard.pipeline' | t"
   >
+    <app-integration-notice [status]="dashStatus()" />
     @if (dash(); as summary) {
       <div class="customer-grid">
         <div>

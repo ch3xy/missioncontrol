@@ -11,7 +11,7 @@
   line-height: 1.4;
 }
 
-.notice--fallback {
+.notice--error {
   background: var(--warn-bg);
 }
 
@@ -21,7 +21,7 @@
   color: var(--info);
 }
 
-.notice--fallback .notice__icon {
+.notice--error .notice__icon {
   color: var(--warn);
 }
 

@@ -23,11 +23,12 @@
   </div>
 </header>
 
+<app-integration-notice [status]="status()" />
+
 @if (summary(); as data) {
   <section class="dashboard-grid">
     <app-widget-card class="span-6" [title]="'velo.cashFlow' | t" [eyebrow]="'common.current' | t">
       <app-source-badge [source]="data.source" />
-      <app-integration-notice [status]="status()" />
       <p class="metric">
         {{ data.currentCashFlow | currency: data.currency : 'symbol' : '1.0-0' : i18n.locale() }}
       </p>
@@ -36,7 +37,6 @@
 
     <app-widget-card class="span-6" [title]="'common.forecast' | t" [eyebrow]="data.periodLabel">
       <app-source-badge [source]="data.source" />
-      <app-integration-notice [status]="status()" />
       <p class="metric">
         {{ data.forecastCashFlow | currency: data.currency : 'symbol' : '1.0-0' : i18n.locale() }}
       </p>

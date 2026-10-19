@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { LucideRefreshCw } from '@lucide/angular';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { TranslationKey } from '../../core/i18n/translations';
 import { CalendarEvent } from '../../core/models/calendar.model';
 import { CalendarAdapterService } from '../../core/services/calendar-adapter.service';
 import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
@@ -26,9 +25,15 @@ export class CalendarPage {
   protected readonly i18n = inject(I18nService);
   private readonly calendarAdapter = inject(CalendarAdapterService);
   protected readonly status = this.calendarAdapter.status;
-  protected readonly statusLabel = computed<TranslationKey>(() => `status.${this.status().kind}`);
+  protected readonly statusLabel = computed(() => {
+    const status = this.status();
+    return status ? this.i18n.t(`status.${status.kind}`) : '';
+  });
   protected readonly events = signal<CalendarEvent[]>([]);
-  protected readonly source = signal<CalendarEvent['source']>('mock');
+  protected readonly source = computed(() => this.events()[0]?.source ?? null);
+  protected readonly hasSource = computed(
+    () => this.status()?.kind === 'ics' || this.status()?.kind === 'local-json',
+  );
   protected readonly isLoading = signal(false);
   protected readonly lastUpdated = signal<Date | null>(null);
   protected readonly eventGroups = computed<CalendarEventGroup[]>(() => {
@@ -57,7 +62,6 @@ export class CalendarPage {
     this.isLoading.set(true);
     const events = await this.calendarAdapter.getEvents();
     this.events.set(events);
-    this.source.set(events[0]?.source ?? 'mock');
     this.lastUpdated.set(new Date());
     this.isLoading.set(false);
   }

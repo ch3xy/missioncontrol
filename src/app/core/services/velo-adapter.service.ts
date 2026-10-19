@@ -1,9 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { I18nService } from '../i18n/i18n.service';
 import { TranslationKey } from '../i18n/translations';
-import { IntegrationStatus, MOCK_STATUS } from '../models/integration-status.model';
+import { IntegrationStatus } from '../models/integration-status.model';
 import { CashFlowPoint, VeloAdapter, VeloSummary } from '../models/velo.model';
-import { MOCK_VELO_SUMMARY } from '../mock-data/velo.mock';
 import { isRecord, readLocalJsonResult } from './local-json-source';
 import { SettingsService } from './settings.service';
 import { VELO_FORECAST_HORIZON_DAYS, VeloApiResult, readVeloApiSummary } from './velo-api';
@@ -12,12 +11,12 @@ import { VELO_FORECAST_HORIZON_DAYS, VeloApiResult, readVeloApiSummary } from '.
 export class VeloAdapterService implements VeloAdapter {
   private readonly settingsService = inject(SettingsService);
   private readonly i18n = inject(I18nService);
-  private readonly statusState = signal<IntegrationStatus>(MOCK_STATUS);
+  private readonly statusState = signal<IntegrationStatus | null>(null);
 
   readonly status = this.statusState.asReadonly();
 
-  /** Priority: velo REST API → local JSON → mock data. */
-  async getSummary(): Promise<VeloSummary> {
+  /** Priority: velo REST API → local JSON. No data without a working source. */
+  async getSummary(): Promise<VeloSummary | null> {
     const apiUrl = this.settingsService.settings().veloApiUrl;
 
     if (apiUrl?.trim()) {
@@ -27,8 +26,8 @@ export class VeloAdapterService implements VeloAdapter {
     const url = this.settingsService.settings().veloSourceUrl;
 
     if (!url?.trim()) {
-      this.statusState.set(MOCK_STATUS);
-      return cloneVeloSummary(MOCK_VELO_SUMMARY);
+      this.statusState.set({ kind: 'unconfigured', message: 'status.velo.unconfigured' });
+      return null;
     }
 
     const result = await readLocalJsonResult(url, isVeloSummary);
@@ -43,14 +42,14 @@ export class VeloAdapterService implements VeloAdapter {
     }
 
     this.statusState.set({
-      kind: 'fallback',
+      kind: 'error',
       message: result.error === 'invalid-shape' ? 'status.velo.invalidShape' : 'status.velo.failed',
       requestedUrl: url,
     });
-    return cloneVeloSummary(MOCK_VELO_SUMMARY);
+    return null;
   }
 
-  private async readApi(apiUrl: string): Promise<VeloSummary> {
+  private async readApi(apiUrl: string): Promise<VeloSummary | null> {
     const periodLabel = this.i18n.t('velo.nextDays', { days: VELO_FORECAST_HORIZON_DAYS });
     const result = await readVeloApiSummary(apiUrl, periodLabel);
 
@@ -60,11 +59,11 @@ export class VeloAdapterService implements VeloAdapter {
     }
 
     this.statusState.set({
-      kind: 'fallback',
+      kind: 'error',
       message: VELO_API_ERROR_MESSAGES[result.error ?? 'network'],
       requestedUrl: apiUrl,
     });
-    return cloneVeloSummary(MOCK_VELO_SUMMARY);
+    return null;
   }
 }
 
@@ -93,7 +92,7 @@ function isVeloSummary(value: unknown): value is VeloSummary {
     typeof value['forecastCashFlow'] === 'number' &&
     value['currency'] === 'EUR' &&
     typeof value['periodLabel'] === 'string' &&
-    (value['source'] === 'mock' || value['source'] === 'local-json') &&
+    value['source'] === 'local-json' &&
     Array.isArray(value['trend']) &&
     value['trend'].every(isCashFlowPoint)
   );

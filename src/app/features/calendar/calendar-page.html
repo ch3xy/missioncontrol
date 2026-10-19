@@ -19,8 +19,10 @@
   </div>
 </header>
 
-<app-widget-card [title]="'calendar.upcoming' | t" [eyebrow]="statusLabel() | t">
-  <app-source-badge [source]="source()" />
+<app-widget-card [title]="'calendar.upcoming' | t" [eyebrow]="statusLabel()">
+  @if (source(); as source) {
+    <app-source-badge [source]="source" />
+  }
   <app-integration-notice [status]="status()" />
   <div class="appointments">
     @for (group of eventGroups(); track group.dateKey) {
@@ -51,7 +53,9 @@
         </div>
       </section>
     } @empty {
-      <p class="empty">{{ 'calendar.empty' | t }}</p>
+      @if (hasSource()) {
+        <p class="empty">{{ 'calendar.empty' | t }}</p>
+      }
     }
   </div>
 </app-widget-card>

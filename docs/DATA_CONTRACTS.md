@@ -13,7 +13,7 @@ export interface CalendarEvent {
   project?: string;
   customer?: string;
   location?: string;
-  source: 'mock' | 'ics' | 'local-json';
+  source: 'ics' | 'local-json';
 }
 ```
 
@@ -31,7 +31,7 @@ export interface VeloSummary {
   currency: 'EUR';
   periodLabel: string;
   trend: CashFlowPoint[];
-  source: 'mock' | 'local-json';
+  source: 'local-json' | 'api';
 }
 ```
 
@@ -43,7 +43,7 @@ export interface DashSummary {
   targetTodayMinutes: number;
   activeCustomers: number;
   openProjects: number;
-  source: 'mock' | 'local-json';
+  source: 'local-json' | 'api';
 }
 ```
 
@@ -68,7 +68,7 @@ export interface MissionControlSettings {
   veloUrl: string;
   dashUrl: string;
   sevDeskUrl: string;
-  calendarSource: 'mock' | 'ics' | 'local-json';
+  calendarSource: 'none' | 'ics' | 'local-json';
   calendarSourceUrl?: string;
   veloSourceUrl?: string;
   dashSourceUrl?: string;

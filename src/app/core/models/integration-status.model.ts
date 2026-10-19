@@ -1,6 +1,6 @@
 import { TranslationKey } from '../i18n/translations';
 
-export type IntegrationStatusKind = 'mock' | 'local-json' | 'api' | 'ics' | 'fallback';
+export type IntegrationStatusKind = 'unconfigured' | 'local-json' | 'api' | 'ics' | 'error';
 
 /** The label is derived from `kind` (`status.<kind>`); `message` is a translation key. */
 export interface IntegrationStatus {
@@ -8,8 +8,3 @@ export interface IntegrationStatus {
   message: TranslationKey;
   requestedUrl?: string;
 }
-
-export const MOCK_STATUS: IntegrationStatus = {
-  kind: 'mock',
-  message: 'status.mockMessage',
-};

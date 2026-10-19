@@ -1,4 +1,5 @@
-export type CalendarSource = 'mock' | 'ics' | 'local-json';
+/** Configured calendar source; `none` shows no appointments. */
+export type CalendarSource = 'none' | 'ics' | 'local-json';
 
 export interface CalendarEvent {
   id: string;
@@ -8,7 +9,7 @@ export interface CalendarEvent {
   project?: string;
   customer?: string;
   location?: string;
-  source: CalendarSource;
+  source: Exclude<CalendarSource, 'none'>;
 }
 
 export interface CalendarAdapter {

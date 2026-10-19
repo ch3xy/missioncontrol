@@ -3,6 +3,21 @@
 Kurzprotokoll von Produkt- und Architekturentscheidungen, die sich nicht aus dem Code ablesen lassen.
 Neueste oben.
 
+## 2026-10-19 — Keine Mock-Daten mehr
+
+**Status:** umgesetzt.
+
+**Entscheidung:** Die eingebauten Mock-Daten für Kalender, velo und dash sind entfernt. Ohne konfigurierte
+Quelle zeigt eine Karte „Nicht konfiguriert“; ist eine Quelle nicht erreichbar oder liefert sie unerwartete
+Daten, zeigt sie eine Warnung und keine Zahlen.
+
+**Warum:** Seit velo und dash per REST-API angebunden sind, würde ein Mock-Fallback bei einem API-Ausfall
+erfundene Zahlen neben echten zeigen. Das ist irreführender als eine leere Karte mit Warnung.
+
+**Folgen:** Ersetzt Regel 8 in `AGENTS.md` („Use mock data when real integrations are unavailable“).
+Kalenderquelle `mock` heißt jetzt `none` (Standard); alte Einstellungen werden beim Laden umgestellt.
+Lokale JSON- und ICS-Quellen samt Beispielen in `public/examples/` bleiben erhalten.
+
 ## 2026-10-19 — KI-Nutzungskarte (Claude / ChatGPT) zurückgestellt
 
 **Status:** zurückgestellt, nicht umgesetzt.

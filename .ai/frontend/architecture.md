@@ -82,7 +82,9 @@ Jeder Zugriff ist in `try/catch` gekapselt (Private Mode, blockierter Storage).
 
 Externe Integrationen liegen hinter typisierten Adapter-Services (`calendar-adapter`, `velo-adapter`,
 `dash-adapter`). Reihenfolge: REST-API von velo/dash (`velo-api.ts`, `dash-api.ts`, nur lesend) →
-Local JSON / ICS → Mock-Fallback mit `IntegrationStatus`. Verträge: `docs/LOCAL_JSON_CONTRACTS.md`. Keine Secrets, keine privaten URLs im Code.
+Local JSON / ICS. Es gibt keine Mock-Daten: ohne Quelle liefern die Adapter `null` bzw. `[]` und
+setzen `IntegrationStatus` auf `unconfigured`, bei Fehlern auf `error` (Warnung, keine Zahlen). Der
+Status ist `null`, solange noch geladen wird. Verträge: `docs/LOCAL_JSON_CONTRACTS.md`. Keine Secrets, keine privaten URLs im Code.
 
 API-URLs sind die Basis-URLs der Apps (`https://arrow.local/velo`). Auf dem Server liegen alle Apps hinter
 Caddy auf einem Host (same-origin, kein CORS); im Dev-Server spiegelt `proxy.conf.mjs` das

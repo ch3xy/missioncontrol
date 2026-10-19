@@ -2,7 +2,7 @@
 
 Mission Control can read optional local JSON files or endpoints for Calendar, Velo, and Dash.
 
-These sources are configured in Settings. If a URL is empty, unreachable, blocked by CORS, or returns a shape that does not match the contract, Mission Control keeps working and falls back to built-in mock data.
+These sources are configured in Settings. If a URL is empty, unreachable, blocked by CORS, or returns a shape that does not match the contract, Mission Control keeps working: the card shows a notice (not configured) or a warning (unreachable, invalid) and no data. There is no built-in mock data.
 
 Calendar can also read a basic ICS URL when the Calendar source is set to `ICS URL`.
 
@@ -26,7 +26,7 @@ Required fields:
 - `id`: string
 - `title`: string
 - `startsAt`: ISO date-time string
-- `source`: `mock`, `ics`, or `local-json`
+- `source`: `ics` or `local-json`
 
 Optional fields:
 
@@ -68,7 +68,7 @@ Required fields:
 - `forecastCashFlow`: number
 - `currency`: `EUR`
 - `periodLabel`: string
-- `source`: `mock` or `local-json`
+- `source`: `local-json`
 - `trend`: array of `{ "date": string, "value": number }`
 
 See `public/examples/velo.json`.
@@ -83,13 +83,13 @@ Required fields:
 - `targetTodayMinutes`: number
 - `activeCustomers`: number
 - `openProjects`: number
-- `source`: `mock` or `local-json`
+- `source`: `local-json`
 
 See `public/examples/dash.json`.
 
 ## Velo and Dash REST APIs
 
-Instead of a JSON file, mission control can read the existing REST APIs of velo and dash directly (Settings → Live-Daten (API)). The configured value is the app's base URL, for example `https://arrow.local/velo`. An API URL takes precedence over the local JSON URL; if the API fails, mock data is shown.
+Instead of a JSON file, mission control can read the existing REST APIs of velo and dash directly (Settings → Live-Daten (API)). The configured value is the app's base URL, for example `https://arrow.local/velo`. An API URL takes precedence over the local JSON URL; if the API fails, the card shows a warning and no data.
 
 Velo (all accounts in EUR are summed; other currencies are skipped):
 

@@ -3,9 +3,10 @@ export interface DashSummary {
   targetTodayMinutes: number;
   activeCustomers: number;
   openProjects: number;
-  source: 'mock' | 'local-json' | 'api';
+  source: 'local-json' | 'api';
 }
 
 export interface DashAdapter {
-  getSummary(): Promise<DashSummary>;
+  /** `null` when no source is configured or the source failed; see the adapter's status. */
+  getSummary(): Promise<DashSummary | null>;
 }

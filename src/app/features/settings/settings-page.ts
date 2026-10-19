@@ -57,8 +57,8 @@ export class SettingsPage {
   protected readonly sourceHint = computed(() => {
     const settings = this.savedSettings();
 
-    if (settings.calendarSource === 'mock') {
-      return this.i18n.t('settings.hint.mock');
+    if (settings.calendarSource === 'none') {
+      return this.i18n.t('settings.hint.none');
     }
 
     if (settings.calendarSource === 'ics') {
@@ -72,7 +72,7 @@ export class SettingsPage {
     veloUrl: ['', [Validators.required, httpUrlValidator()]],
     dashUrl: ['', [Validators.required, httpUrlValidator()]],
     sevDeskUrl: ['', [Validators.required, httpUrlValidator()]],
-    calendarSource: ['mock' as MissionControlSettings['calendarSource']],
+    calendarSource: ['none' as MissionControlSettings['calendarSource']],
     calendarSourceUrl: ['', [httpUrlValidator({ optional: true })]],
     veloSourceUrl: ['', [httpUrlValidator({ optional: true })]],
     dashSourceUrl: ['', [httpUrlValidator({ optional: true })]],

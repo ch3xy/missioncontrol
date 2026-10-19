@@ -1,4 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
+import { CalendarSource } from '../models/calendar.model';
 import { DEFAULT_SETTINGS, MissionControlSettings } from '../models/settings.model';
 
 const STORAGE_KEY = 'mission-control.settings';
@@ -74,7 +75,9 @@ export class SettingsService {
       veloUrl: settings.veloUrl.trim() || DEFAULT_SETTINGS.veloUrl,
       dashUrl: settings.dashUrl.trim() || DEFAULT_SETTINGS.dashUrl,
       sevDeskUrl: settings.sevDeskUrl.trim() || DEFAULT_SETTINGS.sevDeskUrl,
-      calendarSource: settings.calendarSource ?? DEFAULT_SETTINGS.calendarSource,
+      calendarSource: isCalendarSource(settings.calendarSource)
+        ? settings.calendarSource
+        : DEFAULT_SETTINGS.calendarSource,
       dailyTargetHours: isValidTargetHours(settings.dailyTargetHours)
         ? settings.dailyTargetHours
         : DEFAULT_SETTINGS.dailyTargetHours,
@@ -84,6 +87,11 @@ export class SettingsService {
       localTool2Url: settings.localTool2Url.trim(),
     };
   }
+}
+
+/** Also maps the removed `mock` source of older settings to the default. */
+function isCalendarSource(value: unknown): value is CalendarSource {
+  return value === 'none' || value === 'ics' || value === 'local-json';
 }
 
 function isValidTargetHours(value: unknown): value is number {

@@ -12,11 +12,17 @@ import { IntegrationStatus } from '../../../core/models/integration-status.model
   styleUrl: './integration-notice.scss',
 })
 export class IntegrationNotice {
-  readonly status = input.required<IntegrationStatus>();
+  /** `null` while the source is still loading. */
+  readonly status = input.required<IntegrationStatus | null>();
 
-  protected readonly label = computed<TranslationKey>(() => `status.${this.status().kind}`);
+  /** Only problems are shown; loaded sources are indicated by the source badge. */
+  protected readonly visibleStatus = computed(() => {
+    const status = this.status();
+    return status?.kind === 'unconfigured' || status?.kind === 'error' ? status : null;
+  });
 
-  protected readonly isVisible = computed(
-    () => this.status().kind !== 'local-json' && this.status().kind !== 'ics',
-  );
+  protected readonly label = computed<TranslationKey | null>(() => {
+    const status = this.visibleStatus();
+    return status ? `status.${status.kind}` : null;
+  });
 }

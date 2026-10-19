@@ -23,11 +23,12 @@
   </div>
 </header>
 
+<app-integration-notice [status]="status()" />
+
 @if (summary(); as data) {
   <section class="dashboard-grid">
     <app-widget-card class="span-4" [title]="'dash.trackedToday' | t" [eyebrow]="'dash.time' | t">
       <app-source-badge [source]="data.source" />
-      <app-integration-notice [status]="status()" />
       <p class="metric">{{ data.trackedTodayMinutes / 60 | number: '1.1-1' : i18n.locale() }} h</p>
       <div class="progress" [attr.aria-label]="'common.timeProgress' | t">
         <span [style.width.%]="progress()"></span>
@@ -37,7 +38,6 @@
 
     <app-widget-card class="span-4" [title]="'dash.customers' | t" [eyebrow]="'dash.active' | t">
       <app-source-badge [source]="data.source" />
-      <app-integration-notice [status]="status()" />
       <p class="metric">{{ data.activeCustomers }}</p>
       <p class="muted">{{ 'dash.customersHint' | t }}</p>
     </app-widget-card>
@@ -48,7 +48,6 @@
       [eyebrow]="'dash.open.eyebrow' | t"
     >
       <app-source-badge [source]="data.source" />
-      <app-integration-notice [status]="status()" />
       <p class="metric">{{ data.openProjects }}</p>
       <p class="muted">{{ 'dash.projectsHint' | t }}</p>
     </app-widget-card>

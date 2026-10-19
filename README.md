@@ -13,11 +13,10 @@ It is intentionally frontend-only for the MVP. There is no backend, authenticati
 - Configurable external app URLs for Velo, Dash, and sevDesk
 - Optional local tool shortcuts
 - LocalStorage-backed settings with export/import backup
-- Mock data adapters for all data widgets
 - Live data from the velo and dash REST APIs (read-only)
 - Optional browser-readable local JSON sources for Calendar, Velo, and Dash
 - Basic browser-readable ICS calendar source support
-- Fallback notices when configured sources are missing or invalid
+- Notices when a source is not configured, and warnings when it is unreachable or invalid (no mock data)
 - Bundled JSON and ICS examples in `public/examples/`
 
 ## Requirements
@@ -91,6 +90,6 @@ These values are configurable in Settings.
 ## MVP Boundaries
 
 - sevDesk is an external shortcut only.
-- Velo and Dash use mock data unless an API URL or a local JSON URL is configured and readable by the browser.
+- There is no built-in mock data: without a configured, reachable source a card shows a notice instead of numbers.
 - ICS support covers basic `VEVENT` parsing and does not yet handle recurrence rules or advanced timezone behavior.
 - No secrets, tokens, API keys, or private URLs should be committed.

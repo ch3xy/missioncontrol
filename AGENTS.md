@@ -56,7 +56,7 @@ Codex should:
 5. Run available checks after meaningful changes.
 6. Fix errors it introduced.
 7. Avoid asking for permission unless blocked by missing credentials, destructive actions, or impossible requirements.
-8. Use mock data when real integrations are unavailable.
+8. Do not use mock data: when a real integration is unconfigured or unavailable, show a notice or warning instead (decision 2026-10-19, see `.ai/decisions.md`).
 9. Keep all changes frontend-only.
 10. Document assumptions in `docs/ASSUMPTIONS.md`.
 

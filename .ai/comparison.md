@@ -9,7 +9,7 @@ Stand: 2026-10-19. Ziel: Alle drei Arrow-Produkte sollen wie aus einem Guss wirk
 |---|---|---|---|
 | Fachlich | Cashflow-Forecast, Finanzen | Zeiterfassung, Kunden, Projekte, Reports | Cockpit: Kalender, Zusammenfassungen aus velo/dash, Shortcuts |
 | Descriptor im Logo | „cash flow“ | „time tracking“ | „cockpit“ |
-| Datenhaltung | PostgreSQL | PostgreSQL | LocalStorage + Mock/Local-JSON/ICS |
+| Datenhaltung | PostgreSQL | PostgreSQL | LocalStorage + REST-APIs von velo/dash, Local-JSON/ICS |
 
 ## Tech-Stack
 
@@ -50,7 +50,7 @@ Stand: 2026-10-19. Ziel: Alle drei Arrow-Produkte sollen wie aus einem Guss wirk
 | Theme-Service | `core/theme.service.ts`, Key `dash-theme` | `core/services/theme.service.ts`, Key `missioncontrol-theme` |
 | Sidebar-Status | Key `dash-nav-collapsed` | Key `missioncontrol-nav-collapsed` |
 | Routing | Lazy Routes | Lazy Routes unter Shell-Route |
-| Datenzugriff | HTTP-Services gegen Backend | typisierte Adapter (Mock → Local JSON/ICS) |
+| Datenzugriff | HTTP-Services gegen Backend | typisierte Adapter (REST-API → Local JSON/ICS, keine Mocks) |
 
 ## Bewusste Abweichungen
 

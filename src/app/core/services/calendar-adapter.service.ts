@@ -1,7 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { IntegrationStatus, MOCK_STATUS } from '../models/integration-status.model';
+import { IntegrationStatus } from '../models/integration-status.model';
 import { CalendarAdapter, CalendarEvent } from '../models/calendar.model';
-import { MOCK_CALENDAR_EVENTS } from '../mock-data/calendar.mock';
 import { parseIcsEvents } from './ics-parser';
 import { readLocalJsonResult, isRecord } from './local-json-source';
 import { SettingsService } from './settings.service';
@@ -10,10 +9,11 @@ import { TranslationKey } from '../i18n/translations';
 @Injectable({ providedIn: 'root' })
 export class CalendarAdapterService implements CalendarAdapter {
   private readonly settingsService = inject(SettingsService);
-  private readonly statusState = signal<IntegrationStatus>(MOCK_STATUS);
+  private readonly statusState = signal<IntegrationStatus | null>(null);
 
   readonly status = this.statusState.asReadonly();
 
+  /** Empty when no source is configured or the source failed; see `status`. */
   async getEvents(): Promise<CalendarEvent[]> {
     const settings = this.settingsService.settings();
 
@@ -22,8 +22,8 @@ export class CalendarAdapterService implements CalendarAdapter {
     }
 
     if (settings.calendarSource !== 'local-json') {
-      this.statusState.set(MOCK_STATUS);
-      return this.sortEvents(MOCK_CALENDAR_EVENTS);
+      this.statusState.set({ kind: 'unconfigured', message: 'status.calendar.unconfigured' });
+      return [];
     }
 
     const result = await readLocalJsonResult(settings.calendarSourceUrl, isCalendarEventCollection);
@@ -38,20 +38,20 @@ export class CalendarAdapterService implements CalendarAdapter {
     }
 
     this.statusState.set({
-      kind: 'fallback',
-      message: fallbackMessage(result.error),
+      kind: result.error === 'empty-url' ? 'unconfigured' : 'error',
+      message: errorMessage(result.error),
       requestedUrl: settings.calendarSourceUrl,
     });
-    return this.sortEvents(MOCK_CALENDAR_EVENTS);
+    return [];
   }
 
   private async loadIcsEvents(url: string | undefined): Promise<CalendarEvent[]> {
     if (!url?.trim()) {
       this.statusState.set({
-        kind: 'fallback',
+        kind: 'unconfigured',
         message: 'status.calendar.icsEmptyUrl',
       });
-      return this.sortEvents(MOCK_CALENDAR_EVENTS);
+      return [];
     }
 
     try {
@@ -59,22 +59,22 @@ export class CalendarAdapterService implements CalendarAdapter {
 
       if (!response.ok) {
         this.statusState.set({
-          kind: 'fallback',
+          kind: 'error',
           message: 'status.calendar.icsFailed',
           requestedUrl: url,
         });
-        return this.sortEvents(MOCK_CALENDAR_EVENTS);
+        return [];
       }
 
       const events = parseIcsEvents(await response.text());
 
       if (events.length === 0) {
         this.statusState.set({
-          kind: 'fallback',
+          kind: 'error',
           message: 'status.calendar.icsNoEvents',
           requestedUrl: url,
         });
-        return this.sortEvents(MOCK_CALENDAR_EVENTS);
+        return [];
       }
 
       this.statusState.set({
@@ -85,11 +85,11 @@ export class CalendarAdapterService implements CalendarAdapter {
       return this.sortEvents(events);
     } catch {
       this.statusState.set({
-        kind: 'fallback',
+        kind: 'error',
         message: 'status.calendar.icsFailed',
         requestedUrl: url,
       });
-      return this.sortEvents(MOCK_CALENDAR_EVENTS);
+      return [];
     }
   }
 
@@ -122,14 +122,14 @@ function isCalendarEvent(value: unknown): value is CalendarEvent {
 }
 
 function isCalendarSource(value: unknown): value is CalendarEvent['source'] {
-  return value === 'mock' || value === 'ics' || value === 'local-json';
+  return value === 'ics' || value === 'local-json';
 }
 
 function optionalString(value: unknown): boolean {
   return value === undefined || typeof value === 'string';
 }
 
-function fallbackMessage(error: string | undefined): TranslationKey {
+function errorMessage(error: string | undefined): TranslationKey {
   if (error === 'empty-url') {
     return 'status.calendar.jsonEmptyUrl';
   }

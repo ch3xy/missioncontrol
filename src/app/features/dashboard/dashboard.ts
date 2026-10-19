@@ -57,7 +57,7 @@ export class Dashboard {
   protected readonly dashStatus = this.dashAdapter.status;
   protected readonly shortcuts = this.shortcutService.shortcuts;
   protected readonly nextEvents = computed(() => this.events().slice(0, 3));
-  protected readonly calendarSource = computed(() => this.events()[0]?.source ?? 'mock');
+  protected readonly calendarSource = computed(() => this.events()[0]?.source ?? null);
   protected readonly dashProgress = computed(() => {
     const summary = this.dash();
 

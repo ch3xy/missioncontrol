@@ -24,7 +24,7 @@ export const DEFAULT_SETTINGS: MissionControlSettings = {
   veloUrl: 'http://localhost:4201',
   dashUrl: 'http://localhost:4202',
   sevDeskUrl: 'https://my.sevdesk.de',
-  calendarSource: 'mock',
+  calendarSource: 'none',
   dailyTargetHours: 8,
   localTool1Label: 'Local Tool 1',
   localTool1Url: '',
