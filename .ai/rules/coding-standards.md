@@ -16,6 +16,8 @@ Ergänzt `AGENTS.md`. Entspricht dem Frontend-Teil von `dash/.ai/rules/coding-st
 - Template, Styles und Klasse getrennt (`.html`, `.scss`, `.ts`); Komponenten klein halten.
 - Zustand in Signals; Zoneless erfordert, dass asynchrone Ergebnisse in Signals landen.
 - Lucide-Icons einzeln importieren (Tree-Shaking), keine Icon-Fonts, keine Unicode-Glyphen als Icons.
+- Keine hart codierten UI-Texte: neue Texte als Key in `core/i18n/translations.ts` (DE und EN) anlegen und über
+  die `t`-Pipe bzw. `I18nService.t()` ausgeben; Datums-/Zahlen-Pipes mit `i18n.locale()` aufrufen.
 
 ## Styles
 

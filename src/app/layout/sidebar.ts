@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import {
   LucideCalendarDays,
@@ -14,6 +14,8 @@ import {
   LucideWallet,
 } from '@lucide/angular';
 import { version } from '../../../package.json';
+import { I18nService } from '../core/i18n/i18n.service';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
 import { ShortcutService } from '../core/services/shortcut.service';
 import { ThemeService } from '../core/services/theme.service';
 
@@ -25,6 +27,7 @@ interface NavItem {
 }
 
 interface NavGroup {
+  id: string;
   label: string;
   items: NavItem[];
 }
@@ -40,6 +43,7 @@ interface NavGroup {
     LucideChevronRight,
     LucideExternalLink,
     LucideSettings,
+    TranslatePipe,
   ],
   host: { '[style.display]': '"contents"' },
   templateUrl: './sidebar.html',
@@ -47,6 +51,7 @@ interface NavGroup {
 })
 export class Sidebar {
   private readonly shortcutService = inject(ShortcutService);
+  private readonly i18n = inject(I18nService);
   protected readonly theme = inject(ThemeService);
 
   readonly collapsed = input(false);
@@ -55,23 +60,25 @@ export class Sidebar {
   readonly navigate = output();
 
   protected readonly version = version;
-  protected readonly groups: NavGroup[] = [
+  protected readonly groups = computed<NavGroup[]>(() => [
     {
-      label: 'Overview',
+      id: 'overview',
+      label: this.i18n.t('nav.group.overview'),
       items: [
-        { label: 'Dashboard', icon: LucideLayoutDashboard, route: '/' },
-        { label: 'Calendar', icon: LucideCalendarDays, route: '/calendar' },
+        { label: this.i18n.t('nav.dashboard'), icon: LucideLayoutDashboard, route: '/' },
+        { label: this.i18n.t('nav.calendar'), icon: LucideCalendarDays, route: '/calendar' },
       ],
     },
     {
-      label: 'Apps',
+      id: 'apps',
+      label: this.i18n.t('nav.group.apps'),
       items: [
         { label: 'velo', icon: LucideWallet, route: '/velo' },
         { label: 'dash', icon: LucideTimer, route: '/dash' },
         { label: 'sevDesk', icon: LucideReceipt, externalKey: 'sevdesk' },
       ],
     },
-  ];
+  ]);
 
   protected openExternal(item: NavItem): void {
     if (item.externalKey !== 'sevdesk') {

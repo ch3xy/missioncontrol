@@ -1,45 +1,50 @@
 <header class="page-header">
   <div>
     <h1>Velo</h1>
-    <p>Cash-flow summary from mock data or a browser-readable local JSON URL.</p>
+    <p>{{ 'velo.lead' | t }}</p>
     @if (lastUpdated(); as updated) {
-      <p class="page-meta">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+      <p class="page-meta">
+        {{
+          'common.updated'
+            | t: { time: (updated | date: ('format.timeSeconds' | t) : undefined : i18n.locale()) }
+        }}
+      </p>
     }
   </div>
   <div class="page-controls">
     <button class="btn" type="button" [disabled]="isLoading()" (click)="refresh()">
       <svg lucideRefreshCw></svg>
-      {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
+      {{ (isLoading() ? 'common.refreshing' : 'common.refresh') | t }}
     </button>
     <button class="btn btn-primary" type="button" (click)="openVelo()">
       <svg lucideExternalLink></svg>
-      Open velo
+      {{ 'velo.open' | t }}
     </button>
   </div>
 </header>
 
 @if (summary(); as data) {
   <section class="dashboard-grid">
-    <app-widget-card class="span-6" title="Cash Flow" eyebrow="Current">
+    <app-widget-card class="span-6" [title]="'velo.cashFlow' | t" [eyebrow]="'common.current' | t">
       <app-source-badge [source]="data.source" />
       <app-integration-notice [status]="status()" />
       <p class="metric">
-        {{ data.currentCashFlow | currency: data.currency : 'symbol' : '1.0-0' }}
+        {{ data.currentCashFlow | currency: data.currency : 'symbol' : '1.0-0' : i18n.locale() }}
       </p>
-      <p class="muted">Current cash-flow snapshot from {{ data.source }} source.</p>
+      <p class="muted">{{ 'velo.snapshot' | t: { source: data.source } }}</p>
     </app-widget-card>
 
-    <app-widget-card class="span-6" title="Forecast" [eyebrow]="data.periodLabel">
+    <app-widget-card class="span-6" [title]="'common.forecast' | t" [eyebrow]="data.periodLabel">
       <app-source-badge [source]="data.source" />
       <app-integration-notice [status]="status()" />
       <p class="metric">
-        {{ data.forecastCashFlow | currency: data.currency : 'symbol' : '1.0-0' }}
+        {{ data.forecastCashFlow | currency: data.currency : 'symbol' : '1.0-0' : i18n.locale() }}
       </p>
       <app-trend-line [points]="data.trend" />
     </app-widget-card>
   </section>
 }
 
-@if (launchError()) {
-  <p class="text-error">{{ launchError() }}</p>
+@if (launchError(); as name) {
+  <p class="text-error">{{ 'common.noValidUrl' | t: { name } }}</p>
 }

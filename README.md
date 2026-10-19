@@ -7,6 +7,7 @@ It is intentionally frontend-only for the MVP. There is no backend, authenticati
 ## Features
 
 - App shell in the shared Arrow product design (velo/dash): collapsible sidebar, compact top bar, light/dark/system theme
+- German UI by default (de-AT date and number formats), switchable to English in Settings
 - Dashboard widgets for Calendar, Velo cash flow, Dash time tracking, Dash customers, and Quick Access
 - Detail pages for Calendar, Velo, and Dash
 - Configurable external app URLs for Velo, Dash, and sevDesk

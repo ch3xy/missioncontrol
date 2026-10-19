@@ -29,8 +29,8 @@ describe('Shell', () => {
     const groups = Array.from(element.querySelectorAll('.nav-group-label')).map((label) =>
       label.textContent?.trim(),
     );
-    expect(groups).toEqual(['Overview', 'Apps']);
-    expect(element.querySelector('.nav-footer')?.textContent).toContain('Settings');
+    expect(groups).toEqual(['Übersicht', 'Apps']);
+    expect(element.querySelector('.nav-footer')?.textContent).toContain('Einstellungen');
     expect(element.querySelector('.nav-version')?.textContent).toMatch(/^v\d/);
   });
 

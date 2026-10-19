@@ -1,51 +1,60 @@
 <header class="page-header">
   <div>
     <h1>Dash</h1>
-    <p>Time tracking, customers and projects from mock data or a local JSON URL.</p>
+    <p>{{ 'dash.lead' | t }}</p>
     @if (lastUpdated(); as updated) {
-      <p class="page-meta">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+      <p class="page-meta">
+        {{
+          'common.updated'
+            | t: { time: (updated | date: ('format.timeSeconds' | t) : undefined : i18n.locale()) }
+        }}
+      </p>
     }
   </div>
   <div class="page-controls">
     <button class="btn" type="button" [disabled]="isLoading()" (click)="refresh()">
       <svg lucideRefreshCw></svg>
-      {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
+      {{ (isLoading() ? 'common.refreshing' : 'common.refresh') | t }}
     </button>
     <button class="btn btn-primary" type="button" (click)="openDash()">
       <svg lucideExternalLink></svg>
-      Open dash
+      {{ 'dash.open' | t }}
     </button>
   </div>
 </header>
 
 @if (summary(); as data) {
   <section class="dashboard-grid">
-    <app-widget-card class="span-4" title="Tracked Today" eyebrow="Time">
+    <app-widget-card class="span-4" [title]="'dash.trackedToday' | t" [eyebrow]="'dash.time' | t">
       <app-source-badge [source]="data.source" />
       <app-integration-notice [status]="status()" />
-      <p class="metric">{{ data.trackedTodayMinutes / 60 | number: '1.1-1' }}h</p>
-      <div class="progress" aria-label="Daily time target progress">
+      <p class="metric">{{ data.trackedTodayMinutes / 60 | number: '1.1-1' : i18n.locale() }} h</p>
+      <div class="progress" [attr.aria-label]="'common.timeProgress' | t">
         <span [style.width.%]="progress()"></span>
       </div>
-      <p class="muted">{{ progress() }}% of target</p>
+      <p class="muted">{{ 'dash.percentOfTarget' | t: { percent: progress() } }}</p>
     </app-widget-card>
 
-    <app-widget-card class="span-4" title="Customers" eyebrow="Active">
+    <app-widget-card class="span-4" [title]="'dash.customers' | t" [eyebrow]="'dash.active' | t">
       <app-source-badge [source]="data.source" />
       <app-integration-notice [status]="status()" />
       <p class="metric">{{ data.activeCustomers }}</p>
-      <p class="muted">Customers with current work.</p>
+      <p class="muted">{{ 'dash.customersHint' | t }}</p>
     </app-widget-card>
 
-    <app-widget-card class="span-4" title="Projects" eyebrow="Open">
+    <app-widget-card
+      class="span-4"
+      [title]="'dash.projects' | t"
+      [eyebrow]="'dash.open.eyebrow' | t"
+    >
       <app-source-badge [source]="data.source" />
       <app-integration-notice [status]="status()" />
       <p class="metric">{{ data.openProjects }}</p>
-      <p class="muted">Projects visible in the mock adapter.</p>
+      <p class="muted">{{ 'dash.projectsHint' | t }}</p>
     </app-widget-card>
   </section>
 }
 
-@if (launchError()) {
-  <p class="text-error">{{ launchError() }}</p>
+@if (launchError(); as name) {
+  <p class="text-error">{{ 'common.noValidUrl' | t: { name } }}</p>
 }

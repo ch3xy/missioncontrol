@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideDownload, LucideRotateCcw, LucideSave, LucideUpload } from '@lucide/angular';
+import { I18nService, LANGUAGE_LABELS, LANGUAGES } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { TranslationKey } from '../../core/i18n/translations';
 import { AppShortcut } from '../../core/models/shortcut.model';
 import { MissionControlSettings } from '../../core/models/settings.model';
 import { ShortcutService } from '../../core/services/shortcut.service';
@@ -21,11 +24,13 @@ import { WidgetCard } from '../../shared/components/widget-card/widget-card';
     LucideRotateCcw,
     LucideSave,
     LucideUpload,
+    TranslatePipe,
   ],
   templateUrl: './settings-page.html',
   styleUrl: './settings-page.scss',
 })
 export class SettingsPage {
+  protected readonly i18n = inject(I18nService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly settingsService = inject(SettingsService);
   private readonly shortcutService = inject(ShortcutService);
@@ -33,29 +38,34 @@ export class SettingsPage {
 
   protected readonly themeModes: ThemeMode[] = ['light', 'dark', 'system'];
   protected readonly themeLabels = THEME_MODE_LABELS;
+  protected readonly languages = LANGUAGES;
+  protected readonly languageLabels = LANGUAGE_LABELS;
 
   protected readonly savedSettings = this.settingsService.settings;
   protected readonly shortcuts = this.shortcutService.shortcuts;
+  /** Label of the shortcut that could not be opened. */
   protected readonly launchError = signal<string | null>(null);
-  protected readonly backupMessage = signal<string | null>(null);
-  protected readonly savedMessage = computed(
-    () =>
-      `Configured launch URLs: Velo ${this.savedSettings().veloUrl}, Dash ${
-        this.savedSettings().dashUrl
-      }, sevDesk ${this.savedSettings().sevDeskUrl}`,
-  );
+  protected readonly backupMessage = signal<TranslationKey | null>(null);
+  protected readonly savedMessage = computed(() => {
+    const settings = this.savedSettings();
+    return this.i18n.t('settings.savedMessage', {
+      velo: settings.veloUrl,
+      dash: settings.dashUrl,
+      sevdesk: settings.sevDeskUrl,
+    });
+  });
   protected readonly sourceHint = computed(() => {
     const settings = this.savedSettings();
 
     if (settings.calendarSource === 'mock') {
-      return 'Calendar uses mock data. Local JSON fields are optional placeholders.';
+      return this.i18n.t('settings.hint.mock');
     }
 
     if (settings.calendarSource === 'ics') {
-      return 'Calendar attempts the configured ICS URL and falls back to mock data if it fails.';
+      return this.i18n.t('settings.hint.ics');
     }
 
-    return 'Calendar attempts the configured local JSON URL and falls back to mock data if it fails.';
+    return this.i18n.t('settings.hint.localJson');
   });
 
   protected readonly form = this.formBuilder.nonNullable.group({
@@ -100,7 +110,7 @@ export class SettingsPage {
     link.download = 'mission-control-settings.json';
     link.click();
     URL.revokeObjectURL(url);
-    this.backupMessage.set('Settings export created.');
+    this.backupMessage.set('settings.exported');
   }
 
   protected importSettings(event: Event): void {
@@ -115,11 +125,11 @@ export class SettingsPage {
     reader.onload = () => {
       const didImport = this.settingsService.importSettings(String(reader.result ?? ''));
       this.form.reset(this.savedSettings());
-      this.backupMessage.set(didImport ? 'Settings imported.' : 'Settings import failed.');
+      this.backupMessage.set(didImport ? 'settings.imported' : 'settings.importFailed');
       input.value = '';
     };
     reader.onerror = () => {
-      this.backupMessage.set('Settings import failed.');
+      this.backupMessage.set('settings.importFailed');
       input.value = '';
     };
     reader.readAsText(file);
@@ -143,7 +153,7 @@ export class SettingsPage {
 
   protected launch(shortcut: AppShortcut): void {
     const didOpen = this.shortcutService.openExternal(shortcut.url);
-    this.launchError.set(didOpen ? null : `${shortcut.label} has no valid http(s) URL configured.`);
+    this.launchError.set(didOpen ? null : shortcut.label);
   }
 
   private applyAndSave(settings: Partial<MissionControlSettings>): void {

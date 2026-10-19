@@ -7,16 +7,17 @@ Angular 22, Standalone-Komponenten, Zoneless, Signals. Gleiche Grundmuster wie d
 
 ```
 src/
-├── index.html                 # lang, Titel „mission control“, SVG-Favicon
+├── index.html                 # lang="de", Titel „mission control“, SVG-Favicon
 ├── styles.scss                # Arrow-Tokens + globale Komponentenklassen (siehe design-system.md)
 └── app/
-    ├── app.config.ts          # Zoneless, Router, Lucide-Defaults
-    ├── app.routes.ts          # Shell-Route mit Lazy Children
+    ├── app.config.ts          # Zoneless, Router, I18nTitleStrategy, Lucide-Defaults
+    ├── app.routes.ts          # Shell-Route mit Lazy Children, Titel als Übersetzungs-Keys
     ├── layout/
     │   ├── shell.*            # Flex-Layout, Skip-Link, Drawer-Backdrop, Collapse-State
     │   ├── sidebar.*          # Logo, Navigationsgruppen, Settings-Footer, Version
     │   └── topbar.*           # Mobile-Menü, Datum, Theme-Toggle
     ├── core/
+    │   ├── i18n/              # I18nService, Wörterbücher DE/EN, `t`-Pipe, I18nTitleStrategy
     │   ├── models/            # typisierte Interfaces (Settings, Shortcut, Calendar, Velo, Dash …)
     │   ├── services/          # Adapter, SettingsService, ShortcutService, ThemeService
     │   └── validators/        # httpUrlValidator
@@ -25,7 +26,7 @@ src/
     │   ├── calendar/          # Agenda
     │   ├── velo/              # Cashflow-Zusammenfassung
     │   ├── dash/              # Zeit-/Kunden-Zusammenfassung
-    │   └── settings/          # URLs, Datenquellen, Darstellung, Backup
+    │   └── settings/          # URLs, Datenquellen, Sprache, Darstellung, Backup
     ├── shared/components/     # widget-card, source-badge, integration-notice, quick-access-tile, trend-line
     └── testing/               # createMemoryStorage() für Specs
 public/                        # Logo-Set, Favicons, examples/ (Local-JSON/ICS-Beispiele)
@@ -51,6 +52,20 @@ sevDesk ist kein Route-Ziel, sondern ein externer Link über `ShortcutService.op
 - Zoneless: asynchrone Ergebnisse (Adapter-Promises) **immer** in Signals schreiben, nie in Plain-Felder.
 - `SettingsService` hält die Einstellungen als Signal und persistiert in LocalStorage.
 - `ThemeService` hält `mode` (`light | dark | system`) und das effektive `theme`; setzt `data-theme` auf `<html>`.
+- `I18nService` hält `lang` (`de | en`, Standard `de`) und `locale` (`de-AT | en-US`); setzt `lang` auf `<html>`.
+
+## Mehrsprachigkeit
+
+- Alle UI-Texte stehen in `core/i18n/translations.ts`: `EN` definiert die Keys, `DE` muss jeden Key liefern
+  (Typ `Dictionary`). Platzhalter als `{name}`.
+- Templates: `{{ 'nav.settings' | t }}` bzw. `{{ 'common.updated' | t: { time } }}` (Pipe ist impure, damit
+  OnPush-Views beim Umschalten neu rendern). In `computed()`/Services: `i18n.t(key, params)`.
+- Datums-, Zahlen- und Währungs-Pipes bekommen `i18n.locale()` übergeben; Datumsmuster sind selbst Keys
+  (`format.*`).
+- Services speichern Keys statt fertiger Texte, z. B. `IntegrationStatus.message`; das Label leitet sich aus
+  `kind` ab (`status.<kind>`).
+- Route-Titel sind Keys; `I18nTitleStrategy` übersetzt sie und folgt dem Sprachwechsel.
+- Daten (Termine, Kunden, `periodLabel`, Tool-Bezeichnungen) werden nicht übersetzt.
 
 ## LocalStorage-Schlüssel
 
@@ -59,6 +74,7 @@ sevDesk ist kein Route-Ziel, sondern ein externer Link über `ShortcutService.op
 | Settings-Key des `SettingsService` | Externe URLs, Datenquellen, lokale Tools |
 | `missioncontrol-theme` | `light` / `dark` / `system` |
 | `missioncontrol-nav-collapsed` | `true` / `false` |
+| `missioncontrol-lang` | `de` / `en` |
 
 Jeder Zugriff ist in `try/catch` gekapselt (Private Mode, blockierter Storage).
 

@@ -1,6 +1,8 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { LucideExternalLink, LucideRefreshCw } from '@lucide/angular';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { DashSummary } from '../../core/models/dash.model';
 import { DashAdapterService } from '../../core/services/dash-adapter.service';
 import { ShortcutService } from '../../core/services/shortcut.service';
@@ -19,11 +21,13 @@ import { WidgetCard } from '../../shared/components/widget-card/widget-card';
     WidgetCard,
     LucideExternalLink,
     LucideRefreshCw,
+    TranslatePipe,
   ],
   templateUrl: './dash-page.html',
   styleUrl: './dash-page.scss',
 })
 export class DashPage {
+  protected readonly i18n = inject(I18nService);
   private readonly dashAdapter = inject(DashAdapterService);
   private readonly shortcutService = inject(ShortcutService);
 
@@ -56,7 +60,7 @@ export class DashPage {
   protected openDash(): void {
     const shortcut = this.shortcutService.shortcuts().find((candidate) => candidate.id === 'dash');
     const didOpen = this.shortcutService.openExternal(shortcut?.url);
-    this.launchError.set(didOpen ? null : 'Dash has no valid http(s) URL configured.');
+    this.launchError.set(didOpen ? null : 'Dash');
   }
 
   private async load(): Promise<void> {

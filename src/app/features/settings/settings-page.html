@@ -1,132 +1,132 @@
 <header class="page-header">
   <div>
-    <h1>Settings</h1>
-    <p>
-      Configure local shortcuts and placeholder source URLs. Values stay in browser LocalStorage.
-    </p>
+    <h1>{{ 'settings.title' | t }}</h1>
+    <p>{{ 'settings.lead' | t }}</p>
   </div>
 </header>
 
-<app-widget-card title="External Applications" eyebrow="LocalStorage">
+<app-widget-card [title]="'settings.externalApps' | t" eyebrow="LocalStorage">
   <form [formGroup]="form" (ngSubmit)="save()">
     <label class="field">
-      <span>Velo URL</span>
+      <span>{{ 'settings.veloUrl' | t }}</span>
       <input class="input" type="url" formControlName="veloUrl" />
       @if (form.controls.veloUrl.touched && form.controls.veloUrl.invalid) {
-        <small class="field-error">Use a valid http(s) URL.</small>
+        <small class="field-error">{{ 'settings.invalidUrl' | t }}</small>
       }
     </label>
 
     <label class="field">
-      <span>Dash URL</span>
+      <span>{{ 'settings.dashUrl' | t }}</span>
       <input class="input" type="url" formControlName="dashUrl" />
       @if (form.controls.dashUrl.touched && form.controls.dashUrl.invalid) {
-        <small class="field-error">Use a valid http(s) URL.</small>
+        <small class="field-error">{{ 'settings.invalidUrl' | t }}</small>
       }
     </label>
 
     <label class="field">
-      <span>sevDesk URL</span>
+      <span>{{ 'settings.sevDeskUrl' | t }}</span>
       <input class="input" type="url" formControlName="sevDeskUrl" />
       @if (form.controls.sevDeskUrl.touched && form.controls.sevDeskUrl.invalid) {
-        <small class="field-error">Use a valid http(s) URL.</small>
+        <small class="field-error">{{ 'settings.invalidUrl' | t }}</small>
       }
     </label>
 
     <label class="field">
-      <span>Calendar source</span>
+      <span>{{ 'settings.calendarSource' | t }}</span>
       <select class="select" formControlName="calendarSource">
-        <option value="mock">Mock</option>
-        <option value="ics">ICS URL</option>
-        <option value="local-json">Local JSON</option>
+        <option value="mock">{{ 'settings.source.mock' | t }}</option>
+        <option value="ics">{{ 'settings.source.ics' | t }}</option>
+        <option value="local-json">{{ 'settings.source.localJson' | t }}</option>
       </select>
     </label>
 
     <label class="field">
-      <span>Calendar source URL</span>
+      <span>{{ 'settings.calendarSourceUrl' | t }}</span>
       <input
         class="input"
         type="url"
         formControlName="calendarSourceUrl"
-        placeholder="Optional placeholder"
+        [placeholder]="'settings.optionalPlaceholder' | t"
       />
       @if (form.controls.calendarSourceUrl.touched && form.controls.calendarSourceUrl.invalid) {
-        <small class="field-error">Use a valid http(s) URL or leave this empty.</small>
+        <small class="field-error">{{ 'settings.invalidOptionalUrl' | t }}</small>
       }
     </label>
 
     <label class="field">
-      <span>Velo source URL</span>
+      <span>{{ 'settings.veloSourceUrl' | t }}</span>
       <input
         class="input"
         type="url"
         formControlName="veloSourceUrl"
-        placeholder="Optional placeholder"
+        [placeholder]="'settings.optionalPlaceholder' | t"
       />
       @if (form.controls.veloSourceUrl.touched && form.controls.veloSourceUrl.invalid) {
-        <small class="field-error">Use a valid http(s) URL or leave this empty.</small>
+        <small class="field-error">{{ 'settings.invalidOptionalUrl' | t }}</small>
       }
     </label>
 
     <label class="field">
-      <span>Dash source URL</span>
+      <span>{{ 'settings.dashSourceUrl' | t }}</span>
       <input
         class="input"
         type="url"
         formControlName="dashSourceUrl"
-        placeholder="Optional placeholder"
+        [placeholder]="'settings.optionalPlaceholder' | t"
       />
       @if (form.controls.dashSourceUrl.touched && form.controls.dashSourceUrl.invalid) {
-        <small class="field-error">Use a valid http(s) URL or leave this empty.</small>
+        <small class="field-error">{{ 'settings.invalidOptionalUrl' | t }}</small>
       }
     </label>
 
     <div class="preset-actions">
       <button class="btn" type="button" (click)="useBundledJsonExamples()">
-        Use JSON examples
+        {{ 'settings.useJsonExamples' | t }}
       </button>
-      <button class="btn" type="button" (click)="useBundledIcsExample()">Use ICS example</button>
+      <button class="btn" type="button" (click)="useBundledIcsExample()">
+        {{ 'settings.useIcsExample' | t }}
+      </button>
     </div>
 
     <div class="section-label">
-      <h3>Local tools</h3>
-      <p>Configured tools appear in Quick Access when a valid URL is set.</p>
+      <h3>{{ 'settings.localTools' | t }}</h3>
+      <p>{{ 'settings.localToolsHint' | t }}</p>
     </div>
 
     <div class="tool-grid">
       <label class="field">
-        <span>Tool 1 label</span>
+        <span>{{ 'settings.toolLabel' | t: { n: 1 } }}</span>
         <input class="input" type="text" formControlName="localTool1Label" />
       </label>
 
       <label class="field">
-        <span>Tool 1 URL</span>
+        <span>{{ 'settings.toolUrl' | t: { n: 1 } }}</span>
         <input
           class="input"
           type="url"
           formControlName="localTool1Url"
-          placeholder="Optional local URL"
+          [placeholder]="'settings.optionalLocalUrl' | t"
         />
         @if (form.controls.localTool1Url.touched && form.controls.localTool1Url.invalid) {
-          <small class="field-error">Use a valid http(s) URL or leave this empty.</small>
+          <small class="field-error">{{ 'settings.invalidOptionalUrl' | t }}</small>
         }
       </label>
 
       <label class="field">
-        <span>Tool 2 label</span>
+        <span>{{ 'settings.toolLabel' | t: { n: 2 } }}</span>
         <input class="input" type="text" formControlName="localTool2Label" />
       </label>
 
       <label class="field">
-        <span>Tool 2 URL</span>
+        <span>{{ 'settings.toolUrl' | t: { n: 2 } }}</span>
         <input
           class="input"
           type="url"
           formControlName="localTool2Url"
-          placeholder="Optional local URL"
+          [placeholder]="'settings.optionalLocalUrl' | t"
         />
         @if (form.controls.localTool2Url.touched && form.controls.localTool2Url.invalid) {
-          <small class="field-error">Use a valid http(s) URL or leave this empty.</small>
+          <small class="field-error">{{ 'settings.invalidOptionalUrl' | t }}</small>
         }
       </label>
     </div>
@@ -134,11 +134,11 @@
     <div class="actions">
       <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
         <svg lucideSave></svg>
-        Save
+        {{ 'settings.save' | t }}
       </button>
       <button class="btn" type="button" (click)="reset()">
         <svg lucideRotateCcw></svg>
-        Reset defaults
+        {{ 'settings.reset' | t }}
       </button>
     </div>
   </form>
@@ -147,8 +147,27 @@
   <p class="hint">{{ sourceHint() }}</p>
 </app-widget-card>
 
-<app-widget-card title="Appearance" eyebrow="Theme">
-  <div class="theme-options" role="radiogroup" aria-label="Theme">
+<app-widget-card [title]="'settings.language' | t" [eyebrow]="'settings.languageEyebrow' | t">
+  <div class="theme-options" role="radiogroup" [attr.aria-label]="'settings.language' | t">
+    @for (lang of languages; track lang) {
+      <button
+        type="button"
+        class="btn"
+        role="radio"
+        [attr.lang]="lang"
+        [class.is-active]="i18n.lang() === lang"
+        [attr.aria-checked]="i18n.lang() === lang"
+        (click)="i18n.setLanguage(lang)"
+      >
+        {{ languageLabels[lang] }}
+      </button>
+    }
+  </div>
+  <p class="hint">{{ 'settings.languageHint' | t }}</p>
+</app-widget-card>
+
+<app-widget-card [title]="'settings.appearance' | t" [eyebrow]="'settings.theme' | t">
+  <div class="theme-options" role="radiogroup" [attr.aria-label]="'settings.theme' | t">
     @for (mode of themeModes; track mode) {
       <button
         type="button"
@@ -158,39 +177,39 @@
         [attr.aria-checked]="theme.mode() === mode"
         (click)="theme.setMode(mode)"
       >
-        {{ themeLabels[mode] }}
+        {{ themeLabels[mode] | t }}
       </button>
     }
   </div>
-  <p class="hint">Stored in this browser. "System" follows the operating system setting.</p>
+  <p class="hint">{{ 'settings.themeHint' | t }}</p>
 </app-widget-card>
 
-<app-widget-card title="Backup" eyebrow="Local file">
+<app-widget-card [title]="'settings.backup' | t" [eyebrow]="'settings.localFile' | t">
   <div class="backup-actions">
     <button class="btn btn-primary" type="button" (click)="exportSettings()">
       <svg lucideDownload></svg>
-      Export settings
+      {{ 'settings.export' | t }}
     </button>
     <label class="btn file-button">
       <svg lucideUpload></svg>
-      <span>Import settings</span>
+      <span>{{ 'settings.import' | t }}</span>
       <input type="file" accept="application/json,.json" (change)="importSettings($event)" />
     </label>
   </div>
 
-  @if (backupMessage()) {
-    <p class="saved">{{ backupMessage() }}</p>
+  @if (backupMessage(); as message) {
+    <p class="saved">{{ message | t }}</p>
   }
 </app-widget-card>
 
-<app-widget-card title="Shortcut Preview" eyebrow="Quick Access">
+<app-widget-card [title]="'settings.shortcutPreview' | t" [eyebrow]="'dashboard.quickAccess' | t">
   <div class="shortcut-preview">
     @for (shortcut of shortcuts(); track shortcut.id) {
       <app-quick-access-tile [shortcut]="shortcut" (launch)="launch($event)" />
     }
   </div>
 
-  @if (launchError()) {
-    <p class="text-error">{{ launchError() }}</p>
+  @if (launchError(); as name) {
+    <p class="text-error">{{ 'common.noValidUrl' | t: { name } }}</p>
   }
 </app-widget-card>

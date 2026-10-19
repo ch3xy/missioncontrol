@@ -1,99 +1,125 @@
 <header class="page-header">
   <div>
-    <h1>Overview</h1>
-    <p>Appointments, cash flow, tracked time and shortcuts in one local workspace.</p>
+    <h1>{{ 'dashboard.title' | t }}</h1>
+    <p>{{ 'dashboard.lead' | t }}</p>
     @if (lastUpdated(); as updated) {
-      <p class="page-meta">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+      <p class="page-meta">
+        {{
+          'common.updated'
+            | t: { time: (updated | date: ('format.timeSeconds' | t) : undefined : i18n.locale()) }
+        }}
+      </p>
     }
   </div>
   <div class="page-controls">
     <button class="btn" type="button" [disabled]="isLoading()" (click)="refresh()">
       <svg lucideRefreshCw></svg>
-      {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
+      {{ (isLoading() ? 'common.refreshing' : 'common.refresh') | t }}
     </button>
     <a class="btn" routerLink="/settings">
       <svg lucideSettings></svg>
-      Settings
+      {{ 'common.settings' | t }}
     </a>
   </div>
 </header>
 
 <section class="dashboard-grid">
-  <app-widget-card class="span-4" title="Calendar" eyebrow="Today">
+  <app-widget-card class="span-4" [title]="'dashboard.calendar' | t" [eyebrow]="'common.today' | t">
     <app-source-badge [source]="calendarSource()" />
     <app-integration-notice [status]="calendarStatus()" />
     <div class="event-list">
       @for (event of nextEvents(); track event.id) {
         <article class="event">
-          <time>{{ event.startsAt | date: 'HH:mm' }}</time>
+          <time>{{ event.startsAt | date: ('format.time' | t) : undefined : i18n.locale() }}</time>
           <div>
             <strong>{{ event.title }}</strong>
-            <small>{{ event.customer || event.project || 'Personal' }}</small>
+            <small>{{ event.customer || event.project || ('common.personal' | t) }}</small>
           </div>
         </article>
       }
     </div>
-    <a class="card-link" routerLink="/calendar">Open calendar</a>
+    <a class="card-link" routerLink="/calendar">{{ 'dashboard.openCalendar' | t }}</a>
   </app-widget-card>
 
-  <app-widget-card class="span-4" title="velo cash flow" eyebrow="Forecast">
+  <app-widget-card
+    class="span-4"
+    [title]="'dashboard.veloCashFlow' | t"
+    [eyebrow]="'common.forecast' | t"
+  >
     @if (velo(); as summary) {
       <app-source-badge [source]="summary.source" />
       <app-integration-notice [status]="veloStatus()" />
       <p class="metric">
-        {{ summary.forecastCashFlow | currency: summary.currency : 'symbol' : '1.0-0' }}
+        {{
+          summary.forecastCashFlow | currency: summary.currency : 'symbol' : '1.0-0' : i18n.locale()
+        }}
       </p>
-      <p class="muted">{{ summary.periodLabel }} forecast</p>
+      <p class="muted">{{ 'dashboard.forecastFor' | t: { period: summary.periodLabel } }}</p>
       <app-trend-line [points]="summary.trend" />
       <div class="split">
-        <span>Current</span>
+        <span>{{ 'common.current' | t }}</span>
         <strong>{{
-          summary.currentCashFlow | currency: summary.currency : 'symbol' : '1.0-0'
+          summary.currentCashFlow | currency: summary.currency : 'symbol' : '1.0-0' : i18n.locale()
         }}</strong>
       </div>
     }
   </app-widget-card>
 
-  <app-widget-card class="span-4" title="dash time" eyebrow="Today">
+  <app-widget-card class="span-4" [title]="'dashboard.dashTime' | t" [eyebrow]="'common.today' | t">
     @if (dash(); as summary) {
       <app-source-badge [source]="summary.source" />
       <app-integration-notice [status]="dashStatus()" />
-      <p class="metric">{{ summary.trackedTodayMinutes / 60 | number: '1.1-1' }}h</p>
-      <p class="muted">of {{ summary.targetTodayMinutes / 60 | number: '1.0-1' }}h target</p>
-      <div class="progress" aria-label="Daily time target progress">
+      <p class="metric">
+        {{ summary.trackedTodayMinutes / 60 | number: '1.1-1' : i18n.locale() }} h
+      </p>
+      <p class="muted">
+        {{
+          'dashboard.ofTarget'
+            | t: { hours: (summary.targetTodayMinutes / 60 | number: '1.0-1' : i18n.locale()) }
+        }}
+      </p>
+      <div class="progress" [attr.aria-label]="'common.timeProgress' | t">
         <span [style.width.%]="dashProgress()"></span>
       </div>
       <div class="split">
-        <span>Progress</span>
+        <span>{{ 'common.progress' | t }}</span>
         <strong>{{ dashProgress() }}%</strong>
       </div>
     }
   </app-widget-card>
 
-  <app-widget-card class="span-6" title="dash customers" eyebrow="Pipeline">
+  <app-widget-card
+    class="span-6"
+    [title]="'dashboard.dashCustomers' | t"
+    [eyebrow]="'dashboard.pipeline' | t"
+  >
     @if (dash(); as summary) {
       <div class="customer-grid">
         <div>
           <p class="metric">{{ summary.activeCustomers }}</p>
-          <span>Active customers</span>
+          <span>{{ 'dashboard.activeCustomers' | t }}</span>
         </div>
         <div>
           <p class="metric">{{ summary.openProjects }}</p>
-          <span>Open projects</span>
+          <span>{{ 'dashboard.openProjects' | t }}</span>
         </div>
       </div>
-      <a class="card-link" routerLink="/dash">Open dash overview</a>
+      <a class="card-link" routerLink="/dash">{{ 'dashboard.openDash' | t }}</a>
     }
   </app-widget-card>
 
-  <app-widget-card class="span-6" title="Quick Access" eyebrow="Launch">
+  <app-widget-card
+    class="span-6"
+    [title]="'dashboard.quickAccess' | t"
+    [eyebrow]="'dashboard.launch' | t"
+  >
     <div class="quick-grid">
       @for (shortcut of shortcuts(); track shortcut.id) {
         <app-quick-access-tile [shortcut]="shortcut" (launch)="launch($event)" />
       }
     </div>
-    @if (launchError()) {
-      <p class="text-error">{{ launchError() }}</p>
+    @if (launchError(); as name) {
+      <p class="text-error">{{ 'common.noValidUrl' | t: { name } }}</p>
     }
   </app-widget-card>
 </section>

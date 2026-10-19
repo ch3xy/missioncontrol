@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TranslatePipe } from '../core/i18n/translate.pipe';
 import { ThemeService } from '../core/services/theme.service';
 import { Sidebar } from './sidebar';
 import { Topbar } from './topbar';
@@ -14,7 +15,7 @@ const COLLAPSED_KEY = 'missioncontrol-nav-collapsed';
 @Component({
   selector: 'app-shell',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, Sidebar, Topbar],
+  imports: [RouterOutlet, Sidebar, Topbar, TranslatePipe],
   host: { '(document:keydown.escape)': 'drawerOpen.set(false)' },
   templateUrl: './shell.html',
   styleUrl: './shell.scss',

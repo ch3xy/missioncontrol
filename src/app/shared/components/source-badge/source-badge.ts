@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { CalendarSource } from '../../../core/models/calendar.model';
 
 type DataSource = CalendarSource | 'local-json';
@@ -10,16 +11,18 @@ type DataSource = CalendarSource | 'local-json';
   styleUrl: './source-badge.scss',
 })
 export class SourceBadge {
+  private readonly i18n = inject(I18nService);
+
   readonly source = input.required<DataSource>();
 
   protected readonly label = computed(() => {
     switch (this.source()) {
       case 'local-json':
-        return 'Local JSON';
+        return this.i18n.t('source.localJson');
       case 'ics':
-        return 'ICS';
+        return this.i18n.t('source.ics');
       case 'mock':
-        return 'Mock';
+        return this.i18n.t('source.mock');
     }
   });
 

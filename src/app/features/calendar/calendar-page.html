@@ -1,38 +1,47 @@
 <header class="page-header">
   <div>
-    <h1>Calendar</h1>
-    <p>Appointments from mock data, local JSON, or a browser-readable ICS URL.</p>
+    <h1>{{ 'calendar.title' | t }}</h1>
+    <p>{{ 'calendar.lead' | t }}</p>
     @if (lastUpdated(); as updated) {
-      <p class="page-meta">Updated {{ updated | date: 'HH:mm:ss' }}</p>
+      <p class="page-meta">
+        {{
+          'common.updated'
+            | t: { time: (updated | date: ('format.timeSeconds' | t) : undefined : i18n.locale()) }
+        }}
+      </p>
     }
   </div>
   <div class="page-controls">
     <button class="btn" type="button" [disabled]="isLoading()" (click)="refresh()">
       <svg lucideRefreshCw></svg>
-      {{ isLoading() ? 'Refreshing...' : 'Refresh' }}
+      {{ (isLoading() ? 'common.refreshing' : 'common.refresh') | t }}
     </button>
   </div>
 </header>
 
-<app-widget-card title="Upcoming Appointments" eyebrow="Mock data">
+<app-widget-card [title]="'calendar.upcoming' | t" [eyebrow]="statusLabel() | t">
   <app-source-badge [source]="source()" />
   <app-integration-notice [status]="status()" />
   <div class="appointments">
     @for (group of eventGroups(); track group.dateKey) {
       <section class="agenda-day">
-        <h3>{{ group.dateKey | date: 'EEEE, dd MMM yyyy' }}</h3>
+        <h3>{{ group.dateKey | date: ('format.dateLong' | t) : undefined : i18n.locale() }}</h3>
         <div class="agenda-day__events">
           @for (event of group.events; track event.id) {
             <article>
               <time>
-                <span>{{ event.startsAt | date: 'HH:mm' }}</span>
+                <span>{{
+                  event.startsAt | date: ('format.time' | t) : undefined : i18n.locale()
+                }}</span>
                 @if (event.endsAt) {
-                  <small>{{ event.endsAt | date: 'HH:mm' }}</small>
+                  <small>{{
+                    event.endsAt | date: ('format.time' | t) : undefined : i18n.locale()
+                  }}</small>
                 }
               </time>
               <div>
                 <h4>{{ event.title }}</h4>
-                <p>{{ event.customer || event.project || 'Personal' }}</p>
+                <p>{{ event.customer || event.project || ('common.personal' | t) }}</p>
                 @if (event.location) {
                   <small>{{ event.location }}</small>
                 }
@@ -42,7 +51,7 @@
         </div>
       </section>
     } @empty {
-      <p class="empty">No appointments available. Configure a source or use mock data.</p>
+      <p class="empty">{{ 'calendar.empty' | t }}</p>
     }
   </div>
 </app-widget-card>

@@ -101,7 +101,7 @@ describe('local JSON adapters', () => {
     expect(events).toHaveLength(MOCK_CALENDAR_EVENTS.length);
     expect(events[0]?.source).toBe('mock');
     expect(status.kind).toBe('fallback');
-    expect(status.message).toContain('expected shape');
+    expect(status.message).toBe('status.calendar.jsonInvalidShape');
   });
 
   it('should load calendar events from a configured ICS source', async () => {

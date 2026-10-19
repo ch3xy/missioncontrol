@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Shell } from './layout/shell';
 
+/** Route titles are translation keys, resolved by I18nTitleStrategy. */
 export const routes: Routes = [
   {
     path: '',
@@ -9,29 +10,29 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
-        title: 'mission control',
+        title: 'title.dashboard',
       },
       {
         path: 'calendar',
         loadComponent: () =>
           import('./features/calendar/calendar-page').then((m) => m.CalendarPage),
-        title: 'Calendar · mission control',
+        title: 'title.calendar',
       },
       {
         path: 'velo',
         loadComponent: () => import('./features/velo/velo-page').then((m) => m.VeloPage),
-        title: 'velo · mission control',
+        title: 'title.velo',
       },
       {
         path: 'dash',
         loadComponent: () => import('./features/dash/dash-page').then((m) => m.DashPage),
-        title: 'dash · mission control',
+        title: 'title.dash',
       },
       {
         path: 'settings',
         loadComponent: () =>
           import('./features/settings/settings-page').then((m) => m.SettingsPage),
-        title: 'Settings · mission control',
+        title: 'title.settings',
       },
     ],
   },

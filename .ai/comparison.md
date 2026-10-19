@@ -54,8 +54,8 @@ Stand: 2026-10-19. Ziel: Alle drei Arrow-Produkte sollen wie aus einem Guss wirk
 
 ## Bewusste Abweichungen
 
-- **Sprache:** dash und velo sind deutsch, mission control bleibt vorerst englisch (Funktions-/Inhaltsänderung,
-  außerhalb dieses Auftrags). Empfehlung: in einem eigenen Schritt auf Deutsch und de-AT-Formate umstellen.
+- **Sprache:** wie dash und velo standardmäßig deutsch mit de-AT-Formaten; zusätzlich zur Laufzeit auf Englisch
+  umschaltbar (Einstellungen → Sprache / Language). Umgesetzt mit eigenem `I18nService` statt `@angular/localize`.
 - **Widget-Grid:** mission control behält sein 12-Spalten-Grid (`.dashboard-grid`, `.span-*`), weil es
   Dashboard-spezifisch ist; die Karten selbst nutzen `.card`.
 - **Kein Material:** velo nutzt Material, mission control folgt dem leichteren dash-Ansatz.

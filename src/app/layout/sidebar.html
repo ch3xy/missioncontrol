@@ -3,15 +3,10 @@
   id="sidenav"
   [class.collapsed]="collapsed()"
   [class.open]="open()"
-  aria-label="Primary navigation"
+  [attr.aria-label]="'nav.primary' | t"
 >
   <div class="nav-header">
-    <a
-      class="nav-logo"
-      routerLink="/"
-      (click)="navigate.emit()"
-      aria-label="mission control – go to dashboard"
-    >
+    <a class="nav-logo" routerLink="/" (click)="navigate.emit()" [attr.aria-label]="'nav.home' | t">
       <img
         [src]="theme.theme() === 'dark' ? 'logo-sidebar-dark.svg' : 'logo-sidebar.svg'"
         alt=""
@@ -27,9 +22,9 @@
       type="button"
       class="icon-btn collapse-btn"
       (click)="toggleCollapsed.emit()"
-      [attr.aria-label]="collapsed() ? 'Expand navigation' : 'Collapse navigation'"
+      [attr.aria-label]="(collapsed() ? 'nav.expand' : 'nav.collapse') | t"
       [attr.aria-expanded]="!collapsed()"
-      [title]="collapsed() ? 'Expand' : 'Collapse'"
+      [title]="(collapsed() ? 'nav.expandShort' : 'nav.collapseShort') | t"
     >
       @if (collapsed()) {
         <svg lucideChevronRight [size]="20"></svg>
@@ -40,10 +35,10 @@
   </div>
 
   <nav class="nav-body">
-    @for (group of groups; track group.label) {
+    @for (group of groups(); track group.id) {
       <div class="nav-group">
         <div class="nav-group-label">{{ group.label }}</div>
-        @for (item of group.items; track item.label) {
+        @for (item of group.items; track item.icon) {
           @if (item.route) {
             <a
               class="nav-item"
@@ -61,7 +56,7 @@
             <button
               type="button"
               class="nav-item"
-              [attr.aria-label]="item.label + ' (opens in a new tab)'"
+              [attr.aria-label]="'nav.opensInNewTab' | t: { label: item.label }"
               [title]="collapsed() ? item.label : ''"
               (click)="openExternal(item)"
             >
@@ -80,12 +75,12 @@
       class="nav-item nav-settings"
       routerLink="/settings"
       routerLinkActive="active"
-      [attr.aria-label]="collapsed() ? 'Settings' : null"
-      [title]="collapsed() ? 'Settings' : ''"
+      [attr.aria-label]="collapsed() ? ('nav.settings' | t) : null"
+      [title]="collapsed() ? ('nav.settings' | t) : ''"
       (click)="navigate.emit()"
     >
       <span class="nav-icon"><svg lucideSettings [size]="20"></svg></span>
-      <span class="nav-label">Settings</span>
+      <span class="nav-label">{{ 'nav.settings' | t }}</span>
     </a>
   </div>
 

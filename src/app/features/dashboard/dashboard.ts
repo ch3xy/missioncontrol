@@ -2,6 +2,8 @@ import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideRefreshCw, LucideSettings } from '@lucide/angular';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { CalendarEvent } from '../../core/models/calendar.model';
 import { DashSummary } from '../../core/models/dash.model';
 import { AppShortcut } from '../../core/models/shortcut.model';
@@ -31,11 +33,13 @@ import { WidgetCard } from '../../shared/components/widget-card/widget-card';
     WidgetCard,
     LucideRefreshCw,
     LucideSettings,
+    TranslatePipe,
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
 export class Dashboard {
+  protected readonly i18n = inject(I18nService);
   private readonly calendarAdapter = inject(CalendarAdapterService);
   private readonly veloAdapter = inject(VeloAdapterService);
   private readonly dashAdapter = inject(DashAdapterService);
@@ -46,6 +50,7 @@ export class Dashboard {
   protected readonly dash = signal<DashSummary | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly lastUpdated = signal<Date | null>(null);
+  /** Label of the shortcut that could not be opened. */
   protected readonly launchError = signal<string | null>(null);
   protected readonly calendarStatus = this.calendarAdapter.status;
   protected readonly veloStatus = this.veloAdapter.status;
@@ -76,7 +81,7 @@ export class Dashboard {
 
   protected launch(shortcut: AppShortcut): void {
     const didOpen = this.shortcutService.openExternal(shortcut.url);
-    this.launchError.set(didOpen ? null : `${shortcut.label} has no valid http(s) URL configured.`);
+    this.launchError.set(didOpen ? null : shortcut.label);
   }
 
   private async load(): Promise<void> {

@@ -1,6 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { LucideRefreshCw } from '@lucide/angular';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { TranslationKey } from '../../core/i18n/translations';
 import { CalendarEvent } from '../../core/models/calendar.model';
 import { CalendarAdapterService } from '../../core/services/calendar-adapter.service';
 import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
@@ -15,13 +18,15 @@ interface CalendarEventGroup {
 @Component({
   selector: 'app-calendar-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, IntegrationNotice, SourceBadge, WidgetCard, LucideRefreshCw],
+  imports: [DatePipe, IntegrationNotice, SourceBadge, WidgetCard, LucideRefreshCw, TranslatePipe],
   templateUrl: './calendar-page.html',
   styleUrl: './calendar-page.scss',
 })
 export class CalendarPage {
+  protected readonly i18n = inject(I18nService);
   private readonly calendarAdapter = inject(CalendarAdapterService);
   protected readonly status = this.calendarAdapter.status;
+  protected readonly statusLabel = computed<TranslationKey>(() => `status.${this.status().kind}`);
   protected readonly events = signal<CalendarEvent[]>([]);
   protected readonly source = signal<CalendarEvent['source']>('mock');
   protected readonly isLoading = signal(false);

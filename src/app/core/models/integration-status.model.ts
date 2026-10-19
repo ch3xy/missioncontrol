@@ -1,14 +1,15 @@
+import { TranslationKey } from '../i18n/translations';
+
 export type IntegrationStatusKind = 'mock' | 'local-json' | 'ics' | 'fallback';
 
+/** The label is derived from `kind` (`status.<kind>`); `message` is a translation key. */
 export interface IntegrationStatus {
   kind: IntegrationStatusKind;
-  label: string;
-  message: string;
+  message: TranslationKey;
   requestedUrl?: string;
 }
 
 export const MOCK_STATUS: IntegrationStatus = {
   kind: 'mock',
-  label: 'Mock data',
-  message: 'Using built-in mock data.',
+  message: 'status.mockMessage',
 };

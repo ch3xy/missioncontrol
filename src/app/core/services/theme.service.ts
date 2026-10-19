@@ -1,13 +1,14 @@
 import { Injectable, signal } from '@angular/core';
+import { TranslationKey } from '../i18n/translations';
 
 export type Theme = 'light' | 'dark';
 /** User preference; 'system' follows the OS color scheme live. */
 export type ThemeMode = Theme | 'system';
 
-export const THEME_MODE_LABELS: Record<ThemeMode, string> = {
-  light: 'Light',
-  dark: 'Dark',
-  system: 'System',
+export const THEME_MODE_LABELS: Record<ThemeMode, TranslationKey> = {
+  light: 'theme.light',
+  dark: 'theme.dark',
+  system: 'theme.system',
 };
 
 /** Arrow convention: `<product>-theme` (see docs/arrow-corporate-design.md, section 9). */

@@ -19,4 +19,5 @@ Projekt-Regeln und Prioritäten stehen in [AGENTS.md](AGENTS.md) — sie gelten 
 - mission control ist das „cockpit“ der Arrow-Produkte (velo, dash) — frontend-only, local-first.
 - Stack und Design-System sind identisch mit dash (Angular 22, Zoneless, Signals, OnPush, Lucide, Inter, SCSS-Tokens).
 - Node immer über `nvm use` (26.3.1); Checks: `npm run lint`, `npm run test -- --watch=false`, `npm run build`.
+- UI ist deutsch (Standard, de-AT-Formate) und auf Englisch umschaltbar; Texte nur über `core/i18n/translations.ts`.
 - Die Nachbarprojekte `../velo` und `../dash` sind Referenz und werden von hier aus nicht verändert.

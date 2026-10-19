@@ -8,8 +8,8 @@
       }
     </span>
     <span class="notice__body">
-      <strong>{{ status().label }}</strong>
-      <span>{{ status().message }}</span>
+      <strong>{{ label() | t }}</strong>
+      <span>{{ status().message | t }}</span>
     </span>
   </p>
 }

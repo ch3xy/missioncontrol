@@ -5,6 +5,7 @@ import { MOCK_CALENDAR_EVENTS } from '../mock-data/calendar.mock';
 import { parseIcsEvents } from './ics-parser';
 import { readLocalJsonResult, isRecord } from './local-json-source';
 import { SettingsService } from './settings.service';
+import { TranslationKey } from '../i18n/translations';
 
 @Injectable({ providedIn: 'root' })
 export class CalendarAdapterService implements CalendarAdapter {
@@ -30,8 +31,7 @@ export class CalendarAdapterService implements CalendarAdapter {
     if (result.data) {
       this.statusState.set({
         kind: 'local-json',
-        label: 'Local JSON',
-        message: 'Loaded calendar events from the configured local JSON URL.',
+        message: 'status.calendar.localJsonLoaded',
         requestedUrl: settings.calendarSourceUrl,
       });
       return this.sortEvents(result.data);
@@ -39,7 +39,6 @@ export class CalendarAdapterService implements CalendarAdapter {
 
     this.statusState.set({
       kind: 'fallback',
-      label: 'Mock fallback',
       message: fallbackMessage(result.error),
       requestedUrl: settings.calendarSourceUrl,
     });
@@ -50,8 +49,7 @@ export class CalendarAdapterService implements CalendarAdapter {
     if (!url?.trim()) {
       this.statusState.set({
         kind: 'fallback',
-        label: 'Mock fallback',
-        message: 'No ICS URL is configured; using mock data.',
+        message: 'status.calendar.icsEmptyUrl',
       });
       return this.sortEvents(MOCK_CALENDAR_EVENTS);
     }
@@ -62,8 +60,7 @@ export class CalendarAdapterService implements CalendarAdapter {
       if (!response.ok) {
         this.statusState.set({
           kind: 'fallback',
-          label: 'Mock fallback',
-          message: 'ICS calendar could not be loaded; using mock data.',
+          message: 'status.calendar.icsFailed',
           requestedUrl: url,
         });
         return this.sortEvents(MOCK_CALENDAR_EVENTS);
@@ -74,8 +71,7 @@ export class CalendarAdapterService implements CalendarAdapter {
       if (events.length === 0) {
         this.statusState.set({
           kind: 'fallback',
-          label: 'Mock fallback',
-          message: 'ICS calendar did not contain readable events; using mock data.',
+          message: 'status.calendar.icsNoEvents',
           requestedUrl: url,
         });
         return this.sortEvents(MOCK_CALENDAR_EVENTS);
@@ -83,16 +79,14 @@ export class CalendarAdapterService implements CalendarAdapter {
 
       this.statusState.set({
         kind: 'ics',
-        label: 'ICS',
-        message: 'Loaded calendar events from the configured ICS URL.',
+        message: 'status.calendar.icsLoaded',
         requestedUrl: url,
       });
       return this.sortEvents(events);
     } catch {
       this.statusState.set({
         kind: 'fallback',
-        label: 'Mock fallback',
-        message: 'ICS calendar could not be loaded; using mock data.',
+        message: 'status.calendar.icsFailed',
         requestedUrl: url,
       });
       return this.sortEvents(MOCK_CALENDAR_EVENTS);
@@ -135,14 +129,14 @@ function optionalString(value: unknown): boolean {
   return value === undefined || typeof value === 'string';
 }
 
-function fallbackMessage(error: string | undefined): string {
+function fallbackMessage(error: string | undefined): TranslationKey {
   if (error === 'empty-url') {
-    return 'No calendar JSON URL is configured; using mock data.';
+    return 'status.calendar.jsonEmptyUrl';
   }
 
   if (error === 'invalid-shape') {
-    return 'Calendar JSON did not match the expected shape; using mock data.';
+    return 'status.calendar.jsonInvalidShape';
   }
 
-  return 'Calendar JSON could not be loaded; using mock data.';
+  return 'status.calendar.jsonFailed';
 }

@@ -25,8 +25,7 @@ export class VeloAdapterService implements VeloAdapter {
     if (result.data) {
       this.statusState.set({
         kind: 'local-json',
-        label: 'Local JSON',
-        message: 'Loaded Velo summary from the configured local JSON URL.',
+        message: 'status.velo.loaded',
         requestedUrl: url,
       });
       return cloneVeloSummary(result.data);
@@ -34,11 +33,7 @@ export class VeloAdapterService implements VeloAdapter {
 
     this.statusState.set({
       kind: 'fallback',
-      label: 'Mock fallback',
-      message:
-        result.error === 'invalid-shape'
-          ? 'Velo JSON did not match the expected shape; using mock data.'
-          : 'Velo JSON could not be loaded; using mock data.',
+      message: result.error === 'invalid-shape' ? 'status.velo.invalidShape' : 'status.velo.failed',
       requestedUrl: url,
     });
     return cloneVeloSummary(MOCK_VELO_SUMMARY);

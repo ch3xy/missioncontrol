@@ -4,7 +4,7 @@
       type="button"
       class="icon-btn"
       (click)="openMenu.emit()"
-      aria-label="Open menu"
+      [attr.aria-label]="'topbar.openMenu' | t"
       aria-controls="sidenav"
       [attr.aria-expanded]="drawerOpen()"
     >
@@ -14,9 +14,9 @@
   </div>
 
   <div class="topbar-context">
-    <span class="topbar-label">Local-first dashboard</span>
+    <span class="topbar-label">{{ 'topbar.label' | t }}</span>
     <time [attr.datetime]="today().toISOString()">
-      {{ today() | date: 'EEE, dd MMM yyyy' }}
+      {{ today() | date: ('format.date' | t) : undefined : i18n.locale() }}
     </time>
   </div>
 
@@ -25,8 +25,8 @@
       type="button"
       class="btn btn-ghost btn-icon"
       (click)="theme.toggle()"
-      title="Toggle theme"
-      aria-label="Toggle theme"
+      [title]="'topbar.toggleTheme' | t"
+      [attr.aria-label]="'topbar.toggleTheme' | t"
     >
       @if (theme.theme() === 'dark') {
         <svg lucideSun [size]="18"></svg>

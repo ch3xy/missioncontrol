@@ -25,8 +25,7 @@ export class DashAdapterService implements DashAdapter {
     if (result.data) {
       this.statusState.set({
         kind: 'local-json',
-        label: 'Local JSON',
-        message: 'Loaded Dash summary from the configured local JSON URL.',
+        message: 'status.dash.loaded',
         requestedUrl: url,
       });
       return { ...result.data };
@@ -34,11 +33,7 @@ export class DashAdapterService implements DashAdapter {
 
     this.statusState.set({
       kind: 'fallback',
-      label: 'Mock fallback',
-      message:
-        result.error === 'invalid-shape'
-          ? 'Dash JSON did not match the expected shape; using mock data.'
-          : 'Dash JSON could not be loaded; using mock data.',
+      message: result.error === 'invalid-shape' ? 'status.dash.invalidShape' : 'status.dash.failed',
       requestedUrl: url,
     });
     return { ...MOCK_DASH_SUMMARY };

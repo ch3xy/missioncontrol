@@ -1,6 +1,8 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { LucideExternalLink, LucideRefreshCw } from '@lucide/angular';
+import { I18nService } from '../../core/i18n/i18n.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { VeloSummary } from '../../core/models/velo.model';
 import { ShortcutService } from '../../core/services/shortcut.service';
 import { VeloAdapterService } from '../../core/services/velo-adapter.service';
@@ -21,11 +23,13 @@ import { WidgetCard } from '../../shared/components/widget-card/widget-card';
     WidgetCard,
     LucideExternalLink,
     LucideRefreshCw,
+    TranslatePipe,
   ],
   templateUrl: './velo-page.html',
   styleUrl: './velo-page.scss',
 })
 export class VeloPage {
+  protected readonly i18n = inject(I18nService);
   private readonly veloAdapter = inject(VeloAdapterService);
   private readonly shortcutService = inject(ShortcutService);
 
@@ -46,7 +50,7 @@ export class VeloPage {
   protected openVelo(): void {
     const shortcut = this.shortcutService.shortcuts().find((candidate) => candidate.id === 'velo');
     const didOpen = this.shortcutService.openExternal(shortcut?.url);
-    this.launchError.set(didOpen ? null : 'Velo has no valid http(s) URL configured.');
+    this.launchError.set(didOpen ? null : 'Velo');
   }
 
   private async load(): Promise<void> {

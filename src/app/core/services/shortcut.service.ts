@@ -7,20 +7,23 @@ import {
   LucideWallet,
 } from '@lucide/angular';
 import { AppShortcut } from '../models/shortcut.model';
+import { I18nService } from '../i18n/i18n.service';
 import { SettingsService } from './settings.service';
 
 @Injectable({ providedIn: 'root' })
 export class ShortcutService {
   private readonly settingsService = inject(SettingsService);
+  private readonly i18n = inject(I18nService);
 
   readonly shortcuts = computed<AppShortcut[]>(() => {
     const urls = this.settingsService.externalUrls();
+    const t = this.i18n.t.bind(this.i18n);
 
     const baseShortcuts: AppShortcut[] = [
       {
         id: 'velo',
         label: 'velo',
-        description: 'Cash flow and forecast',
+        description: t('shortcut.velo'),
         url: urls.velo,
         icon: LucideWallet,
         external: true,
@@ -28,7 +31,7 @@ export class ShortcutService {
       {
         id: 'dash',
         label: 'dash',
-        description: 'Time and customer management',
+        description: t('shortcut.dash'),
         url: urls.dash,
         icon: LucideTimer,
         external: true,
@@ -36,15 +39,15 @@ export class ShortcutService {
       {
         id: 'sevdesk',
         label: 'sevDesk',
-        description: 'Accounting workspace',
+        description: t('shortcut.sevdesk'),
         url: urls.sevdesk,
         icon: LucideReceipt,
         external: true,
       },
       {
         id: 'calendar',
-        label: 'Calendar',
-        description: 'Appointments and focus blocks',
+        label: t('nav.calendar'),
+        description: t('shortcut.calendar'),
         route: '/calendar',
         icon: LucideCalendarDays,
         external: false,
@@ -57,7 +60,7 @@ export class ShortcutService {
       .map((tool) => ({
         id: tool.id,
         label: tool.label,
-        description: 'Configurable local network shortcut',
+        description: t('shortcut.localTool'),
         url: tool.url,
         icon: LucideServer,
         external: true,
