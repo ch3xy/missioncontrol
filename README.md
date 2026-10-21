@@ -65,7 +65,7 @@ npm run build:pi    # ng build --base-href /missioncontrol/
 MISSIONCONTROL_LOCAL_PATH=$PWD ../pi-ops/scripts/deploy-missioncontrol.sh
 ```
 
-The sidebar shows the version from `package.json`; its tooltip shows the commit and build time of the deployed build. Release a version with `npm version patch|minor|major -m "Release %s"` (commits and tags `v<version>`), see [.ai/stack.md](.ai/stack.md).
+The sidebar shows the version from `package.json` and the commit of the deployed build, e.g. `v0.1.0 (Build 7de439b)`; its tooltip shows the build time. Release a version with `npm version patch|minor|major -m "Release %s"` (commits and tags `v<version>`), see [.ai/stack.md](.ai/stack.md).
 
 On the server, open `http://arrow.local/missioncontrol/` and use Settings → **APIs dieses Servers verwenden**; requests to velo and dash are then same-origin.
 

@@ -56,12 +56,12 @@ npm run format         # prettier --write
 
 `start`, `build`, `build:pi` und `watch` laufen über `scripts/ng-with-build-info.mjs`: Es übergibt Commit,
 „dirty“-Flag und Build-Zeit per `ng … --define MC_BUILD_INFO=…` (gelesen in `core/build-info.ts`). Direkt
-aufgerufenes `ng build` und die Unit-Tests haben keine Build-Info; die Sidebar zeigt dann nur die Version.
+aufgerufenes `ng build` und die Unit-Tests haben keine Build-Info; die Sidebar zeigt dann nur `v<version>`.
 
 ## Versionierung
 
 - SemVer in `package.json` ist die einzige Quelle der Version (Gegenstück zur `<version>` in den POMs von velo/dash).
-- Die Sidebar zeigt `v<version>`; der Tooltip zeigt Commit und Build-Zeit, `-dirty` bei uncommitteten Änderungen.
+- Die Sidebar zeigt `v<version> (Build <commit>)`, `-dirty` bei uncommitteten Änderungen; der Tooltip zeigt die Build-Zeit.
 - Keine Buildnummer: Gebaut und deployt wird lokal ohne CI, der Commit identifiziert einen Build eindeutig.
 - Neue Version bei sauberem Working Tree, danach bauen und deployen:
 

@@ -87,16 +87,15 @@
   <div
     class="nav-version"
     [attr.title]="
-      build.commit
-        ? ('nav.buildInfo'
-          | t
-            : {
-                commit: build.commit + (build.dirty ? '-dirty' : ''),
-                date: build.builtAt | date: ('format.dateTime' | t) : undefined : i18n.locale(),
-              })
+      build.builtAt
+        ? ('nav.builtAt'
+          | t: { date: build.builtAt | date: ('format.dateTime' | t) : undefined : i18n.locale() })
         : null
     "
   >
     v{{ build.version }}
+    @if (build.commit) {
+      ({{ 'nav.build' | t: { commit: build.commit + (build.dirty ? '-dirty' : '') } }})
+    }
   </div>
 </aside>
