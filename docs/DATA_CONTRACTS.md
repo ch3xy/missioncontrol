@@ -15,6 +15,7 @@ export interface CalendarEvent {
   location?: string;
   calendar?: string; // calendar name
   color?: string; // calendar color, `#rrggbb` or a CSS color keyword
+  allDay?: boolean; // startsAt is 00:00 UTC of the date, no time of day
   source: 'ics' | 'local-json';
 }
 ```

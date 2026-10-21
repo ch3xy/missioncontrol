@@ -102,6 +102,7 @@ function toCalendarEvent(
     endsAt: endsAt === startsAt ? undefined : endsAt,
     location: event.location?.trim() || undefined,
     project: event.description?.trim() || undefined,
+    allDay: start.isDate || undefined,
     ...meta,
     source: 'ics',
   };

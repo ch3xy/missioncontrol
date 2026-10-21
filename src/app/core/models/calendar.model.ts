@@ -9,6 +9,8 @@ export interface CalendarEvent {
   project?: string;
   customer?: string;
   location?: string;
+  /** All-day event: `startsAt` is 00:00 UTC of its date and carries no time of day. */
+  allDay?: boolean;
   /** Name of the calendar the event belongs to, e.g. from `X-WR-CALNAME`. */
   calendar?: string;
   /** CSS color of that calendar (`#rrggbb` or a color keyword). */

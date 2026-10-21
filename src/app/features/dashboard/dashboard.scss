@@ -29,6 +29,10 @@ app-integration-notice + .metric {
   font-variant-numeric: tabular-nums;
 }
 
+.event time small {
+  font-size: var(--fs-sm);
+}
+
 .event strong,
 .event small {
   display: block;

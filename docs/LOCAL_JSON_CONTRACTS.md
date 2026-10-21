@@ -38,6 +38,7 @@ Optional fields:
 - `location`: string
 - `calendar`: string, name of the calendar, shown next to the appointment
 - `color`: string, calendar color as a CSS color (e.g. `#1badf8`)
+- `allDay`: boolean, all-day event; `startsAt` is 00:00 UTC of its date and shown as "Ganztägig" instead of a time
 
 See `public/examples/calendar.json`.
 
@@ -60,7 +61,7 @@ Parsing uses [ical.js](https://github.com/kewisch/ical.js). Supported date forma
 
 - UTC date-time, for example `20260619T090000Z`
 - Local date-time with `TZID`, converted with the calendar's `VTIMEZONE`; without one, or without `TZID` (floating time), in the browser's time zone
-- Date-only values (`VALUE=DATE`), for example `20260619`, stored as 00:00 UTC of that day
+- Date-only values (`VALUE=DATE`), for example `20260619`, stored as 00:00 UTC of that day with `allDay: true`
 
 Recurring events (`RRULE`, `RDATE`) are expanded into one event per occurrence from today up to one year ahead; `EXDATE` and changed occurrences (`RECURRENCE-ID`) are applied. All occurrences keep the event's `UID` as `id`. Non-recurring events are not limited to that range.
 

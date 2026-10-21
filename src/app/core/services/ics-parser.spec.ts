@@ -168,6 +168,7 @@ END:VCALENDAR`,
       '2026-11-10T00:00:00.000Z',
       '2026-12-08T00:00:00.000Z',
     ]);
+    expect(events.every((event) => event.allDay)).toBe(true);
   });
 
   it('should keep a moved occurrence whose series is not in the file', () => {

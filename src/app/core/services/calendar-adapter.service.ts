@@ -128,7 +128,8 @@ function isCalendarEvent(value: unknown): value is CalendarEvent {
     optionalString(value['customer']) &&
     optionalString(value['location']) &&
     optionalString(value['calendar']) &&
-    optionalString(value['color'])
+    optionalString(value['color']) &&
+    (value['allDay'] === undefined || typeof value['allDay'] === 'boolean')
   );
 }
 

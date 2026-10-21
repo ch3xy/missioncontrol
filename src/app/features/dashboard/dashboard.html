@@ -32,7 +32,13 @@
     <div class="event-list">
       @for (event of nextEvents(); track event.id + event.startsAt) {
         <article class="event" [style.--calendar-color]="event.color">
-          <time>{{ event.startsAt | date: ('format.time' | t) : undefined : i18n.locale() }}</time>
+          <time>
+            @if (event.allDay) {
+              <small>{{ 'common.allDay' | t }}</small>
+            } @else {
+              {{ event.startsAt | date: ('format.time' | t) : undefined : i18n.locale() }}
+            }
+          </time>
           <div>
             <strong>
               @if (event.color) {

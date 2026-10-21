@@ -32,13 +32,17 @@
           @for (event of group.events; track event.id + event.startsAt) {
             <article [class.has-color]="event.color" [style.--calendar-color]="event.color">
               <time>
-                <span>{{
-                  event.startsAt | date: ('format.time' | t) : undefined : i18n.locale()
-                }}</span>
-                @if (event.endsAt) {
-                  <small>{{
-                    event.endsAt | date: ('format.time' | t) : undefined : i18n.locale()
-                  }}</small>
+                @if (event.allDay) {
+                  <small>{{ 'common.allDay' | t }}</small>
+                } @else {
+                  <span>{{
+                    event.startsAt | date: ('format.time' | t) : undefined : i18n.locale()
+                  }}</span>
+                  @if (event.endsAt) {
+                    <small>{{
+                      event.endsAt | date: ('format.time' | t) : undefined : i18n.locale()
+                    }}</small>
+                  }
                 }
               </time>
               <div>

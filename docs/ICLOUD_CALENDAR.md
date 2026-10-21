@@ -170,6 +170,5 @@ mission control expands recurring events itself (with [ical.js](https://github.c
 
 ## Limitations
 
-- All-day events are shown at 00:00 UTC (e.g. 01:00 or 02:00 in Vienna) in the time column.
 - Single (non-recurring) events are shown as delivered; the sync window above keeps past ones out.
 - Cancelled occurrences that iCloud keeps as `STATUS:CANCELLED` (instead of an `EXDATE`) are still shown.
