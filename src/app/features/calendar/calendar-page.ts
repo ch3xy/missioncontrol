@@ -20,7 +20,7 @@ import {
 } from '@lucide/angular';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { CalendarEvent } from '../../core/models/calendar.model';
+import { CalendarEvent, isUpcoming } from '../../core/models/calendar.model';
 import { CalendarAdapterService } from '../../core/services/calendar-adapter.service';
 import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
 import { SourceBadge } from '../../shared/components/source-badge/source-badge';
@@ -115,7 +115,7 @@ export class CalendarPage {
   protected readonly eventGroups = computed<CalendarEventGroup[]>(() => {
     const groups = new Map<string, CalendarEvent[]>();
 
-    for (const event of this.events()) {
+    for (const event of this.events().filter((item) => isUpcoming(item, this.now()))) {
       const key = eventDayKeys(event)[0];
       groups.set(key, [...(groups.get(key) ?? []), event]);
     }

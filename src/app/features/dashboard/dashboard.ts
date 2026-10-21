@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { LucideRefreshCw, LucideSettings } from '@lucide/angular';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { CalendarEvent } from '../../core/models/calendar.model';
+import { CalendarEvent, isUpcoming } from '../../core/models/calendar.model';
 import { DashSummary } from '../../core/models/dash.model';
 import { AppShortcut } from '../../core/models/shortcut.model';
 import { VeloSummary } from '../../core/models/velo.model';
@@ -56,7 +56,11 @@ export class Dashboard {
   protected readonly veloStatus = this.veloAdapter.status;
   protected readonly dashStatus = this.dashAdapter.status;
   protected readonly shortcuts = this.shortcutService.shortcuts;
-  protected readonly nextEvents = computed(() => this.events().slice(0, 3));
+  protected readonly nextEvents = computed(() =>
+    this.events()
+      .filter((event) => isUpcoming(event))
+      .slice(0, 3),
+  );
   protected readonly calendarSource = computed(() => this.events()[0]?.source ?? null);
   protected readonly dashProgress = computed(() => {
     const summary = this.dash();
