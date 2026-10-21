@@ -10,6 +10,7 @@ export const EN = {
   'format.timeSeconds': 'HH:mm:ss',
   'format.dateTime': 'MMM d, yyyy, HH:mm',
   'format.month': 'MMMM yyyy',
+  'format.dayMonth': 'MMM d',
   'format.weekday': 'EEE',
 
   // Shell, sidebar, topbar
@@ -119,11 +120,14 @@ export const EN = {
   'calendar.upcoming': 'Upcoming Appointments',
   'calendar.empty': 'No upcoming appointments.',
   'calendar.view': 'View',
+  'calendar.viewWeek': 'Week',
   'calendar.viewMonth': 'Month',
   'calendar.viewList': 'List',
   'calendar.previousMonth': 'Previous month',
   'calendar.nextMonth': 'Next month',
-  'calendar.currentMonth': 'Today',
+  'calendar.today': 'Today',
+  'calendar.previousWeek': 'Previous week',
+  'calendar.nextWeek': 'Next week',
   'calendar.more': '+{count} more',
 
   // Velo
@@ -221,6 +225,7 @@ export const DE: Dictionary = {
   'format.timeSeconds': 'HH:mm:ss',
   'format.dateTime': 'd.M.yyyy, HH:mm',
   'format.month': 'MMMM yyyy',
+  'format.dayMonth': 'd. MMM',
   'format.weekday': 'EEE',
 
   'shell.skipLink': 'Zum Inhalt springen',
@@ -325,11 +330,14 @@ export const DE: Dictionary = {
   'calendar.upcoming': 'Anstehende Termine',
   'calendar.empty': 'Keine anstehenden Termine.',
   'calendar.view': 'Ansicht',
+  'calendar.viewWeek': 'Woche',
   'calendar.viewMonth': 'Monat',
   'calendar.viewList': 'Liste',
   'calendar.previousMonth': 'Vorheriger Monat',
   'calendar.nextMonth': 'Nächster Monat',
-  'calendar.currentMonth': 'Heute',
+  'calendar.today': 'Heute',
+  'calendar.previousWeek': 'Vorherige Woche',
+  'calendar.nextWeek': 'Nächste Woche',
   'calendar.more': '+{count} weitere',
 
   'velo.lead': 'Cashflow-Übersicht aus der velo-API.',

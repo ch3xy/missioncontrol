@@ -9,7 +9,7 @@ It is intentionally frontend-only for the MVP. There is no backend, authenticati
 - App shell in the shared Arrow product design (velo/dash): collapsible sidebar, compact top bar, light/dark/system theme
 - German UI by default (de-AT date and number formats), switchable to English in Settings
 - Dashboard widgets for Calendar, Velo cash flow, Dash time tracking, Dash customers, and Quick Access
-- Detail pages for Calendar (read-only month view or list, with calendar colors), Velo, and Dash
+- Detail pages for Calendar (read-only week view (default, 06:00–18:00 in view), month view or list, with calendar colors), Velo, and Dash
 - Configurable external app URLs for Velo, Dash, and sevDesk
 - Optional local tool shortcuts
 - LocalStorage-backed settings with export/import backup

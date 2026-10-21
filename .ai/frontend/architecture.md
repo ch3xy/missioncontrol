@@ -23,7 +23,7 @@ src/
     │   └── validators/        # httpUrlValidator
     ├── features/
     │   ├── dashboard/         # Übersicht (Widget-Grid)
-    │   ├── calendar/          # Monatsansicht (Standard) und Agenda-Liste, Ansicht in `missioncontrol-calendar-view`
+    │   ├── calendar/          # Wochenansicht (Standard, 06:00–18:00 sichtbar), Monatsansicht und Agenda-Liste, Ansicht in `missioncontrol-calendar-view`
     │   ├── velo/              # Cashflow-Zusammenfassung
     │   ├── dash/              # Zeit-/Kunden-Zusammenfassung
     │   └── settings/          # URLs, Datenquellen, Sprache, Darstellung, Backup
@@ -34,14 +34,14 @@ public/                        # Logo-Set, Favicons, examples/ (Local-JSON/ICS-B
 
 ## Routing
 
-| Pfad | Komponente | Titel |
-|---|---|---|
-| `/` | `Dashboard` | `mission control` |
-| `/calendar` | `CalendarPage` | `Calendar · mission control` |
-| `/velo` | `VeloPage` | `velo · mission control` |
-| `/dash` | `DashPage` | `dash · mission control` |
-| `/settings` | `SettingsPage` | `Settings · mission control` |
-| `**` | Redirect auf `/` | |
+| Pfad        | Komponente       | Titel                        |
+| ----------- | ---------------- | ---------------------------- |
+| `/`         | `Dashboard`      | `mission control`            |
+| `/calendar` | `CalendarPage`   | `Calendar · mission control` |
+| `/velo`     | `VeloPage`       | `velo · mission control`     |
+| `/dash`     | `DashPage`       | `dash · mission control`     |
+| `/settings` | `SettingsPage`   | `Settings · mission control` |
+| `**`        | Redirect auf `/` |                              |
 
 Alle Feature-Routen sind Children der Shell-Route und werden lazy geladen (`loadComponent`).
 sevDesk ist kein Route-Ziel, sondern ein externer Link über `ShortcutService.openExternal()`.
@@ -69,12 +69,12 @@ sevDesk ist kein Route-Ziel, sondern ein externer Link über `ShortcutService.op
 
 ## LocalStorage-Schlüssel
 
-| Schlüssel | Inhalt |
-|---|---|
+| Schlüssel                          | Inhalt                                   |
+| ---------------------------------- | ---------------------------------------- |
 | Settings-Key des `SettingsService` | Externe URLs, Datenquellen, lokale Tools |
-| `missioncontrol-theme` | `light` / `dark` / `system` |
-| `missioncontrol-nav-collapsed` | `true` / `false` |
-| `missioncontrol-lang` | `de` / `en` |
+| `missioncontrol-theme`             | `light` / `dark` / `system`              |
+| `missioncontrol-nav-collapsed`     | `true` / `false`                         |
+| `missioncontrol-lang`              | `de` / `en`                              |
 
 Jeder Zugriff ist in `try/catch` gekapselt (Private Mode, blockierter Storage).
 

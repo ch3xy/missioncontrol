@@ -208,6 +208,156 @@ article.has-color {
   font-size: var(--fs-xs);
 }
 
+/* Week view: hour labels plus seven days; the scroll area shows 12 hours (06:00–18:00 on open). */
+.week {
+  --hour-height: 3rem;
+  --hour-label-width: 3.5rem;
+
+  margin-top: var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.week-row {
+  display: grid;
+  grid-template-columns: var(--hour-label-width) repeat(7, minmax(0, 1fr));
+}
+
+/* Rows outside the scroll area reserve the scrollbar width so the columns line up. */
+.week-head,
+.week-all-day {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.week-head__day {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--sp-1);
+  padding: var(--sp-2) var(--sp-1);
+  border-left: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.week-head__day strong {
+  min-width: 1.75rem;
+  padding: 2px var(--sp-1);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.week-head__day.is-today strong {
+  background: var(--brand);
+  color: #fff;
+}
+
+.week-all-day > small {
+  align-self: center;
+  overflow: hidden;
+  padding: 0 var(--sp-1);
+  text-overflow: ellipsis;
+  font-size: var(--fs-xs);
+  text-align: right;
+}
+
+.week-all-day__cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 2px;
+  border-left: 1px solid var(--border);
+}
+
+.week-scroll {
+  height: calc(12 * var(--hour-height));
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  background: var(--surface);
+}
+
+.week-body {
+  height: calc(24 * var(--hour-height));
+}
+
+.week-hours {
+  display: grid;
+  grid-template-rows: repeat(24, var(--hour-height));
+}
+
+.week-hours span {
+  align-self: start;
+  padding-right: var(--sp-2);
+  line-height: 1;
+  color: var(--text-faint);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  transform: translateY(-50%);
+}
+
+.week-day {
+  position: relative;
+  border-left: 1px solid var(--border);
+  background-image: linear-gradient(var(--border) 1px, transparent 1px);
+  background-size: 100% var(--hour-height);
+}
+
+.week-day.is-today {
+  background-color: color-mix(in srgb, var(--brand) 4%, var(--surface));
+}
+
+/* Calendar colors are user data (from iCloud), not status colors. */
+.week-event {
+  position: absolute;
+  top: calc(var(--start) / 60 * var(--hour-height));
+  left: calc(var(--column) / var(--columns) * 100%);
+  width: calc(100% / var(--columns) - 2px);
+  height: calc((var(--end) - var(--start)) / 60 * var(--hour-height) - 1px);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1px var(--sp-1);
+  overflow: hidden;
+  border-left: 3px solid var(--calendar-color, var(--brand));
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--calendar-color, var(--brand)) 16%, var(--surface));
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+}
+
+.week-event time {
+  display: block;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.week-event span {
+  overflow: hidden;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.week-now {
+  position: absolute;
+  top: calc(var(--start) / 60 * var(--hour-height));
+  right: 0;
+  left: 0;
+  z-index: 1;
+  border-top: 2px solid var(--brand);
+  pointer-events: none;
+}
+
 @media (max-width: 640px) {
   .month-day {
     min-height: 4.5rem;
@@ -219,6 +369,28 @@ article.has-color {
   }
 
   .month-event time {
+    display: none;
+  }
+
+  .week {
+    --hour-label-width: 2.5rem;
+  }
+
+  .week-all-day > small {
+    visibility: hidden;
+  }
+
+  .week-head__day {
+    flex-direction: column;
+    align-items: center;
+    padding: var(--sp-1) 0;
+  }
+
+  .week-event {
+    padding: 1px 2px;
+  }
+
+  .week-event time {
     display: none;
   }
 }

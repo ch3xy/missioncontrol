@@ -63,10 +63,14 @@ aufgerufenes `ng build` und die Unit-Tests haben keine Build-Info; die Sidebar z
 - SemVer in `package.json` ist die einzige Quelle der Version (Gegenstück zur `<version>` in den POMs von velo/dash).
 - Die Sidebar zeigt `v<version> (Build <commit>)`, `-dirty` bei uncommitteten Änderungen; der Tooltip zeigt die Build-Zeit.
 - Keine Buildnummer: Gebaut und deployt wird lokal ohne CI, der Commit identifiziert einen Build eindeutig.
-- Neue Version bei sauberem Working Tree, danach bauen und deployen:
+- Jeder Deploy ist ein Release: Änderungen zuerst committen, dann die dritte Stelle erhöhen, bauen und deployen. Es wird nie ein Stand mit `-dirty` deployt.
+- minor und major werden nur auf ausdrücklichen Wunsch erhöht.
 
 ```bash
-npm version patch -m "Release %s"   # Fehlerbehebungen; minor = neue Funktionen, major = Brüche
+git commit ...                      # alle Änderungen committen, Working Tree sauber
+npm version patch -m "Release %s"   # bei jedem Deploy; minor/major nur auf Ansage
+npm run build:pi
+MISSIONCONTROL_LOCAL_PATH=$PWD ../pi-ops/scripts/deploy-missioncontrol.sh
 git push --follow-tags              # erst nach Rückfrage
 ```
 
