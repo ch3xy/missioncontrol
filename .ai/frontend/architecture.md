@@ -23,7 +23,7 @@ src/
     │   └── validators/        # httpUrlValidator
     ├── features/
     │   ├── dashboard/         # Übersicht (Widget-Grid)
-    │   ├── calendar/          # Agenda
+    │   ├── calendar/          # Monatsansicht (Standard) und Agenda-Liste, Ansicht in `missioncontrol-calendar-view`
     │   ├── velo/              # Cashflow-Zusammenfassung
     │   ├── dash/              # Zeit-/Kunden-Zusammenfassung
     │   └── settings/          # URLs, Datenquellen, Sprache, Darstellung, Backup

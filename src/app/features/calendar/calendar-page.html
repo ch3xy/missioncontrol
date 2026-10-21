@@ -12,6 +12,28 @@
     }
   </div>
   <div class="page-controls">
+    <div class="view-switch" role="group" [attr.aria-label]="'calendar.view' | t">
+      <button
+        class="btn btn-sm"
+        type="button"
+        [class.is-active]="view() === 'month'"
+        [attr.aria-pressed]="view() === 'month'"
+        (click)="setView('month')"
+      >
+        <svg lucideCalendarDays></svg>
+        {{ 'calendar.viewMonth' | t }}
+      </button>
+      <button
+        class="btn btn-sm"
+        type="button"
+        [class.is-active]="view() === 'list'"
+        [attr.aria-pressed]="view() === 'list'"
+        (click)="setView('list')"
+      >
+        <svg lucideList></svg>
+        {{ 'calendar.viewList' | t }}
+      </button>
+    </div>
     <button class="btn" type="button" [disabled]="isLoading()" (click)="refresh()">
       <svg lucideRefreshCw></svg>
       {{ (isLoading() ? 'common.refreshing' : 'common.refresh') | t }}
@@ -19,53 +41,133 @@
   </div>
 </header>
 
-<app-widget-card [title]="'calendar.upcoming' | t" [eyebrow]="statusLabel()">
-  @if (source(); as source) {
-    <app-source-badge [source]="source" />
-  }
-  <app-integration-notice [status]="status()" />
-  <div class="appointments">
-    @for (group of eventGroups(); track group.dateKey) {
-      <section class="agenda-day">
-        <h3>{{ group.dateKey | date: ('format.dateLong' | t) : undefined : i18n.locale() }}</h3>
-        <div class="agenda-day__events">
-          @for (event of group.events; track event.id + event.startsAt) {
-            <article [class.has-color]="event.color" [style.--calendar-color]="event.color">
-              <time>
-                @if (event.allDay) {
-                  <small>{{ 'common.allDay' | t }}</small>
-                } @else {
-                  <span>{{
-                    event.startsAt | date: ('format.time' | t) : undefined : i18n.locale()
-                  }}</span>
-                  @if (event.endsAt) {
-                    <small>{{
-                      event.endsAt | date: ('format.time' | t) : undefined : i18n.locale()
-                    }}</small>
-                  }
-                }
-              </time>
-              <div>
-                <h4>{{ event.title }}</h4>
-                <p>{{ event.customer || event.project || ('common.personal' | t) }}</p>
-                @if (event.location) {
-                  <small>{{ event.location }}</small>
-                }
-                @if (event.calendar) {
-                  <small class="calendar-name">
-                    <span class="calendar-dot" aria-hidden="true"></span>
-                    {{ event.calendar }}
-                  </small>
-                }
-              </div>
-            </article>
+@if (view() === 'month') {
+  <app-widget-card
+    [title]="(month() | date: ('format.month' | t) : undefined : i18n.locale()) ?? ''"
+    [eyebrow]="statusLabel()"
+  >
+    <div class="month-toolbar">
+      @if (source(); as source) {
+        <app-source-badge [source]="source" />
+      }
+      <div class="month-nav">
+        <button
+          class="btn btn-sm btn-icon"
+          type="button"
+          [attr.aria-label]="'calendar.previousMonth' | t"
+          [title]="'calendar.previousMonth' | t"
+          (click)="moveMonth(-1)"
+        >
+          <svg lucideChevronLeft></svg>
+        </button>
+        <button class="btn btn-sm" type="button" (click)="showCurrentMonth()">
+          {{ 'calendar.currentMonth' | t }}
+        </button>
+        <button
+          class="btn btn-sm btn-icon"
+          type="button"
+          [attr.aria-label]="'calendar.nextMonth' | t"
+          [title]="'calendar.nextMonth' | t"
+          (click)="moveMonth(1)"
+        >
+          <svg lucideChevronRight></svg>
+        </button>
+      </div>
+    </div>
+    <app-integration-notice [status]="status()" />
+    <div class="month-grid">
+      @for (day of weekdays(); track day.key) {
+        <div class="month-weekday" aria-hidden="true">
+          {{ day.date | date: ('format.weekday' | t) : undefined : i18n.locale() }}
+        </div>
+      }
+      @for (day of monthDays(); track day.key) {
+        <div class="month-day" [class.is-outside]="!day.inMonth" [class.is-today]="day.isToday">
+          <span
+            class="month-day__number"
+            [attr.aria-label]="day.date | date: ('format.dateLong' | t) : undefined : i18n.locale()"
+            >{{ day.date.getDate() }}</span
+          >
+          @for (event of day.events.slice(0, maxEventsPerDay); track event.id + event.startsAt) {
+            <div
+              class="month-event"
+              [class.is-all-day]="event.allDay"
+              [style.--calendar-color]="event.color"
+              [title]="
+                (event.allDay
+                  ? ('common.allDay' | t)
+                  : (event.startsAt | date: ('format.time' | t) : undefined : i18n.locale())) +
+                ' · ' +
+                event.title +
+                (event.calendar ? ' · ' + event.calendar : '')
+              "
+            >
+              @if (!event.allDay) {
+                <time>{{
+                  event.startsAt | date: ('format.time' | t) : undefined : i18n.locale()
+                }}</time>
+              }
+              <span>{{ event.title }}</span>
+            </div>
+          }
+          @if (day.events.length > maxEventsPerDay) {
+            <small class="month-more">{{
+              'calendar.more' | t: { count: day.events.length - maxEventsPerDay }
+            }}</small>
           }
         </div>
-      </section>
-    } @empty {
-      @if (hasSource()) {
-        <p class="empty">{{ 'calendar.empty' | t }}</p>
       }
+    </div>
+  </app-widget-card>
+} @else {
+  <app-widget-card [title]="'calendar.upcoming' | t" [eyebrow]="statusLabel()">
+    @if (source(); as source) {
+      <app-source-badge [source]="source" />
     }
-  </div>
-</app-widget-card>
+    <app-integration-notice [status]="status()" />
+    <div class="appointments">
+      @for (group of eventGroups(); track group.dateKey) {
+        <section class="agenda-day">
+          <h3>{{ group.dateKey | date: ('format.dateLong' | t) : undefined : i18n.locale() }}</h3>
+          <div class="agenda-day__events">
+            @for (event of group.events; track event.id + event.startsAt) {
+              <article [class.has-color]="event.color" [style.--calendar-color]="event.color">
+                <time>
+                  @if (event.allDay) {
+                    <small>{{ 'common.allDay' | t }}</small>
+                  } @else {
+                    <span>{{
+                      event.startsAt | date: ('format.time' | t) : undefined : i18n.locale()
+                    }}</span>
+                    @if (event.endsAt) {
+                      <small>{{
+                        event.endsAt | date: ('format.time' | t) : undefined : i18n.locale()
+                      }}</small>
+                    }
+                  }
+                </time>
+                <div>
+                  <h4>{{ event.title }}</h4>
+                  <p>{{ event.customer || event.project || ('common.personal' | t) }}</p>
+                  @if (event.location) {
+                    <small>{{ event.location }}</small>
+                  }
+                  @if (event.calendar) {
+                    <small class="calendar-name">
+                      <span class="calendar-dot" aria-hidden="true"></span>
+                      {{ event.calendar }}
+                    </small>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+      } @empty {
+        @if (hasSource()) {
+          <p class="empty">{{ 'calendar.empty' | t }}</p>
+        }
+      }
+    </div>
+  </app-widget-card>
+}

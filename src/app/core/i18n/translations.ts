@@ -8,6 +8,8 @@ export const EN = {
   'format.dateLong': 'EEEE, dd MMM yyyy',
   'format.time': 'HH:mm',
   'format.timeSeconds': 'HH:mm:ss',
+  'format.month': 'MMMM yyyy',
+  'format.weekday': 'EEE',
 
   // Shell, sidebar, topbar
   'shell.skipLink': 'Skip to content',
@@ -113,6 +115,13 @@ export const EN = {
   'calendar.lead': 'Appointments from local JSON or a browser-readable ICS URL.',
   'calendar.upcoming': 'Upcoming Appointments',
   'calendar.empty': 'No upcoming appointments.',
+  'calendar.view': 'View',
+  'calendar.viewMonth': 'Month',
+  'calendar.viewList': 'List',
+  'calendar.previousMonth': 'Previous month',
+  'calendar.nextMonth': 'Next month',
+  'calendar.currentMonth': 'Today',
+  'calendar.more': '+{count} more',
 
   // Velo
   'velo.lead': 'Cash-flow summary from the velo API.',
@@ -207,6 +216,8 @@ export const DE: Dictionary = {
   'format.dateLong': 'EEEE, d. MMMM yyyy',
   'format.time': 'HH:mm',
   'format.timeSeconds': 'HH:mm:ss',
+  'format.month': 'MMMM yyyy',
+  'format.weekday': 'EEE',
 
   'shell.skipLink': 'Zum Inhalt springen',
   'nav.primary': 'Hauptnavigation',
@@ -307,6 +318,13 @@ export const DE: Dictionary = {
   'calendar.lead': 'Termine aus lokalem JSON oder einer im Browser lesbaren ICS-URL.',
   'calendar.upcoming': 'Anstehende Termine',
   'calendar.empty': 'Keine anstehenden Termine.',
+  'calendar.view': 'Ansicht',
+  'calendar.viewMonth': 'Monat',
+  'calendar.viewList': 'Liste',
+  'calendar.previousMonth': 'Vorheriger Monat',
+  'calendar.nextMonth': 'Nächster Monat',
+  'calendar.currentMonth': 'Heute',
+  'calendar.more': '+{count} weitere',
 
   'velo.lead': 'Cashflow-Übersicht aus der velo-API.',
   'velo.open': 'velo öffnen',
