@@ -30,7 +30,7 @@
     }
     <app-integration-notice [status]="calendarStatus()" />
     <div class="event-list">
-      @for (event of nextEvents(); track event.id) {
+      @for (event of nextEvents(); track event.id + event.startsAt) {
         <article class="event">
           <time>{{ event.startsAt | date: ('format.time' | t) : undefined : i18n.locale() }}</time>
           <div>

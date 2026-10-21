@@ -6,6 +6,8 @@ These sources are configured in Settings. If a URL is empty, unreachable, blocke
 
 Calendar can also read a basic ICS URL when the Calendar source is set to `ICS URL`.
 
+The calendar source URL field takes one URL per line: an absolute http(s) URL or a path on the same host starting with `/` (e.g. `/missioncontrol/calendars/work.ics`). All sources are loaded in parallel and their events are merged; an event with the same `id` and `startsAt` in several sources is shown once. If only some sources fail, the loaded events are shown together with a warning. Private iCloud calendars: [ICLOUD_CALENDAR.md](ICLOUD_CALENDAR.md).
+
 ## Example URLs
 
 When running the Angular dev server, the included examples are available at:
@@ -50,11 +52,15 @@ Used fields:
 - `LOCATION` maps to `location`
 - `DESCRIPTION` maps to `project`
 
-Supported date formats:
+Parsing uses [ical.js](https://github.com/kewisch/ical.js). Supported date formats:
 
 - UTC date-time, for example `20260619T090000Z`
-- Date-only values, for example `20260619`
-- Browser-readable ISO strings
+- Local date-time with `TZID`, converted with the calendar's `VTIMEZONE`; without one, or without `TZID` (floating time), in the browser's time zone
+- Date-only values (`VALUE=DATE`), for example `20260619`, stored as 00:00 UTC of that day
+
+Recurring events (`RRULE`, `RDATE`) are expanded into one event per occurrence from today up to one year ahead; `EXDATE` and changed occurrences (`RECURRENCE-ID`) are applied. All occurrences keep the event's `UID` as `id`. Non-recurring events are not limited to that range.
+
+A response without `BEGIN:VCALENDAR` (e.g. an HTML page) or one ical.js cannot parse is reported as invalid; a calendar without events is valid and simply empty.
 
 See `public/examples/calendar.ics`.
 

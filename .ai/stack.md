@@ -21,6 +21,7 @@ Konfiguration zwischen den Projekten austauschbar sind.
 |---|---|---|
 | `@lucide/angular` | ^1.59.0 | Icons (Arrow-Standard), Default `size 16`, `strokeWidth 1.75` |
 | `@fontsource-variable/inter` | ^5.3.0 | Inter selbst gehostet (keine Font-CDN) |
+| `ical.js` | ^2.2.1 | ICS-Parsing inkl. Wiederholungen (RRULE/EXDATE/RECURRENCE-ID) und VTIMEZONE (MPL-2.0) |
 
 Bewusst **nicht** verwendet: Angular Material (velo nutzt es, dash nicht — mission control folgt dash),
 Tailwind, Chart-Bibliotheken (der Trend-Sparkline ist ein eigenes SVG).

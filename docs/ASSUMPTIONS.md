@@ -72,3 +72,23 @@ Deployment on arrow-pi (2026-10-19):
 - The build is made locally with `npm run build:pi` (`--base-href /missioncontrol/`); the deploy script refuses builds with another base href.
 - Bundled example presets in Settings resolve against `<base href>` instead of the origin root.
 - External launch URLs (Velo, Dash) keep their localhost defaults; on the server they are set in Settings (e.g. `http://arrow.local/velo/`).
+
+Private iCloud calendars (2026-10-21):
+
+- iCloud calendars are not shared publicly. A vdirsyncer job on arrow-pi reads them via CalDAV with an app-specific password and writes one `.ics` file per calendar; Caddy serves them under `/missioncontrol/calendars/`. Setup: `docs/ICLOUD_CALENDAR.md`. mission control itself stays frontend-only and never sees the Apple ID credentials.
+- The calendar source URL field takes several URLs, one per line, for both ICS and local JSON. The setting stays a single string (`calendarSourceUrl`), so existing settings and backups keep working unchanged.
+- Besides absolute http(s) URLs, the field accepts paths starting with `/` (same host). Relative paths without `/` are rejected to avoid mistaking `arrow.local/x.ics` for a path.
+- Sources are loaded in parallel and merged; duplicates (same `id` and `startsAt`) are dropped. If some sources fail, the others are still shown, with a warning (`status.calendar.partiallyLoaded`).
+- An ICS response without `BEGIN:VCALENDAR` is invalid (it is typically the `index.html` fallback of Caddy's `try_files`); an ICS calendar without events is now valid and empty instead of a warning, since a synced calendar can legitimately be empty.
+- The calendars live in `/home/pi/apps/calendars`, not inside `/home/pi/apps/missioncontrol`, because the deploy script rsyncs the build into that directory.
+- The dev server forwards `/missioncontrol/calendars` to `CALENDARS_TARGET` (default `http://arrow.local`).
+- The Caddy and compose changes belong to `pi-ops` and are only documented here, not applied.
+
+Recurring calendar events (2026-10-21):
+
+- ICS parsing uses `ical.js` (Mozilla, MPL-2.0, ~25 kB gzip) instead of the former hand-written parser. RRULE expansion with EXDATE, RECURRENCE-ID and VTIMEZONE conversion is easy to get subtly wrong (BYSETPOS, DST, THISANDFUTURE), and a well-tested library is cheaper than maintaining our own.
+- Occurrences are generated from the start of today up to one year ahead. The agenda shows upcoming appointments, so past occurrences of a series are not shown; non-recurring events are still returned unfiltered as before.
+- All occurrences keep the series `UID` as `id`; lists track and deduplicate by `id` + `startsAt`.
+- All-day events keep the previous representation (00:00 UTC of their date), so the agenda, which groups by the UTC date, keeps them on the right day.
+- Expansion stops after 50,000 iterations per series as a guard against endless rules; that covers a daily series starting more than 100 years ago.
+- `TZID` values without a matching `VTIMEZONE` fall back to the browser's time zone, as before.

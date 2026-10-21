@@ -94,3 +94,20 @@ form {
     grid-template-columns: 1fr;
   }
 }
+
+.textarea {
+  height: auto;
+  padding: var(--sp-2) var(--sp-3);
+  resize: vertical;
+  font-family: var(--mono);
+  font-size: var(--fs-sm);
+}
+
+.textarea.ng-invalid.ng-touched {
+  border-color: var(--danger);
+}
+
+.field-hint {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+}

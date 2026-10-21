@@ -69,6 +69,7 @@ export interface MissionControlSettings {
   dashUrl: string;
   sevDeskUrl: string;
   calendarSource: 'none' | 'ics' | 'local-json';
+  /** One URL per line: absolute http(s) URL or a path starting with `/`. */
   calendarSourceUrl?: string;
   veloSourceUrl?: string;
   dashSourceUrl?: string;

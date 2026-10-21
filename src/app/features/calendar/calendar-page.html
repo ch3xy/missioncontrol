@@ -29,7 +29,7 @@
       <section class="agenda-day">
         <h3>{{ group.dateKey | date: ('format.dateLong' | t) : undefined : i18n.locale() }}</h3>
         <div class="agenda-day__events">
-          @for (event of group.events; track event.id) {
+          @for (event of group.events; track event.id + event.startsAt) {
             <article>
               <time>
                 <span>{{

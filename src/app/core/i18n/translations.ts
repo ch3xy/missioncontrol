@@ -65,8 +65,10 @@ export const EN = {
   'status.calendar.jsonFailed': 'Calendar JSON could not be loaded.',
   'status.calendar.icsEmptyUrl': 'No ICS URL is configured.',
   'status.calendar.icsFailed': 'ICS calendar could not be loaded.',
-  'status.calendar.icsNoEvents': 'ICS calendar did not contain readable events.',
-  'status.calendar.icsLoaded': 'Loaded calendar events from the configured ICS URL.',
+  'status.calendar.icsInvalid': 'The response is not a readable ICS calendar.',
+  'status.calendar.icsLoaded': 'Loaded calendar events from the configured ICS URLs.',
+  'status.calendar.partiallyLoaded':
+    'Some calendars could not be loaded; appointments from the others are shown.',
   'status.velo.loaded': 'Loaded Velo summary from the configured local JSON URL.',
   'status.velo.invalidShape': 'Velo JSON did not match the expected shape.',
   'status.velo.failed': 'Velo JSON could not be loaded.',
@@ -145,7 +147,10 @@ export const EN = {
   'settings.source.none': 'None',
   'settings.source.ics': 'ICS URL',
   'settings.source.localJson': 'Local JSON',
-  'settings.calendarSourceUrl': 'Calendar source URL',
+  'settings.calendarSourceUrl': 'Calendar source URLs',
+  'settings.calendarSourceUrlHint':
+    'One URL per line, e.g. /missioncontrol/calendars/work.ics for calendars synced to the server.',
+  'settings.invalidSourceUrls': 'Each line must be an http(s) URL or a path starting with /.',
   'settings.veloSourceUrl': 'Velo source URL',
   'settings.dashSourceUrl': 'Dash source URL',
   'settings.optionalPlaceholder': 'Optional placeholder',
@@ -168,9 +173,10 @@ export const EN = {
   'settings.reset': 'Reset defaults',
   'settings.savedMessage': 'Configured launch URLs: Velo {velo}, Dash {dash}, sevDesk {sevdesk}',
   'settings.hint.none': 'No calendar source is configured, so the calendar stays empty.',
-  'settings.hint.ics': 'Calendar loads the configured ICS URL and shows a warning if it fails.',
+  'settings.hint.ics':
+    'Calendar loads and merges the configured ICS URLs and shows a warning if one fails.',
   'settings.hint.localJson':
-    'Calendar loads the configured local JSON URL and shows a warning if it fails.',
+    'Calendar loads and merges the configured local JSON URLs and shows a warning if one fails.',
   'settings.appearance': 'Appearance',
   'settings.theme': 'Theme',
   'settings.themeHint': 'Stored in this browser. "System" follows the operating system setting.',
@@ -254,8 +260,10 @@ export const DE: Dictionary = {
   'status.calendar.jsonFailed': 'Kalender-JSON konnte nicht geladen werden.',
   'status.calendar.icsEmptyUrl': 'Keine ICS-URL konfiguriert.',
   'status.calendar.icsFailed': 'ICS-Kalender konnte nicht geladen werden.',
-  'status.calendar.icsNoEvents': 'ICS-Kalender enthält keine lesbaren Termine.',
-  'status.calendar.icsLoaded': 'Termine aus der konfigurierten ICS-URL geladen.',
+  'status.calendar.icsInvalid': 'Die Antwort ist kein lesbarer ICS-Kalender.',
+  'status.calendar.icsLoaded': 'Termine aus den konfigurierten ICS-URLs geladen.',
+  'status.calendar.partiallyLoaded':
+    'Einige Kalender konnten nicht geladen werden; die Termine der übrigen werden angezeigt.',
   'status.velo.loaded': 'Velo-Übersicht aus der konfigurierten lokalen JSON-URL geladen.',
   'status.velo.invalidShape': 'Velo-JSON entspricht nicht dem erwarteten Format.',
   'status.velo.failed': 'Velo-JSON konnte nicht geladen werden.',
@@ -329,7 +337,11 @@ export const DE: Dictionary = {
   'settings.source.none': 'Keine',
   'settings.source.ics': 'ICS-URL',
   'settings.source.localJson': 'Lokales JSON',
-  'settings.calendarSourceUrl': 'Kalender-Quell-URL',
+  'settings.calendarSourceUrl': 'Kalender-Quell-URLs',
+  'settings.calendarSourceUrlHint':
+    'Eine URL pro Zeile, z. B. /missioncontrol/calendars/arbeit.ics für auf den Server synchronisierte Kalender.',
+  'settings.invalidSourceUrls':
+    'Jede Zeile muss eine http(s)-URL oder ein Pfad mit / am Anfang sein.',
   'settings.veloSourceUrl': 'Velo-Quell-URL',
   'settings.dashSourceUrl': 'Dash-Quell-URL',
   'settings.optionalPlaceholder': 'Optional',
@@ -354,9 +366,9 @@ export const DE: Dictionary = {
   'settings.savedMessage': 'Konfigurierte Start-URLs: Velo {velo}, Dash {dash}, sevDesk {sevdesk}',
   'settings.hint.none': 'Keine Kalenderquelle konfiguriert, der Kalender bleibt leer.',
   'settings.hint.ics':
-    'Der Kalender lädt die konfigurierte ICS-URL und zeigt bei Fehlern eine Warnung.',
+    'Der Kalender lädt die konfigurierten ICS-URLs, führt sie zusammen und warnt, wenn eine fehlschlägt.',
   'settings.hint.localJson':
-    'Der Kalender lädt die konfigurierte lokale JSON-URL und zeigt bei Fehlern eine Warnung.',
+    'Der Kalender lädt die konfigurierten lokalen JSON-URLs, führt sie zusammen und warnt, wenn eine fehlschlägt.',
   'settings.appearance': 'Darstellung',
   'settings.theme': 'Design',
   'settings.themeHint':

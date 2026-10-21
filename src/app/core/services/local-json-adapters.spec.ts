@@ -133,6 +133,82 @@ END:VCALENDAR
     expect(status?.kind).toBe('ics');
   });
 
+  it('should merge several ICS sources and drop events shared between them', async () => {
+    const calendar = (uid: string, start: string) => `BEGIN:VCALENDAR
+BEGIN:VEVENT
+UID:${uid}
+SUMMARY:${uid}
+DTSTART:${start}
+END:VEVENT
+BEGIN:VEVENT
+UID:shared
+SUMMARY:Shared
+DTSTART:20260619T120000Z
+END:VEVENT
+END:VCALENDAR`;
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) =>
+      String(input).includes('work')
+        ? new Response(calendar('work', '20260619T090000Z'))
+        : new Response(calendar('private', '20260618T090000Z')),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    TestBed.inject(SettingsService).updateSettings({
+      ...DEFAULT_SETTINGS,
+      calendarSource: 'ics',
+      calendarSourceUrl:
+        '/missioncontrol/calendars/work.ics\n\n/missioncontrol/calendars/private.ics',
+    });
+
+    const events = await TestBed.inject(CalendarAdapterService).getEvents();
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(events.map((event) => event.id)).toEqual(['private', 'work', 'shared']);
+    expect(TestBed.inject(CalendarAdapterService).status()?.kind).toBe('ics');
+  });
+
+  it('should keep loaded calendars and warn when one ICS source fails', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL) =>
+        String(input).includes('missing')
+          ? new Response('<!doctype html><html></html>')
+          : new Response(
+              'BEGIN:VCALENDAR\nBEGIN:VEVENT\nUID:ok\nDTSTART:20260619T090000Z\nEND:VEVENT\nEND:VCALENDAR',
+            ),
+      ),
+    );
+    TestBed.inject(SettingsService).updateSettings({
+      ...DEFAULT_SETTINGS,
+      calendarSource: 'ics',
+      calendarSourceUrl: '/calendars/ok.ics\n/calendars/missing.ics',
+    });
+
+    const events = await TestBed.inject(CalendarAdapterService).getEvents();
+    const status = TestBed.inject(CalendarAdapterService).status();
+
+    expect(events.map((event) => event.id)).toEqual(['ok']);
+    expect(status?.kind).toBe('error');
+    expect(status?.message).toBe('status.calendar.partiallyLoaded');
+    expect(status?.requestedUrl).toBe('/calendars/missing.ics');
+  });
+
+  it('should accept an ICS calendar without events', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('BEGIN:VCALENDAR\nEND:VCALENDAR')),
+    );
+    TestBed.inject(SettingsService).updateSettings({
+      ...DEFAULT_SETTINGS,
+      calendarSource: 'ics',
+      calendarSourceUrl: '/calendars/empty.ics',
+    });
+
+    const events = await TestBed.inject(CalendarAdapterService).getEvents();
+
+    expect(events).toEqual([]);
+    expect(TestBed.inject(CalendarAdapterService).status()?.kind).toBe('ics');
+  });
+
   it('should report unconfigured sources instead of showing data', async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);

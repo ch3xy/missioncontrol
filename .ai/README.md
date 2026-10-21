@@ -35,6 +35,7 @@ Fachliche Details bleiben in `docs/` und werden hier nicht dupliziert:
 |---|---|
 | [../docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) | Architekturübersicht, Adapter-Schicht |
 | [../docs/LOCAL_JSON_CONTRACTS.md](../docs/LOCAL_JSON_CONTRACTS.md) | JSON-Verträge für velo/dash/Kalender |
+| [../docs/ICLOUD_CALENDAR.md](../docs/ICLOUD_CALENDAR.md) | Private iCloud-Kalender über vdirsyncer + Caddy auf arrow-pi |
 | [../docs/DATA_CONTRACTS.md](../docs/DATA_CONTRACTS.md) | Typisierte Datenmodelle |
 | [../docs/UI_UX_SPEC.md](../docs/UI_UX_SPEC.md) | UI/UX-Spezifikation |
 | [../docs/ASSUMPTIONS.md](../docs/ASSUMPTIONS.md) | Getroffene Annahmen |

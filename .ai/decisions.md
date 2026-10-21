@@ -3,6 +3,23 @@
 Kurzprotokoll von Produkt- und Architekturentscheidungen, die sich nicht aus dem Code ablesen lassen.
 Neueste oben.
 
+## 2026-10-21 — Private iCloud-Kalender über Sync auf dem Server
+
+**Status:** umgesetzt (mission control); Caddy-/Compose-Änderung in `pi-ops` dokumentiert, nicht angewendet.
+
+**Entscheidung:** iCloud-Kalender werden nicht öffentlich geteilt. vdirsyncer auf arrow-pi liest sie per
+CalDAV (app-spezifisches Passwort, nur lesend) und schreibt je Kalender eine `.ics`-Datei, die Caddy unter
+`/missioncontrol/calendars/` ausliefert. mission control lädt mehrere ICS-URLs (eine pro Zeile) und führt
+sie zusammen. Anleitung: `docs/ICLOUD_CALENDAR.md`.
+
+**Warum:** Öffentliche iCloud-Links sind für jeden mit dem Link lesbar und scheitern im Browser zusätzlich an
+CORS. CalDAV direkt aus dem Browser würde das Apple-ID-Passwort im LocalStorage ablegen und widerspricht
+„frontend-only, keine Secrets im Frontend“. Ein eigenes Backend wäre für reines Lesen überdimensioniert.
+
+**Folgen:** Die `.ics`-Dateien sind ohne Login für alle lesbar, die mission control erreichen — nur im
+Heimnetz/VPN betreiben oder die Route schützen. Wiederkehrende Termine expandiert mission control selbst
+(`ical.js`, siehe `docs/ASSUMPTIONS.md`, „Recurring calendar events“).
+
 ## 2026-10-19 — Keine Mock-Daten mehr
 
 **Status:** umgesetzt.

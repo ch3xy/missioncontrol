@@ -42,14 +42,17 @@
 
     <label class="field">
       <span>{{ 'settings.calendarSourceUrl' | t }}</span>
-      <input
-        class="input"
-        type="url"
+      <textarea
+        class="textarea"
+        rows="3"
+        spellcheck="false"
         formControlName="calendarSourceUrl"
         [placeholder]="'settings.optionalPlaceholder' | t"
-      />
+      ></textarea>
       @if (form.controls.calendarSourceUrl.touched && form.controls.calendarSourceUrl.invalid) {
-        <small class="field-error">{{ 'settings.invalidOptionalUrl' | t }}</small>
+        <small class="field-error">{{ 'settings.invalidSourceUrls' | t }}</small>
+      } @else {
+        <small class="field-hint">{{ 'settings.calendarSourceUrlHint' | t }}</small>
       }
     </label>
 

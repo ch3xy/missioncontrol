@@ -15,7 +15,8 @@ It is intentionally frontend-only for the MVP. There is no backend, authenticati
 - LocalStorage-backed settings with export/import backup
 - Live data from the velo and dash REST APIs (read-only)
 - Optional browser-readable local JSON sources for Calendar, Velo, and Dash
-- Basic browser-readable ICS calendar source support
+- Basic browser-readable ICS calendar source support, several calendars merged
+- Private iCloud calendars via a CalDAV sync job on the server ([docs/ICLOUD_CALENDAR.md](docs/ICLOUD_CALENDAR.md))
 - Notices when a source is not configured, and warnings when it is unreachable or invalid (no mock data)
 - Bundled JSON and ICS examples in `public/examples/`
 
@@ -66,6 +67,8 @@ MISSIONCONTROL_LOCAL_PATH=$PWD ../pi-ops/scripts/deploy-missioncontrol.sh
 
 On the server, open `http://arrow.local/missioncontrol/` and use Settings → **APIs dieses Servers verwenden**; requests to velo and dash are then same-origin.
 
+Private iCloud calendars are synced to the Pi with vdirsyncer and served by Caddy under `/missioncontrol/calendars/`; setup in [docs/ICLOUD_CALENDAR.md](docs/ICLOUD_CALENDAR.md). The dev server forwards that path to `CALENDARS_TARGET` (default `http://arrow.local`).
+
 ## Quality Checks
 
 ```bash
@@ -103,5 +106,5 @@ These values are configurable in Settings.
 
 - sevDesk is an external shortcut only.
 - There is no built-in mock data: without a configured, reachable source a card shows a notice instead of numbers.
-- ICS support covers basic `VEVENT` parsing and does not yet handle recurrence rules or advanced timezone behavior.
+- ICS parsing expands recurring events (RRULE, EXDATE, moved occurrences) from today up to one year ahead; all-day events are shown at 00:00 UTC.
 - No secrets, tokens, API keys, or private URLs should be committed.

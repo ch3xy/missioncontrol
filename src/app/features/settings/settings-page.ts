@@ -10,6 +10,7 @@ import { ShortcutService } from '../../core/services/shortcut.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { THEME_MODE_LABELS, ThemeMode, ThemeService } from '../../core/services/theme.service';
 import { httpUrlValidator } from '../../core/validators/http-url.validator';
+import { sourceUrlsValidator } from '../../core/validators/source-urls.validator';
 import { QuickAccessTile } from '../../shared/components/quick-access-tile/quick-access-tile';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
@@ -76,7 +77,7 @@ export class SettingsPage {
     dashUrl: ['', [Validators.required, httpUrlValidator()]],
     sevDeskUrl: ['', [Validators.required, httpUrlValidator()]],
     calendarSource: ['none' as MissionControlSettings['calendarSource']],
-    calendarSourceUrl: ['', [httpUrlValidator({ optional: true })]],
+    calendarSourceUrl: ['', [sourceUrlsValidator()]],
     veloSourceUrl: ['', [httpUrlValidator({ optional: true })]],
     dashSourceUrl: ['', [httpUrlValidator({ optional: true })]],
     veloApiUrl: ['', [httpUrlValidator({ optional: true })]],

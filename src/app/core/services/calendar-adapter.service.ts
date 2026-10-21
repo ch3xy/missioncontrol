@@ -4,7 +4,10 @@ import { CalendarAdapter, CalendarEvent } from '../models/calendar.model';
 import { parseIcsEvents } from './ics-parser';
 import { readLocalJsonResult, isRecord } from './local-json-source';
 import { SettingsService } from './settings.service';
+import { splitSourceUrls } from './source-urls';
 import { TranslationKey } from '../i18n/translations';
+
+type SourceResult = { events: CalendarEvent[] } | { error: TranslationKey };
 
 @Injectable({ providedIn: 'root' })
 export class CalendarAdapterService implements CalendarAdapter {
@@ -13,83 +16,84 @@ export class CalendarAdapterService implements CalendarAdapter {
 
   readonly status = this.statusState.asReadonly();
 
-  /** Empty when no source is configured or the source failed; see `status`. */
+  /**
+   * Empty when no source is configured or every source failed; see `status`. Several URLs (one per
+   * line) are loaded in parallel and merged, so one failing calendar does not hide the others.
+   */
   async getEvents(): Promise<CalendarEvent[]> {
     const settings = this.settingsService.settings();
+    const source = settings.calendarSource;
 
-    if (settings.calendarSource === 'ics') {
-      return this.loadIcsEvents(settings.calendarSourceUrl);
-    }
-
-    if (settings.calendarSource !== 'local-json') {
+    if (source === 'none') {
       this.statusState.set({ kind: 'unconfigured', message: 'status.calendar.unconfigured' });
       return [];
     }
 
-    const result = await readLocalJsonResult(settings.calendarSourceUrl, isCalendarEventCollection);
+    const urls = splitSourceUrls(settings.calendarSourceUrl);
 
-    if (result.data) {
-      this.statusState.set({
-        kind: 'local-json',
-        message: 'status.calendar.localJsonLoaded',
-        requestedUrl: settings.calendarSourceUrl,
-      });
-      return this.sortEvents(result.data);
-    }
-
-    this.statusState.set({
-      kind: result.error === 'empty-url' ? 'unconfigured' : 'error',
-      message: errorMessage(result.error),
-      requestedUrl: settings.calendarSourceUrl,
-    });
-    return [];
-  }
-
-  private async loadIcsEvents(url: string | undefined): Promise<CalendarEvent[]> {
-    if (!url?.trim()) {
+    if (urls.length === 0) {
       this.statusState.set({
         kind: 'unconfigured',
-        message: 'status.calendar.icsEmptyUrl',
+        message: source === 'ics' ? 'status.calendar.icsEmptyUrl' : 'status.calendar.jsonEmptyUrl',
       });
       return [];
     }
+
+    const results = await Promise.all(
+      urls.map((url) => (source === 'ics' ? this.loadIcsEvents(url) : this.loadJsonEvents(url))),
+    );
+    const failedUrls = urls.filter((_, index) => 'error' in results[index]);
+    const firstError = results.find((result) => 'error' in result);
+
+    if (!firstError) {
+      this.statusState.set({
+        kind: source,
+        message: source === 'ics' ? 'status.calendar.icsLoaded' : 'status.calendar.localJsonLoaded',
+        requestedUrl: urls.join(', '),
+      });
+    } else {
+      this.statusState.set({
+        kind: 'error',
+        message:
+          failedUrls.length < urls.length ? 'status.calendar.partiallyLoaded' : firstError.error,
+        requestedUrl: failedUrls.join(', '),
+      });
+    }
+
+    return this.sortEvents(
+      uniqueEvents(results.flatMap((result) => ('events' in result ? result.events : []))),
+    );
+  }
+
+  private async loadJsonEvents(url: string): Promise<SourceResult> {
+    const result = await readLocalJsonResult(url, isCalendarEventCollection);
+    return result.data ? { events: result.data } : { error: errorMessage(result.error) };
+  }
+
+  private async loadIcsEvents(url: string): Promise<SourceResult> {
+    let text: string;
 
     try {
       const response = await fetch(url);
 
       if (!response.ok) {
-        this.statusState.set({
-          kind: 'error',
-          message: 'status.calendar.icsFailed',
-          requestedUrl: url,
-        });
-        return [];
+        return { error: 'status.calendar.icsFailed' };
       }
 
-      const events = parseIcsEvents(await response.text());
-
-      if (events.length === 0) {
-        this.statusState.set({
-          kind: 'error',
-          message: 'status.calendar.icsNoEvents',
-          requestedUrl: url,
-        });
-        return [];
-      }
-
-      this.statusState.set({
-        kind: 'ics',
-        message: 'status.calendar.icsLoaded',
-        requestedUrl: url,
-      });
-      return this.sortEvents(events);
+      text = await response.text();
     } catch {
-      this.statusState.set({
-        kind: 'error',
-        message: 'status.calendar.icsFailed',
-        requestedUrl: url,
-      });
-      return [];
+      return { error: 'status.calendar.icsFailed' };
+    }
+
+    // An empty calendar is fine; anything else (e.g. an HTML fallback page) is not.
+    if (!text.includes('BEGIN:VCALENDAR')) {
+      return { error: 'status.calendar.icsInvalid' };
+    }
+
+    try {
+      return { events: parseIcsEvents(text) };
+    } catch {
+      return { error: 'status.calendar.icsInvalid' };
     }
   }
 
@@ -129,11 +133,23 @@ function optionalString(value: unknown): boolean {
   return value === undefined || typeof value === 'string';
 }
 
-function errorMessage(error: string | undefined): TranslationKey {
-  if (error === 'empty-url') {
-    return 'status.calendar.jsonEmptyUrl';
-  }
+/** The same event can be in several calendars, e.g. an invitation shared by two people. */
+function uniqueEvents(events: CalendarEvent[]): CalendarEvent[] {
+  const seen = new Set<string>();
 
+  return events.filter((event) => {
+    const key = `${event.id}|${event.startsAt}`;
+
+    if (seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
+}
+
+function errorMessage(error: string | undefined): TranslationKey {
   if (error === 'invalid-shape') {
     return 'status.calendar.jsonInvalidShape';
   }

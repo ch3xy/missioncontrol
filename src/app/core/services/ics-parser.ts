@@ -1,135 +1,116 @@
+import ICAL from 'ical.js';
 import { CalendarEvent } from '../models/calendar.model';
 
-interface IcsEventFields {
-  uid?: string;
-  summary?: string;
-  dtstart?: string;
-  dtend?: string;
-  location?: string;
-  description?: string;
+/** Occurrences of recurring events are only generated inside this range. */
+export interface IcsWindow {
+  from: Date;
+  to: Date;
 }
 
-export function parseIcsEvents(icsText: string): CalendarEvent[] {
-  return unfoldIcsLines(icsText)
-    .reduce<IcsEventFields[]>((events, line) => {
-      if (line === 'BEGIN:VEVENT') {
-        events.push({});
-        return events;
-      }
+/** Guards against endless rules (no COUNT/UNTIL) and very old daily series. */
+const MAX_ITERATIONS_PER_EVENT = 50_000;
 
-      if (line === 'END:VEVENT') {
-        return events;
-      }
+/**
+ * Parses a VCALENDAR into events. Recurring events (RRULE/RDATE) are expanded into one event per
+ * occurrence inside `window`, honouring EXDATE and moved or changed occurrences (RECURRENCE-ID).
+ * Non-recurring events are returned regardless of the window. Throws on text that is not iCalendar.
+ */
+export function parseIcsEvents(
+  icsText: string,
+  window: IcsWindow = upcomingYear(),
+): CalendarEvent[] {
+  const calendar = new ICAL.Component(ICAL.parse(icsText.trim()));
 
-      const current = events.at(-1);
-
-      if (!current) {
-        return events;
-      }
-
-      const separatorIndex = line.indexOf(':');
-
-      if (separatorIndex < 0) {
-        return events;
-      }
-
-      const rawKey = line.slice(0, separatorIndex).split(';')[0]?.toUpperCase();
-      const rawValue = line.slice(separatorIndex + 1);
-
-      switch (rawKey) {
-        case 'UID':
-          current.uid = decodeIcsText(rawValue);
-          break;
-        case 'SUMMARY':
-          current.summary = decodeIcsText(rawValue);
-          break;
-        case 'DTSTART':
-          current.dtstart = rawValue;
-          break;
-        case 'DTEND':
-          current.dtend = rawValue;
-          break;
-        case 'LOCATION':
-          current.location = decodeIcsText(rawValue);
-          break;
-        case 'DESCRIPTION':
-          current.description = decodeIcsText(rawValue);
-          break;
-      }
-
-      return events;
-    }, [])
-    .map(toCalendarEvent)
-    .filter((event): event is CalendarEvent => event !== null);
-}
-
-function unfoldIcsLines(icsText: string): string[] {
-  return icsText
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n')
-    .split('\n')
-    .reduce<string[]>((lines, line) => {
-      if ((line.startsWith(' ') || line.startsWith('\t')) && lines.length > 0) {
-        lines[lines.length - 1] += line.slice(1);
-      } else {
-        lines.push(line.trimEnd());
-      }
-
-      return lines;
-    }, []);
-}
-
-function toCalendarEvent(fields: IcsEventFields): CalendarEvent | null {
-  if (!fields.dtstart) {
-    return null;
+  // Without its VTIMEZONE a TZID is treated as floating time, i.e. the browser's time zone.
+  for (const timezone of calendar.getAllSubcomponents('vtimezone')) {
+    ICAL.TimezoneService.register(timezone);
   }
 
-  const startsAt = parseIcsDate(fields.dtstart);
+  // ical.js cannot compute an end without a start; such entries are not appointments anyway.
+  const components = calendar
+    .getAllSubcomponents('vevent')
+    .filter((component) => component.hasProperty('dtstart'));
+  const masters = components.filter((component) => !component.hasProperty('recurrence-id'));
+  const exceptions = components.filter((component) => component.hasProperty('recurrence-id'));
+  const masterUids = new Set(masters.map((component) => component.getFirstPropertyValue('uid')));
 
-  if (!startsAt) {
-    return null;
+  return [
+    ...masters.flatMap((component) => {
+      const event = new ICAL.Event(component);
+
+      for (const exception of exceptions) {
+        if (exception.getFirstPropertyValue('uid') === event.uid) {
+          event.relateException(exception);
+        }
+      }
+
+      return event.isRecurring()
+        ? expandOccurrences(event, window)
+        : [toCalendarEvent(event, event.startDate, event.endDate)];
+    }),
+    // A changed occurrence whose series is not in the file is still a real appointment.
+    ...exceptions
+      .filter((component) => !masterUids.has(component.getFirstPropertyValue('uid')))
+      .map((component) => new ICAL.Event(component))
+      .map((event) => toCalendarEvent(event, event.startDate, event.endDate)),
+  ];
+}
+
+function expandOccurrences(event: ICAL.Event, window: IcsWindow): CalendarEvent[] {
+  const events: CalendarEvent[] = [];
+  const iterator = event.iterator();
+
+  for (let i = 0; i < MAX_ITERATIONS_PER_EVENT; i++) {
+    const next = iterator.next() as ICAL.Time | undefined;
+
+    if (!next || next.toJSDate() > window.to) {
+      break;
+    }
+
+    const details = event.getOccurrenceDetails(next);
+    const endsAt = (details.endDate ?? details.startDate).toJSDate();
+
+    if (endsAt >= window.from && details.startDate.toJSDate() <= window.to) {
+      events.push(toCalendarEvent(details.item, details.startDate, details.endDate));
+    }
   }
 
-  const endsAt = fields.dtend ? parseIcsDate(fields.dtend) : undefined;
+  return events;
+}
+
+function toCalendarEvent(
+  event: ICAL.Event,
+  start: ICAL.Time,
+  end: ICAL.Time | null,
+): CalendarEvent {
+  const startsAt = toIsoString(start);
+  const endsAt = end ? toIsoString(end) : undefined;
 
   return {
-    id: fields.uid || `ics-${startsAt}`,
-    title: fields.summary || 'Untitled event',
+    id: event.uid || `ics-${startsAt}`,
+    title: event.summary?.trim() || 'Untitled event',
     startsAt,
-    endsAt,
-    location: fields.location,
-    project: fields.description,
+    endsAt: endsAt === startsAt ? undefined : endsAt,
+    location: event.location?.trim() || undefined,
+    project: event.description?.trim() || undefined,
     source: 'ics',
   };
 }
 
-function parseIcsDate(value: string): string | undefined {
-  const normalized = value.trim();
-  const dateTimeMatch = normalized.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/);
-
-  if (dateTimeMatch) {
-    const [, year, month, day, hour, minute, second, zulu] = dateTimeMatch;
-    const iso = `${year}-${month}-${day}T${hour}:${minute}:${second}${zulu ? 'Z' : ''}`;
-    const date = new Date(iso);
-    return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+/** All-day dates stay at 00:00 UTC of their day, so the agenda groups them under the right date. */
+function toIsoString(time: ICAL.Time): string {
+  if (time.isDate) {
+    const pad = (value: number) => String(value).padStart(2, '0');
+    return `${time.year}-${pad(time.month)}-${pad(time.day)}T00:00:00.000Z`;
   }
 
-  const dateMatch = normalized.match(/^(\d{4})(\d{2})(\d{2})$/);
-
-  if (dateMatch) {
-    const [, year, month, day] = dateMatch;
-    return `${year}-${month}-${day}T00:00:00.000Z`;
-  }
-
-  const parsed = new Date(normalized);
-  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+  return time.toJSDate().toISOString();
 }
 
-function decodeIcsText(value: string): string {
-  return value
-    .replace(/\\n/gi, '\n')
-    .replace(/\\,/g, ',')
-    .replace(/\\;/g, ';')
-    .replace(/\\\\/g, '\\')
-    .trim();
+function upcomingYear(): IcsWindow {
+  const from = new Date();
+  from.setHours(0, 0, 0, 0);
+  const to = new Date(from);
+  to.setFullYear(to.getFullYear() + 1);
+  return { from, to };
 }
