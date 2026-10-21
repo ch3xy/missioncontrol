@@ -56,6 +56,26 @@ small {
   font-size: var(--fs-sm);
 }
 
+/* Calendar colors are user data (from iCloud), not status colors. */
+article.has-color {
+  box-shadow: inset 3px 0 0 var(--calendar-color);
+}
+
+.calendar-name {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+}
+
+.calendar-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--calendar-color, var(--text-muted));
+}
+
 .empty {
   padding: var(--sp-4);
   border: 1px dashed var(--border);

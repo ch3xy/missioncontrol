@@ -4,11 +4,13 @@ How to show iCloud calendars in mission control **without sharing them publicly*
 
 mission control is frontend-only and cannot hold an Apple ID password, and iCloud does not allow
 browser requests from other origins (CORS). A sync job on arrow-pi therefore pulls the calendars via
-CalDAV and writes one `.ics` file per calendar. Caddy serves these files next to mission control, so the
+CalDAV and writes one `.ics` file per calendar. A second step adds each calendar's name and color and
+publishes it under a readable file name. Caddy serves these files next to mission control, so the
 browser reads them same-origin.
 
 ```text
-iCloud (CalDAV, private) ──vdirsyncer, every 15 min──▶ /home/pi/apps/calendars/<name>.ics
+iCloud (CalDAV, private) ──vdirsyncer, every 15 min──▶ ~/.local/share/vdirsyncer/calendars/<id>.ics
+                         ──publish-calendars.py (name, color)──▶ /home/pi/apps/calendars/<name>.ics
                                                         │ mounted read-only into the caddy container
 mission control ──GET /missioncontrol/calendars/<name>.ics──▶ Caddy (same-origin, no CORS)
 ```
@@ -27,7 +29,7 @@ time. The normal Apple ID password does not work for CalDAV when two-factor auth
 
 ```bash
 sudo apt install vdirsyncer
-mkdir -p ~/.config/vdirsyncer /home/pi/apps/calendars
+mkdir -p ~/.config/vdirsyncer ~/.local/share/vdirsyncer/calendars /home/pi/apps/calendars
 # Paste the app-specific password, then Ctrl-D
 cat > ~/.config/vdirsyncer/icloud-password
 chmod 600 ~/.config/vdirsyncer/icloud-password
@@ -58,33 +60,46 @@ end_date = "datetime.now() + timedelta(days=365)"
 
 [storage icloud_local]
 type = "singlefile"
-path = "/home/pi/apps/calendars/%s.ics"
+path = "/home/pi/.local/share/vdirsyncer/calendars/%s.ics"
 ```
 
 - `read_only = true` on the iCloud side: vdirsyncer never changes anything in iCloud.
-- Every iCloud calendar becomes one file. Its name is the collection ID from iCloud, which is often a
-  UUID. To use readable names, replace `["from a"]` with explicit entries
-  `["<file name>", "<iCloud collection>", "<file name>"]`, e.g.
-  `collections = [["work", "8F3C…", "work"], ["private", "home", "private"]]`. The IDs are listed by
-  `vdirsyncer discover`.
+- Every iCloud calendar becomes one file, named by its iCloud collection ID (often a UUID). These
+  files are not served; step 3 publishes them under readable names.
 
 First run:
 
 ```bash
 vdirsyncer discover icloud   # answer "y" to create the local collections
 vdirsyncer sync
-ls /home/pi/apps/calendars   # one .ics file per calendar
+ls ~/.local/share/vdirsyncer/calendars   # one .ics file per calendar
 ```
 
-Then sync every 15 minutes (`crontab -e`):
+## 3. Name and color
+
+vdirsyncer's `singlefile` storage keeps no calendar metadata, so the files have neither the calendar's
+name nor its color. `publish-calendars.py` (pi-ops, `stacks/apps/bin`, deployed to
+`/home/pi/apps/bin` by `deploy-stack.sh`) fills that gap:
+
+1. It reads the Apple ID from the vdirsyncer config (storage `icloud_remote`) and asks iCloud via
+   CalDAV for every calendar's display name and color. Nothing is written to iCloud.
+2. It writes each synced calendar to `/home/pi/apps/calendars/<name>.ics`, e.g. `familienkalender.ics`
+   (lowercase, umlauts as `ae`/`oe`/`ue`), with `X-WR-CALNAME` and `X-APPLE-CALENDAR-COLOR` added.
+3. It deletes published files whose calendar no longer exists and prints the published file names.
+
+The vdirsyncer files stay untouched: vdirsyncer copies calendar properties into every event, so an
+added color would look like a local change on each sync.
+
+Sync and publish every 15 minutes (`crontab -e`):
 
 ```cron
-*/15 * * * * /usr/bin/vdirsyncer -v WARNING sync >> /home/pi/.local/share/vdirsyncer/sync.log 2>&1
+*/15 * * * * /usr/bin/vdirsyncer -v WARNING sync >> /home/pi/.local/share/vdirsyncer/sync.log 2>&1; /usr/bin/python3 /home/pi/apps/bin/publish-calendars.py > /dev/null 2>> /home/pi/.local/share/vdirsyncer/sync.log
 ```
 
-Run `vdirsyncer discover icloud` again after adding a calendar in iCloud.
+Run `vdirsyncer discover icloud` again after adding a calendar in iCloud. Renaming a calendar in iCloud
+renames its published file, so update the URL in mission control.
 
-## 3. Caddy (pi-ops)
+## 4. Caddy (pi-ops)
 
 The Caddy setup lives in the `pi-ops` repository (`stacks/apps`). Two changes, applied there:
 
@@ -117,7 +132,7 @@ script syncs the build into that directory with rsync and would delete foreign f
 
 Check: `curl -I http://arrow.local/missioncontrol/calendars/work.ics` returns `200`.
 
-## 4. mission control
+## 5. mission control
 
 Settings → **Kalenderquelle** = `ICS-URL`, **Kalender-Quell-URLs**, one per line:
 
@@ -126,7 +141,8 @@ Settings → **Kalenderquelle** = `ICS-URL`, **Kalender-Quell-URLs**, one per li
 /missioncontrol/calendars/private.ics
 ```
 
-Appointments of all calendars are merged and sorted. If one file is missing or broken, the others are
+Appointments of all calendars are merged and sorted. Each appointment shows its calendar's name and
+color (from `X-WR-CALNAME` and `X-APPLE-CALENDAR-COLOR`, or RFC 7986 `NAME` and `COLOR`). If one file is missing or broken, the others are
 still shown together with a warning.
 
 For local development, `npm run start` forwards `/missioncontrol/calendars` to the server
@@ -137,6 +153,7 @@ For local development, `npm run start` forwards `/missioncontrol/calendars` to t
 - The `.ics` files can be read by anyone who can reach mission control on the server, without login.
   That is fine inside the home network or VPN. If `arrow.local` is ever reachable from outside, protect
   `/missioncontrol/calendars/*` (e.g. with Caddy `basic_auth`) or remove the route.
+- `publish-calendars.py` reads the same password file and only sends it to iCloud.
 - The password file stays on the Pi (`chmod 600`) and is never part of a repository.
 - To revoke access, delete the app-specific password in the Apple account.
 

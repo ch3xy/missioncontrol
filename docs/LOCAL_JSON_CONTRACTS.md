@@ -36,6 +36,8 @@ Optional fields:
 - `project`: string
 - `customer`: string
 - `location`: string
+- `calendar`: string, name of the calendar, shown next to the appointment
+- `color`: string, calendar color as a CSS color (e.g. `#1badf8`)
 
 See `public/examples/calendar.json`.
 
@@ -51,6 +53,8 @@ Used fields:
 - `DTEND` maps to `endsAt`
 - `LOCATION` maps to `location`
 - `DESCRIPTION` maps to `project`
+- Calendar-level `X-WR-CALNAME` (or RFC 7986 `NAME`) maps to `calendar` of every event
+- Calendar-level `X-APPLE-CALENDAR-COLOR` (or RFC 7986 `COLOR`) maps to `color`; Apple's `#RRGGBBAA` becomes `#rrggbb`, values that are neither hex nor a color keyword are dropped
 
 Parsing uses [ical.js](https://github.com/kewisch/ical.js). Supported date formats:
 

@@ -31,11 +31,18 @@
     <app-integration-notice [status]="calendarStatus()" />
     <div class="event-list">
       @for (event of nextEvents(); track event.id + event.startsAt) {
-        <article class="event">
+        <article class="event" [style.--calendar-color]="event.color">
           <time>{{ event.startsAt | date: ('format.time' | t) : undefined : i18n.locale() }}</time>
           <div>
-            <strong>{{ event.title }}</strong>
-            <small>{{ event.customer || event.project || ('common.personal' | t) }}</small>
+            <strong>
+              @if (event.color) {
+                <span class="calendar-dot" aria-hidden="true"></span>
+              }
+              {{ event.title }}
+            </strong>
+            <small>{{
+              event.customer || event.project || event.calendar || ('common.personal' | t)
+            }}</small>
           </div>
         </article>
       }

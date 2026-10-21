@@ -30,7 +30,7 @@
         <h3>{{ group.dateKey | date: ('format.dateLong' | t) : undefined : i18n.locale() }}</h3>
         <div class="agenda-day__events">
           @for (event of group.events; track event.id + event.startsAt) {
-            <article>
+            <article [class.has-color]="event.color" [style.--calendar-color]="event.color">
               <time>
                 <span>{{
                   event.startsAt | date: ('format.time' | t) : undefined : i18n.locale()
@@ -46,6 +46,12 @@
                 <p>{{ event.customer || event.project || ('common.personal' | t) }}</p>
                 @if (event.location) {
                   <small>{{ event.location }}</small>
+                }
+                @if (event.calendar) {
+                  <small class="calendar-name">
+                    <span class="calendar-dot" aria-hidden="true"></span>
+                    {{ event.calendar }}
+                  </small>
                 }
               </div>
             </article>

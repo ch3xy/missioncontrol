@@ -126,7 +126,9 @@ function isCalendarEvent(value: unknown): value is CalendarEvent {
     optionalString(value['endsAt']) &&
     optionalString(value['project']) &&
     optionalString(value['customer']) &&
-    optionalString(value['location'])
+    optionalString(value['location']) &&
+    optionalString(value['calendar']) &&
+    optionalString(value['color'])
   );
 }
 

@@ -51,6 +51,30 @@ END:VCALENDAR
     ]);
   });
 
+  it('should attach calendar name and color to every event', () => {
+    const calendar = (props: string) =>
+      parseIcsEvents(`BEGIN:VCALENDAR
+${props}
+BEGIN:VEVENT
+UID:event-1
+DTSTART:20260619T130000Z
+END:VEVENT
+END:VCALENDAR`)[0];
+
+    expect(calendar('X-WR-CALNAME:Arbeit\nX-APPLE-CALENDAR-COLOR:#FF2968FF')).toMatchObject({
+      calendar: 'Arbeit',
+      color: '#ff2968',
+    });
+    expect(calendar('NAME:Privat\nCOLOR:turquoise')).toMatchObject({
+      calendar: 'Privat',
+      color: 'turquoise',
+    });
+    expect(calendar('X-APPLE-CALENDAR-COLOR:red;background:url(x)')).toMatchObject({
+      calendar: undefined,
+      color: undefined,
+    });
+  });
+
   it('should ignore events without a valid start date', () => {
     const events = parseIcsEvents(`
 BEGIN:VCALENDAR

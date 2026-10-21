@@ -13,6 +13,8 @@ export interface CalendarEvent {
   project?: string;
   customer?: string;
   location?: string;
+  calendar?: string; // calendar name
+  color?: string; // calendar color, `#rrggbb` or a CSS color keyword
   source: 'ics' | 'local-json';
 }
 ```

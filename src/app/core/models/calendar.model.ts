@@ -9,6 +9,10 @@ export interface CalendarEvent {
   project?: string;
   customer?: string;
   location?: string;
+  /** Name of the calendar the event belongs to, e.g. from `X-WR-CALNAME`. */
+  calendar?: string;
+  /** CSS color of that calendar (`#rrggbb` or a color keyword). */
+  color?: string;
   source: Exclude<CalendarSource, 'none'>;
 }
 
