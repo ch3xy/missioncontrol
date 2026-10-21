@@ -54,6 +54,25 @@ npm run lint           # typecheck + prettier --check
 npm run format         # prettier --write
 ```
 
+`start`, `build`, `build:pi` und `watch` laufen über `scripts/ng-with-build-info.mjs`: Es übergibt Commit,
+„dirty“-Flag und Build-Zeit per `ng … --define MC_BUILD_INFO=…` (gelesen in `core/build-info.ts`). Direkt
+aufgerufenes `ng build` und die Unit-Tests haben keine Build-Info; die Sidebar zeigt dann nur die Version.
+
+## Versionierung
+
+- SemVer in `package.json` ist die einzige Quelle der Version (Gegenstück zur `<version>` in den POMs von velo/dash).
+- Die Sidebar zeigt `v<version>`; der Tooltip zeigt Commit und Build-Zeit, `-dirty` bei uncommitteten Änderungen.
+- Keine Buildnummer: Gebaut und deployt wird lokal ohne CI, der Commit identifiziert einen Build eindeutig.
+- Neue Version bei sauberem Working Tree, danach bauen und deployen:
+
+```bash
+npm version patch -m "Release %s"   # Fehlerbehebungen; minor = neue Funktionen, major = Brüche
+git push --follow-tags              # erst nach Rückfrage
+```
+
+`npm version` passt `package.json` und `package-lock.json` an, committet und setzt den Tag `v<version>`.
+Vor 1.0.0 dürfen auch minor-Versionen Brüche enthalten.
+
 ## Offene Punkte gegenüber dash
 
 | Thema | dash | mission control |

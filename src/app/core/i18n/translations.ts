@@ -8,6 +8,7 @@ export const EN = {
   'format.dateLong': 'EEEE, dd MMM yyyy',
   'format.time': 'HH:mm',
   'format.timeSeconds': 'HH:mm:ss',
+  'format.dateTime': 'MMM d, yyyy, HH:mm',
   'format.month': 'MMMM yyyy',
   'format.weekday': 'EEE',
 
@@ -25,6 +26,7 @@ export const EN = {
   'nav.dashboard': 'Dashboard',
   'nav.calendar': 'Calendar',
   'nav.settings': 'Settings',
+  'nav.buildInfo': 'Commit {commit} · built {date}',
   'topbar.openMenu': 'Open menu',
   'topbar.label': 'Local-first dashboard',
   'topbar.toggleTheme': 'Toggle theme',
@@ -216,6 +218,7 @@ export const DE: Dictionary = {
   'format.dateLong': 'EEEE, d. MMMM yyyy',
   'format.time': 'HH:mm',
   'format.timeSeconds': 'HH:mm:ss',
+  'format.dateTime': 'd.M.yyyy, HH:mm',
   'format.month': 'MMMM yyyy',
   'format.weekday': 'EEE',
 
@@ -232,6 +235,7 @@ export const DE: Dictionary = {
   'nav.dashboard': 'Dashboard',
   'nav.calendar': 'Kalender',
   'nav.settings': 'Einstellungen',
+  'nav.buildInfo': 'Commit {commit} · gebaut {date}',
   'topbar.openMenu': 'Menü öffnen',
   'topbar.label': 'Lokales Dashboard',
   'topbar.toggleTheme': 'Design wechseln',

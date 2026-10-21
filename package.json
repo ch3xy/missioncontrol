@@ -1,16 +1,16 @@
 {
   "name": "missioncontrol",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "engines": {
     "node": ">=26.0.0",
     "npm": ">=11.0.0"
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "build:pi": "ng build --base-href /missioncontrol/",
-    "watch": "ng build --watch --configuration development",
+    "start": "node scripts/ng-with-build-info.mjs serve",
+    "build": "node scripts/ng-with-build-info.mjs build",
+    "build:pi": "node scripts/ng-with-build-info.mjs build --base-href /missioncontrol/",
+    "watch": "node scripts/ng-with-build-info.mjs build --watch --configuration development",
     "test": "ng test",
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.spec.json --noEmit",
     "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"docs/**/*.md\" README.md package.json",

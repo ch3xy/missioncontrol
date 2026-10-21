@@ -31,7 +31,7 @@ describe('Shell', () => {
     );
     expect(groups).toEqual(['Übersicht', 'Apps']);
     expect(element.querySelector('.nav-footer')?.textContent).toContain('Einstellungen');
-    expect(element.querySelector('.nav-version')?.textContent).toMatch(/^v\d/);
+    expect(element.querySelector('.nav-version')?.textContent?.trim()).toMatch(/^v\d+\.\d+\.\d+$/);
   });
 
   it('should persist the collapsed sidebar state', async () => {

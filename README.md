@@ -65,6 +65,8 @@ npm run build:pi    # ng build --base-href /missioncontrol/
 MISSIONCONTROL_LOCAL_PATH=$PWD ../pi-ops/scripts/deploy-missioncontrol.sh
 ```
 
+The sidebar shows the version from `package.json`; its tooltip shows the commit and build time of the deployed build. Release a version with `npm version patch|minor|major -m "Release %s"` (commits and tags `v<version>`), see [.ai/stack.md](.ai/stack.md).
+
 On the server, open `http://arrow.local/missioncontrol/` and use Settings → **APIs dieses Servers verwenden**; requests to velo and dash are then same-origin.
 
 Private iCloud calendars are synced to the Pi with vdirsyncer and served by Caddy under `/missioncontrol/calendars/`; setup in [docs/ICLOUD_CALENDAR.md](docs/ICLOUD_CALENDAR.md). The dev server forwards that path to `CALENDARS_TARGET` (default `http://arrow.local`).

@@ -84,5 +84,19 @@
     </a>
   </div>
 
-  <div class="nav-version">v{{ version }}</div>
+  <div
+    class="nav-version"
+    [attr.title]="
+      build.commit
+        ? ('nav.buildInfo'
+          | t
+            : {
+                commit: build.commit + (build.dirty ? '-dirty' : ''),
+                date: build.builtAt | date: ('format.dateTime' | t) : undefined : i18n.locale(),
+              })
+        : null
+    "
+  >
+    v{{ build.version }}
+  </div>
 </aside>

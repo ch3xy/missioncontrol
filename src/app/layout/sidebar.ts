@@ -13,7 +13,8 @@ import {
   LucideTimer,
   LucideWallet,
 } from '@lucide/angular';
-import { version } from '../../../package.json';
+import { DatePipe } from '@angular/common';
+import { BUILD_INFO } from '../core/build-info';
 import { I18nService } from '../core/i18n/i18n.service';
 import { TranslatePipe } from '../core/i18n/translate.pipe';
 import { ShortcutService } from '../core/services/shortcut.service';
@@ -36,6 +37,7 @@ interface NavGroup {
   selector: 'app-sidebar',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    DatePipe,
     RouterLink,
     RouterLinkActive,
     LucideDynamicIcon,
@@ -51,7 +53,7 @@ interface NavGroup {
 })
 export class Sidebar {
   private readonly shortcutService = inject(ShortcutService);
-  private readonly i18n = inject(I18nService);
+  protected readonly i18n = inject(I18nService);
   protected readonly theme = inject(ThemeService);
 
   readonly collapsed = input(false);
@@ -59,7 +61,7 @@ export class Sidebar {
   readonly toggleCollapsed = output();
   readonly navigate = output();
 
-  protected readonly version = version;
+  protected readonly build = BUILD_INFO;
   protected readonly groups = computed<NavGroup[]>(() => [
     {
       id: 'overview',
