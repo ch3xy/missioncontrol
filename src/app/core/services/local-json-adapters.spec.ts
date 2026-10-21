@@ -192,22 +192,25 @@ END:VCALENDAR`;
     expect(status?.requestedUrl).toBe('/calendars/missing.ics');
   });
 
-  it('should accept an ICS calendar without events', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async () => new Response('BEGIN:VCALENDAR\nEND:VCALENDAR')),
-    );
-    TestBed.inject(SettingsService).updateSettings({
-      ...DEFAULT_SETTINGS,
-      calendarSource: 'ics',
-      calendarSourceUrl: '/calendars/empty.ics',
-    });
+  it.each(['BEGIN:VCALENDAR\nEND:VCALENDAR', ''])(
+    'should accept an empty ICS calendar (%j)',
+    async (body) => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => new Response(body)),
+      );
+      TestBed.inject(SettingsService).updateSettings({
+        ...DEFAULT_SETTINGS,
+        calendarSource: 'ics',
+        calendarSourceUrl: '/calendars/empty.ics',
+      });
 
-    const events = await TestBed.inject(CalendarAdapterService).getEvents();
+      const events = await TestBed.inject(CalendarAdapterService).getEvents();
 
-    expect(events).toEqual([]);
-    expect(TestBed.inject(CalendarAdapterService).status()?.kind).toBe('ics');
-  });
+      expect(events).toEqual([]);
+      expect(TestBed.inject(CalendarAdapterService).status()?.kind).toBe('ics');
+    },
+  );
 
   it('should report unconfigured sources instead of showing data', async () => {
     const fetchMock = vi.fn();

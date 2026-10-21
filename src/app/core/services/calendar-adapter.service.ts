@@ -85,6 +85,11 @@ export class CalendarAdapterService implements CalendarAdapter {
       return { error: 'status.calendar.icsFailed' };
     }
 
+    // vdirsyncer writes an empty file for an empty calendar.
+    if (!text.trim()) {
+      return { events: [] };
+    }
+
     // An empty calendar is fine; anything else (e.g. an HTML fallback page) is not.
     if (!text.includes('BEGIN:VCALENDAR')) {
       return { error: 'status.calendar.icsInvalid' };

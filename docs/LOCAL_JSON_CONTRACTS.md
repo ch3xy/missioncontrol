@@ -60,7 +60,7 @@ Parsing uses [ical.js](https://github.com/kewisch/ical.js). Supported date forma
 
 Recurring events (`RRULE`, `RDATE`) are expanded into one event per occurrence from today up to one year ahead; `EXDATE` and changed occurrences (`RECURRENCE-ID`) are applied. All occurrences keep the event's `UID` as `id`. Non-recurring events are not limited to that range.
 
-A response without `BEGIN:VCALENDAR` (e.g. an HTML page) or one ical.js cannot parse is reported as invalid; a calendar without events is valid and simply empty.
+A response without `BEGIN:VCALENDAR` (e.g. an HTML page) or one ical.js cannot parse is reported as invalid; a calendar without events, or an empty response (vdirsyncer writes empty files for empty calendars), is valid and simply empty.
 
 See `public/examples/calendar.ics`.
 
