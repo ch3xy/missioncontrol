@@ -70,6 +70,7 @@ export class Dashboard {
     () => this.calendarStatus()?.kind === 'ics' || this.calendarStatus()?.kind === 'local-json',
   );
   protected readonly calendarSource = computed(() => this.events()[0]?.source ?? null);
+  /** Share of today's target; goes past 100 % for overtime (16 h of 8 h = 200 %). */
   protected readonly dashProgress = computed(() => {
     const summary = this.dash();
 
@@ -77,11 +78,10 @@ export class Dashboard {
       return 0;
     }
 
-    return Math.min(
-      100,
-      Math.round((summary.trackedTodayMinutes / summary.targetTodayMinutes) * 100),
-    );
+    return Math.round((summary.trackedTodayMinutes / summary.targetTodayMinutes) * 100);
   });
+  /** The bar is full at the target. */
+  protected readonly dashProgressBar = computed(() => Math.min(100, this.dashProgress()));
 
   constructor() {
     void this.load();
