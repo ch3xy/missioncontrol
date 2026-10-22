@@ -17,6 +17,7 @@ import { QuickAccessTile } from '../../shared/components/quick-access-tile/quick
 import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { TrendLine } from '../../shared/components/trend-line/trend-line';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
+import { eventDayKeys, localDateKey } from '../calendar/calendar-month';
 
 @Component({
   selector: 'app-dashboard',
@@ -56,10 +57,17 @@ export class Dashboard {
   protected readonly veloStatus = this.veloAdapter.status;
   protected readonly dashStatus = this.dashAdapter.status;
   protected readonly shortcuts = this.shortcutService.shortcuts;
-  protected readonly nextEvents = computed(() =>
-    this.events()
-      .filter((event) => isUpcoming(event))
-      .slice(0, 3),
+  /** Today's appointments (local day) that are not over yet. */
+  protected readonly todayEvents = computed(() => {
+    const now = new Date();
+    const todayKey = localDateKey(now);
+
+    return this.events()
+      .filter((event) => isUpcoming(event, now) && eventDayKeys(event).includes(todayKey))
+      .slice(0, 3);
+  });
+  protected readonly hasCalendar = computed(
+    () => this.calendarStatus()?.kind === 'ics' || this.calendarStatus()?.kind === 'local-json',
   );
   protected readonly calendarSource = computed(() => this.events()[0]?.source ?? null);
   protected readonly dashProgress = computed(() => {

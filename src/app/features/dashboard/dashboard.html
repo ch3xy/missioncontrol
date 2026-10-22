@@ -30,7 +30,7 @@
     }
     <app-integration-notice [status]="calendarStatus()" />
     <div class="event-list">
-      @for (event of nextEvents(); track event.id + event.startsAt) {
+      @for (event of todayEvents(); track event.id + event.startsAt) {
         <article class="event" [style.--calendar-color]="event.color">
           <time>
             @if (event.allDay) {
@@ -51,6 +51,10 @@
             }}</small>
           </div>
         </article>
+      } @empty {
+        @if (hasCalendar()) {
+          <p class="empty">{{ 'dashboard.noEventsToday' | t }}</p>
+        }
       }
     </div>
     <a class="card-link" routerLink="/calendar">{{ 'dashboard.openCalendar' | t }}</a>
