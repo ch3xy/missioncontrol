@@ -5,7 +5,11 @@ import { I18nService, LANGUAGE_LABELS, LANGUAGES } from '../../core/i18n/i18n.se
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { TranslationKey } from '../../core/i18n/translations';
 import { AppShortcut } from '../../core/models/shortcut.model';
-import { MissionControlSettings } from '../../core/models/settings.model';
+import {
+  AUTO_REFRESH_MINUTES,
+  AutoRefreshMinutes,
+  MissionControlSettings,
+} from '../../core/models/settings.model';
 import { ShortcutService } from '../../core/services/shortcut.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { THEME_MODE_LABELS, ThemeMode, ThemeService } from '../../core/services/theme.service';
@@ -44,6 +48,7 @@ export class SettingsPage {
   protected readonly themeLabels = THEME_MODE_LABELS;
   protected readonly languages = LANGUAGES;
   protected readonly languageLabels = LANGUAGE_LABELS;
+  protected readonly autoRefreshOptions = AUTO_REFRESH_MINUTES;
 
   protected readonly savedSettings = this.settingsService.settings;
   protected readonly shortcuts = this.shortcutService.shortcuts;
@@ -83,6 +88,7 @@ export class SettingsPage {
     veloApiUrl: ['', [httpUrlValidator({ optional: true })]],
     dashApiUrl: ['', [httpUrlValidator({ optional: true })]],
     dailyTargetHours: [8, [Validators.required, Validators.min(0.5), Validators.max(24)]],
+    autoRefreshMinutes: [5 as AutoRefreshMinutes],
     localTool1Label: ['Local Tool 1', [Validators.required]],
     localTool1Url: ['', [httpUrlValidator({ optional: true })]],
     localTool2Label: ['Local Tool 2', [Validators.required]],

@@ -8,6 +8,9 @@
           'common.updated'
             | t: { time: (updated | date: ('format.timeSeconds' | t) : undefined : i18n.locale()) }
         }}
+        @if (autoRefreshMinutes() > 0) {
+          · {{ 'common.autoRefresh' | t: { minutes: autoRefreshMinutes() } }}
+        }
       </p>
     }
   </div>

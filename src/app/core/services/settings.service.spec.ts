@@ -67,4 +67,14 @@ describe('SettingsService', () => {
     expect(service.settings().localTool1Label).toBe('NAS');
     expect(service.importSettings('{broken')).toBe(false);
   });
+
+  it('should fall back to the default refresh interval for unknown values', () => {
+    const service = TestBed.inject(SettingsService);
+
+    expect(service.importSettings(JSON.stringify({ autoRefreshMinutes: 7 }))).toBe(true);
+    expect(service.settings().autoRefreshMinutes).toBe(DEFAULT_SETTINGS.autoRefreshMinutes);
+
+    expect(service.importSettings(JSON.stringify({ autoRefreshMinutes: 0 }))).toBe(true);
+    expect(service.settings().autoRefreshMinutes).toBe(0);
+  });
 });

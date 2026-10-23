@@ -92,3 +92,10 @@ Recurring calendar events (2026-10-21):
 - All-day events keep the previous representation (00:00 UTC of their date), so the agenda, which groups by the UTC date, keeps them on the right day.
 - Expansion stops after 50,000 iterations per series as a guard against endless rules; that covers a daily series starting more than 100 years ago.
 - `TZID` values without a matching `VTIMEZONE` fall back to the browser's time zone, as before.
+
+Dashboard background refresh (2026-10-23):
+
+- The dashboard reloads calendar, velo and dash data every 5 minutes by default; Settings offers off, 1, 5, 15 and 30 minutes (`autoRefreshMinutes`). Older settings and backups without the field get the default; unknown values fall back to it.
+- While the tab is hidden, ticks are skipped so no requests run for a dashboard nobody looks at. On returning to the tab, data older than the interval is reloaded immediately.
+- Background reloads reuse the manual refresh: the visible data stays until new data arrives, and a reload that is still running is not started a second time.
+- Only the dashboard refreshes itself; the calendar, velo and dash pages keep loading once on open.

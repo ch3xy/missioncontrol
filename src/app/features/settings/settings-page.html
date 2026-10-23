@@ -144,6 +144,25 @@
     </div>
 
     <div class="section-label">
+      <h3>{{ 'settings.autoRefresh' | t }}</h3>
+      <p>{{ 'settings.autoRefreshHint' | t }}</p>
+    </div>
+
+    <label class="field">
+      <span>{{ 'settings.autoRefreshInterval' | t }}</span>
+      <select class="select" formControlName="autoRefreshMinutes">
+        @for (minutes of autoRefreshOptions; track minutes) {
+          <option [ngValue]="minutes">
+            {{
+              (minutes === 0 ? 'settings.autoRefreshOff' : 'settings.autoRefreshEvery')
+                | t: { minutes }
+            }}
+          </option>
+        }
+      </select>
+    </label>
+
+    <div class="section-label">
       <h3>{{ 'settings.localTools' | t }}</h3>
       <p>{{ 'settings.localToolsHint' | t }}</p>
     </div>

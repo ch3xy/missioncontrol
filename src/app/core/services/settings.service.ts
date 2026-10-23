@@ -1,6 +1,11 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { CalendarSource } from '../models/calendar.model';
-import { DEFAULT_SETTINGS, MissionControlSettings } from '../models/settings.model';
+import {
+  AUTO_REFRESH_MINUTES,
+  AutoRefreshMinutes,
+  DEFAULT_SETTINGS,
+  MissionControlSettings,
+} from '../models/settings.model';
 
 const STORAGE_KEY = 'mission-control.settings';
 
@@ -81,6 +86,9 @@ export class SettingsService {
       dailyTargetHours: isValidTargetHours(settings.dailyTargetHours)
         ? settings.dailyTargetHours
         : DEFAULT_SETTINGS.dailyTargetHours,
+      autoRefreshMinutes: isAutoRefreshMinutes(settings.autoRefreshMinutes)
+        ? settings.autoRefreshMinutes
+        : DEFAULT_SETTINGS.autoRefreshMinutes,
       localTool1Label: settings.localTool1Label.trim() || DEFAULT_SETTINGS.localTool1Label,
       localTool1Url: settings.localTool1Url.trim(),
       localTool2Label: settings.localTool2Label.trim() || DEFAULT_SETTINGS.localTool2Label,
@@ -96,4 +104,9 @@ function isCalendarSource(value: unknown): value is CalendarSource {
 
 function isValidTargetHours(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value > 0 && value <= 24;
+}
+
+/** Unknown intervals (e.g. from an edited backup) fall back to the default. */
+function isAutoRefreshMinutes(value: unknown): value is AutoRefreshMinutes {
+  return AUTO_REFRESH_MINUTES.some((minutes) => minutes === value);
 }

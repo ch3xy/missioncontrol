@@ -1,5 +1,9 @@
 import { CalendarSource } from './calendar.model';
 
+export const AUTO_REFRESH_MINUTES = [0, 1, 5, 15, 30] as const;
+
+export type AutoRefreshMinutes = (typeof AUTO_REFRESH_MINUTES)[number];
+
 export interface MissionControlSettings {
   veloUrl: string;
   dashUrl: string;
@@ -14,6 +18,8 @@ export interface MissionControlSettings {
   dashApiUrl?: string;
   /** dash has no daily target of its own. */
   dailyTargetHours: number;
+  /** Interval of the dashboard background refresh; `0` turns it off. */
+  autoRefreshMinutes: AutoRefreshMinutes;
   localTool1Label: string;
   localTool1Url: string;
   localTool2Label: string;
@@ -26,6 +32,7 @@ export const DEFAULT_SETTINGS: MissionControlSettings = {
   sevDeskUrl: 'https://my.sevdesk.de',
   calendarSource: 'none',
   dailyTargetHours: 8,
+  autoRefreshMinutes: 5,
   localTool1Label: 'Local Tool 1',
   localTool1Url: '',
   localTool2Label: 'Local Tool 2',
