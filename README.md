@@ -59,13 +59,14 @@ Defaults are `http://localhost:8081` (velo) and `http://localhost:8080` (dash). 
 
 mission control runs on the Pi as a static build served by Caddy under `/missioncontrol/`, next to velo (`/velo`) and dash (`/dash`). The deploy script and Caddy configuration live in the `pi-ops` repository.
 
+Every deploy is a release. Commit everything first, then run:
+
 ```bash
-npm ci
-npm run build:pi    # ng build --base-href /missioncontrol/
-MISSIONCONTROL_LOCAL_PATH=$PWD ../pi-ops/scripts/deploy-missioncontrol.sh
+scripts/deploy.sh          # npm version patch (commit + tag v<version>), npm run build:pi, deploy via ../pi-ops
+scripts/deploy.sh minor    # patch | minor | major | <version>; minor/major only on request
 ```
 
-The sidebar shows the version from `package.json` and the commit of the deployed build, e.g. `v0.1.0 (Build 7de439b)`; its tooltip shows the build time. Release a version with `npm version patch|minor|major -m "Release %s"` (commits and tags `v<version>`), see [.ai/stack.md](.ai/stack.md).
+The release and deploy rules for all Arrow apps live in `../pi-ops/docs/deploy-conventions.md`. The sidebar shows the version from `package.json` and the commit of the deployed build, e.g. `v0.1.0 (Build 7de439b)`; its tooltip shows the build time.
 
 On the server, open `http://arrow.local/missioncontrol/` and use Settings → **APIs dieses Servers verwenden**; requests to velo and dash are then same-origin.
 
