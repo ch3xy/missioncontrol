@@ -17,6 +17,7 @@ import { DashSummary } from '../../core/models/dash.model';
 import { AppShortcut } from '../../core/models/shortcut.model';
 import { VeloSummary } from '../../core/models/velo.model';
 import { CalendarAdapterService } from '../../core/services/calendar-adapter.service';
+import { ClockService } from '../../core/services/clock.service';
 import { DashAdapterService } from '../../core/services/dash-adapter.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { ShortcutService } from '../../core/services/shortcut.service';
@@ -26,7 +27,7 @@ import { QuickAccessTile } from '../../shared/components/quick-access-tile/quick
 import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { TrendLine } from '../../shared/components/trend-line/trend-line';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
-import { eventDayKeys, localDateKey } from '../calendar/calendar-month';
+import { coversDay, localDateKey } from '../calendar/calendar-month';
 
 @Component({
   selector: 'app-dashboard',
@@ -56,6 +57,7 @@ export class Dashboard {
   private readonly shortcutService = inject(ShortcutService);
   private readonly settingsService = inject(SettingsService);
   private readonly document = inject(DOCUMENT);
+  private readonly clock = inject(ClockService);
 
   protected readonly events = signal<CalendarEvent[]>([]);
   protected readonly velo = signal<VeloSummary | null>(null);
@@ -73,11 +75,11 @@ export class Dashboard {
   );
   /** Today's appointments (local day) that are not over yet. */
   protected readonly todayEvents = computed(() => {
-    const now = new Date();
+    const now = this.clock.now();
     const todayKey = localDateKey(now);
 
     return this.events()
-      .filter((event) => isUpcoming(event, now) && eventDayKeys(event).includes(todayKey))
+      .filter((event) => isUpcoming(event, now) && coversDay(event, todayKey))
       .slice(0, 3);
   });
   protected readonly hasCalendar = computed(
@@ -88,7 +90,7 @@ export class Dashboard {
   protected readonly dashProgress = computed(() => {
     const summary = this.dash();
 
-    if (!summary) {
+    if (!summary || summary.targetTodayMinutes <= 0) {
       return 0;
     }
 
@@ -150,16 +152,16 @@ export class Dashboard {
 
     this.isLoading.set(true);
 
-    const [events, velo, dash] = await Promise.all([
-      this.calendarAdapter.getEvents(),
-      this.veloAdapter.getSummary(),
-      this.dashAdapter.getSummary(),
-    ]);
-
-    this.events.set(events);
-    this.velo.set(velo);
-    this.dash.set(dash);
-    this.lastUpdated.set(new Date());
-    this.isLoading.set(false);
+    // Each card updates as soon as its source answers, so a slow calendar does not hold back the rest
+    try {
+      await Promise.all([
+        this.calendarAdapter.getEvents().then((events) => this.events.set(events)),
+        this.veloAdapter.getSummary().then((velo) => this.velo.set(velo)),
+        this.dashAdapter.getSummary().then((dash) => this.dash.set(dash)),
+      ]);
+      this.lastUpdated.set(new Date());
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }

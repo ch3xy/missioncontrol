@@ -63,7 +63,7 @@ Parsing uses [ical.js](https://github.com/kewisch/ical.js). Supported date forma
 - Local date-time with `TZID`, converted with the calendar's `VTIMEZONE`; without one, or without `TZID` (floating time), in the browser's time zone
 - Date-only values (`VALUE=DATE`), for example `20260619`, stored as 00:00 UTC of that day with `allDay: true`
 
-Recurring events (`RRULE`, `RDATE`) are expanded into one event per occurrence from today up to one year ahead; `EXDATE` and changed occurrences (`RECURRENCE-ID`) are applied. All occurrences keep the event's `UID` as `id`. Non-recurring events are not limited to that range.
+Recurring events (`RRULE`, `RDATE`) are expanded into one event per occurrence from the start of the month one year back up to the end of the month one year ahead; `EXDATE`, changed occurrences (`RECURRENCE-ID`) and `STATUS:CANCELLED` are applied. All occurrences keep the event's `UID` as `id`. Non-recurring events are not limited to that range.
 
 A response without `BEGIN:VCALENDAR` (e.g. an HTML page) or one ical.js cannot parse is reported as invalid; a calendar without events, or an empty response (vdirsyncer writes empty files for empty calendars), is valid and simply empty.
 

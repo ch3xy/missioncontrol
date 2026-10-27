@@ -56,15 +56,19 @@ export async function readVeloApiSummary(
     return { data: null, error: failed.error };
   }
 
-  const totals = new Map<string, number>();
+  const totals = new Map<string, { sum: number; accounts: number }>();
 
   for (const forecast of forecasts) {
     for (const day of forecast.data?.dailyBalances ?? []) {
-      totals.set(day.date, (totals.get(day.date) ?? 0) + day.balance);
+      const total = totals.get(day.date) ?? { sum: 0, accounts: 0 };
+      totals.set(day.date, { sum: total.sum + day.balance, accounts: total.accounts + 1 });
     }
   }
 
+  // A date that some accounts do not cover would show a partial sum as the total balance
   const trend: CashFlowPoint[] = [...totals]
+    .filter(([, total]) => total.accounts === forecasts.length)
+    .map(([date, total]): [string, number] => [date, total.sum])
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, value]) => ({ date, value: roundCents(value) }));
   const currentCashFlow = roundCents(

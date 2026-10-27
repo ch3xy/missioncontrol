@@ -9,7 +9,7 @@ export interface CalendarDay {
   events: CalendarEvent[];
 }
 
-/** Long events (e.g. holidays) are cut off after this many days to keep the grid cheap. */
+/** `eventDayKeys` lists at most this many days; use `coversDay` to test a single day. */
 const MAX_EVENT_DAYS = 62;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -53,20 +53,31 @@ export function eventDayKeys(event: CalendarEvent): string[] {
   return keys;
 }
 
+/** Whether an event falls on the local day `key` (`YYYY-MM-DD`), however long it runs. */
+export function coversDay(event: CalendarEvent, key: string): boolean {
+  if (event.allDay) {
+    const start = event.startsAt.slice(0, 10);
+    const end = event.endsAt?.slice(0, 10);
+    // The end date is exclusive; without a later one the event covers its start date only
+    return key === start || (key > start && !!end && key < end);
+  }
+
+  const [year, month, day] = key.split('-').map(Number);
+  const dayStart = new Date(year, month - 1, day).getTime();
+  const dayEnd = new Date(year, month - 1, day + 1).getTime();
+  const start = Date.parse(event.startsAt);
+  // An end at exactly midnight belongs to the previous day
+  const end = event.endsAt ? Math.max(start, Date.parse(event.endsAt) - 1) : start;
+
+  return start < dayEnd && end >= dayStart;
+}
+
 /** Full weeks (Monday first) around `month`, each day with its events: all-day first, then by time. */
 export function buildMonth(
   month: Date,
   events: CalendarEvent[],
   today = new Date(),
 ): CalendarDay[] {
-  const byDay = new Map<string, CalendarEvent[]>();
-
-  for (const event of events) {
-    for (const key of eventDayKeys(event)) {
-      byDay.set(key, [...(byDay.get(key) ?? []), event]);
-    }
-  }
-
   const first = new Date(month.getFullYear(), month.getMonth(), 1);
   const last = new Date(month.getFullYear(), month.getMonth() + 1, 0);
   const start = new Date(first);
@@ -83,11 +94,13 @@ export function buildMonth(
       date: new Date(date),
       inMonth: date.getMonth() === month.getMonth(),
       isToday: key === todayKey,
-      events: [...(byDay.get(key) ?? [])].sort(
-        (a, b) =>
-          Number(!!b.allDay) - Number(!!a.allDay) ||
-          Date.parse(a.startsAt) - Date.parse(b.startsAt),
-      ),
+      events: events
+        .filter((event) => coversDay(event, key))
+        .sort(
+          (a, b) =>
+            Number(!!b.allDay) - Number(!!a.allDay) ||
+            Date.parse(a.startsAt) - Date.parse(b.startsAt),
+        ),
     });
   }
 

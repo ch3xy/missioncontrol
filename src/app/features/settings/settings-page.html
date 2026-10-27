@@ -218,6 +218,9 @@
   </form>
 
   <p class="saved">{{ savedMessage() }}</p>
+  @if (!persisted()) {
+    <p class="text-error">{{ 'settings.notPersisted' | t }}</p>
+  }
   <p class="hint">{{ sourceHint() }}</p>
 </app-widget-card>
 

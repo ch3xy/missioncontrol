@@ -11,6 +11,8 @@ type CalendarMeta = Pick<CalendarEvent, 'calendar' | 'color'>;
 
 /** Guards against endless rules (no COUNT/UNTIL) and very old daily series. */
 const MAX_ITERATIONS_PER_EVENT = 50_000;
+/** Occurrences scheduled after the window can be moved into it, so the expansion looks a bit further. */
+const MOVED_OCCURRENCE_SLACK_MS = 31 * 24 * 60 * 60 * 1000;
 
 /**
  * Parses a VCALENDAR into events. Recurring events (RRULE/RDATE) are expanded into one event per
@@ -19,60 +21,91 @@ const MAX_ITERATIONS_PER_EVENT = 50_000;
  */
 export function parseIcsEvents(
   icsText: string,
-  window: IcsWindow = upcomingYear(),
+  window: IcsWindow = defaultWindow(),
 ): CalendarEvent[] {
   const calendar = new ICAL.Component(ICAL.parse(icsText.trim()));
 
   // Without its VTIMEZONE a TZID is treated as floating time, i.e. the browser's time zone.
   for (const timezone of calendar.getAllSubcomponents('vtimezone')) {
-    ICAL.TimezoneService.register(timezone);
+    try {
+      ICAL.TimezoneService.register(timezone);
+    } catch {
+      // A broken VTIMEZONE (e.g. without TZID) must not cost the whole calendar.
+    }
   }
 
   const meta = calendarMeta(calendar);
 
+  const vevents = calendar.getAllSubcomponents('vevent');
   // ical.js cannot compute an end without a start; such entries are not appointments anyway.
-  const components = calendar
-    .getAllSubcomponents('vevent')
-    .filter((component) => component.hasProperty('dtstart'));
-  const masters = components.filter((component) => !component.hasProperty('recurrence-id'));
-  const exceptions = components.filter((component) => component.hasProperty('recurrence-id'));
-  const masterUids = new Set(masters.map((component) => component.getFirstPropertyValue('uid')));
+  const components = vevents.filter((component) => component.hasProperty('dtstart'));
+  const masters = components.filter(
+    (component) => !component.hasProperty('recurrence-id') && !isCancelled(component),
+  );
+  const exceptions = components.filter(
+    (component) => component.hasProperty('recurrence-id') && !isCancelled(component),
+  );
+  // Cancelled single occurrences often come without DTSTART; they act like an EXDATE.
+  const cancellations = vevents.filter(
+    (component) => component.hasProperty('recurrence-id') && isCancelled(component),
+  );
+  // Includes cancelled series, whose changed occurrences are cancelled with them.
+  const masterUids = new Set(
+    vevents
+      .filter((component) => !component.hasProperty('recurrence-id'))
+      .map((component) => component.getFirstPropertyValue('uid')),
+  );
+  const sameUid = (uid: unknown) => (component: ICAL.Component) =>
+    component.getFirstPropertyValue('uid') === uid;
 
   return [
     ...masters.flatMap((component) => {
-      const event = new ICAL.Event(component);
+      const uid = component.getFirstPropertyValue('uid');
+      // Without explicit exceptions ical.js relates every RECURRENCE-ID of the file, whatever its UID.
+      const event = new ICAL.Event(component, { exceptions: exceptions.filter(sameUid(uid)) });
 
-      for (const exception of exceptions) {
-        if (exception.getFirstPropertyValue('uid') === event.uid) {
-          event.relateException(exception);
-        }
+      if (!event.isRecurring()) {
+        return [toCalendarEvent(event, event.startDate, event.endDate, meta)];
       }
 
-      return event.isRecurring()
-        ? expandOccurrences(event, window, meta)
-        : [toCalendarEvent(event, event.startDate, event.endDate, meta)];
+      const cancelled = new Set(cancellations.filter(sameUid(uid)).map(recurrenceIdTime));
+      return expandOccurrences(event, window, meta, cancelled);
     }),
     // A changed occurrence whose series is not in the file is still a real appointment.
     ...exceptions
       .filter((component) => !masterUids.has(component.getFirstPropertyValue('uid')))
-      .map((component) => new ICAL.Event(component))
+      .map((component) => new ICAL.Event(component, { exceptions: [] }))
       .map((event) => toCalendarEvent(event, event.startDate, event.endDate, meta)),
   ];
+}
+
+function isCancelled(component: ICAL.Component): boolean {
+  return String(component.getFirstPropertyValue('status') ?? '').toUpperCase() === 'CANCELLED';
+}
+
+function recurrenceIdTime(component: ICAL.Component): number {
+  return (component.getFirstPropertyValue('recurrence-id') as ICAL.Time).toJSDate().getTime();
 }
 
 function expandOccurrences(
   event: ICAL.Event,
   window: IcsWindow,
   meta: CalendarMeta,
+  cancelled: Set<number>,
 ): CalendarEvent[] {
   const events: CalendarEvent[] = [];
   const iterator = event.iterator();
+  const lastScheduled = window.to.getTime() + MOVED_OCCURRENCE_SLACK_MS;
 
   for (let i = 0; i < MAX_ITERATIONS_PER_EVENT; i++) {
     const next = iterator.next() as ICAL.Time | undefined;
 
-    if (!next || next.toJSDate() > window.to) {
+    if (!next || next.toJSDate().getTime() > lastScheduled) {
       break;
+    }
+
+    if (cancelled.has(next.toJSDate().getTime())) {
+      continue;
     }
 
     const details = event.getOccurrenceDetails(next);
@@ -96,7 +129,8 @@ function toCalendarEvent(
   const endsAt = end ? toIsoString(end) : undefined;
 
   return {
-    id: event.uid || `ics-${startsAt}`,
+    // Without a UID the title keeps different events at the same time apart.
+    id: event.uid || `ics-${startsAt}-${event.summary?.trim() ?? ''}`,
     title: event.summary?.trim() || 'Untitled event',
     startsAt,
     endsAt: endsAt === startsAt ? undefined : endsAt,
@@ -149,10 +183,11 @@ function toIsoString(time: ICAL.Time): string {
   return time.toJSDate().toISOString();
 }
 
-function upcomingYear(): IcsWindow {
-  const from = new Date();
-  from.setHours(0, 0, 0, 0);
-  const to = new Date(from);
-  to.setFullYear(to.getFullYear() + 1);
-  return { from, to };
+/** A year back and ahead from the current month, so past weeks and months show their series too. */
+function defaultWindow(): IcsWindow {
+  const today = new Date();
+  return {
+    from: new Date(today.getFullYear() - 1, today.getMonth(), 1),
+    to: new Date(today.getFullYear() + 1, today.getMonth() + 1, 1),
+  };
 }

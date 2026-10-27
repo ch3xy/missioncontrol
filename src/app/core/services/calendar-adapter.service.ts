@@ -2,7 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { IntegrationStatus } from '../models/integration-status.model';
 import { CalendarAdapter, CalendarEvent } from '../models/calendar.model';
 import { parseIcsEvents } from './ics-parser';
-import { readLocalJsonResult, isRecord } from './local-json-source';
+import { FETCH_TIMEOUT_MS, readLocalJsonResult, isRecord } from './local-json-source';
 import { SettingsService } from './settings.service';
 import { splitSourceUrls } from './source-urls';
 import { TranslationKey } from '../i18n/translations';
@@ -13,6 +13,8 @@ type SourceResult = { events: CalendarEvent[] } | { error: TranslationKey };
 export class CalendarAdapterService implements CalendarAdapter {
   private readonly settingsService = inject(SettingsService);
   private readonly statusState = signal<IntegrationStatus | null>(null);
+  /** Only the latest request may set the status; an older one finishing late is outdated. */
+  private latestRequest = 0;
 
   readonly status = this.statusState.asReadonly();
 
@@ -21,6 +23,7 @@ export class CalendarAdapterService implements CalendarAdapter {
    * line) are loaded in parallel and merged, so one failing calendar does not hide the others.
    */
   async getEvents(): Promise<CalendarEvent[]> {
+    const request = ++this.latestRequest;
     const settings = this.settingsService.settings();
     const source = settings.calendarSource;
 
@@ -42,6 +45,11 @@ export class CalendarAdapterService implements CalendarAdapter {
     const results = await Promise.all(
       urls.map((url) => (source === 'ics' ? this.loadIcsEvents(url) : this.loadJsonEvents(url))),
     );
+
+    if (request !== this.latestRequest) {
+      return this.sortEvents(uniqueEvents(eventsOf(results)));
+    }
+
     const failedUrls = urls.filter((_, index) => 'error' in results[index]);
     const firstError = results.find((result) => 'error' in result);
 
@@ -60,9 +68,7 @@ export class CalendarAdapterService implements CalendarAdapter {
       });
     }
 
-    return this.sortEvents(
-      uniqueEvents(results.flatMap((result) => ('events' in result ? result.events : []))),
-    );
+    return this.sortEvents(uniqueEvents(eventsOf(results)));
   }
 
   private async loadJsonEvents(url: string): Promise<SourceResult> {
@@ -74,7 +80,7 @@ export class CalendarAdapterService implements CalendarAdapter {
     let text: string;
 
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
 
       if (!response.ok) {
         return { error: 'status.calendar.icsFailed' };
@@ -121,9 +127,9 @@ function isCalendarEvent(value: unknown): value is CalendarEvent {
   return (
     typeof value['id'] === 'string' &&
     typeof value['title'] === 'string' &&
-    typeof value['startsAt'] === 'string' &&
+    isDateString(value['startsAt']) &&
     isCalendarSource(value['source']) &&
-    optionalString(value['endsAt']) &&
+    (value['endsAt'] === undefined || isDateString(value['endsAt'])) &&
     optionalString(value['project']) &&
     optionalString(value['customer']) &&
     optionalString(value['location']) &&
@@ -135,6 +141,10 @@ function isCalendarEvent(value: unknown): value is CalendarEvent {
 
 function isCalendarSource(value: unknown): value is CalendarEvent['source'] {
   return value === 'ics' || value === 'local-json';
+}
+
+function isDateString(value: unknown): value is string {
+  return typeof value === 'string' && !Number.isNaN(Date.parse(value));
 }
 
 function optionalString(value: unknown): boolean {
@@ -155,6 +165,10 @@ function uniqueEvents(events: CalendarEvent[]): CalendarEvent[] {
     seen.add(key);
     return true;
   });
+}
+
+function eventsOf(results: SourceResult[]): CalendarEvent[] {
+  return results.flatMap((result) => ('events' in result ? result.events : []));
 }
 
 function errorMessage(error: string | undefined): TranslationKey {

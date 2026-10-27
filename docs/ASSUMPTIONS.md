@@ -87,7 +87,7 @@ Private iCloud calendars (2026-10-21):
 Recurring calendar events (2026-10-21):
 
 - ICS parsing uses `ical.js` (Mozilla, MPL-2.0, ~25 kB gzip) instead of the former hand-written parser. RRULE expansion with EXDATE, RECURRENCE-ID and VTIMEZONE conversion is easy to get subtly wrong (BYSETPOS, DST, THISANDFUTURE), and a well-tested library is cheaper than maintaining our own.
-- Occurrences are generated from the start of today up to one year ahead. The agenda shows upcoming appointments, so past occurrences of a series are not shown; non-recurring events are still returned unfiltered as before.
+- Occurrences are generated from the start of today up to one year ahead. The agenda shows upcoming appointments, so past occurrences of a series are not shown; non-recurring events are still returned unfiltered as before. (Superseded 2026-10-27, see below.)
 - All occurrences keep the series `UID` as `id`; lists track and deduplicate by `id` + `startsAt`.
 - All-day events keep the previous representation (00:00 UTC of their date), so the agenda, which groups by the UTC date, keeps them on the right day.
 - Expansion stops after 50,000 iterations per series as a guard against endless rules; that covers a daily series starting more than 100 years ago.
@@ -99,3 +99,13 @@ Dashboard background refresh (2026-10-23):
 - While the tab is hidden, ticks are skipped so no requests run for a dashboard nobody looks at. On returning to the tab, data older than the interval is reloaded immediately.
 - Background reloads reuse the manual refresh: the visible data stays until new data arrives, and a reload that is still running is not started a second time.
 - Only the dashboard refreshes itself; the calendar, velo and dash pages keep loading once on open.
+
+Review fixes (2026-10-27):
+
+- Recurring events are expanded from the start of the month one year back to the end of the month one year ahead, so past days of the current week and month show their series. A moved occurrence is found up to 31 days beyond that window.
+- `STATUS:CANCELLED` hides events and single occurrences; a cancelled occurrence without `DTSTART` acts like an `EXDATE`. Changed occurrences are only related to the series with the same `UID`.
+- Every fetch (local JSON, REST APIs, ICS) is aborted after 15 seconds. The dashboard updates each card as soon as its source answers; a failing load no longer leaves the refresh blocked.
+- Times of day (top bar date, "Today", highlighted day) follow a shared clock that ticks every minute, so an open tab rolls over at midnight.
+- Imported and stored settings are checked field by field; files that are not a JSON object are rejected. If LocalStorage is blocked or full, settings apply for the session and Settings shows a warning.
+- URLs with user name or password are rejected, because settings are stored in LocalStorage and exported in plain text. Secret calendar links should not be entered either; iCloud is read through vdirsyncer on the server instead.
+- The velo forecast only sums dates that every EUR account covers.

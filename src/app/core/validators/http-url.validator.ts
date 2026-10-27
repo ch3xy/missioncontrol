@@ -1,4 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { isHttpUrl } from '../services/source-urls';
 
 interface HttpUrlValidatorOptions {
   optional?: boolean;
@@ -12,11 +13,6 @@ export function httpUrlValidator(options: HttpUrlValidatorOptions = {}): Validat
       return options.optional ? null : { httpUrl: true };
     }
 
-    try {
-      const url = new URL(value);
-      return url.protocol === 'http:' || url.protocol === 'https:' ? null : { httpUrl: true };
-    } catch {
-      return { httpUrl: true };
-    }
+    return isHttpUrl(value) ? null : { httpUrl: true };
   };
 }

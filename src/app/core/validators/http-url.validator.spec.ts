@@ -25,4 +25,15 @@ describe('httpUrlValidator', () => {
 
     expect(validator(new FormControl(''))).toBeNull();
   });
+
+  it('should reject URLs with user name or password', () => {
+    const validator = httpUrlValidator();
+
+    expect(validator(new FormControl('https://alice:secret@nas.example/app'))).toEqual({
+      httpUrl: true,
+    });
+    expect(validator(new FormControl('https://alice@nas.example/app'))).toEqual({
+      httpUrl: true,
+    });
+  });
 });

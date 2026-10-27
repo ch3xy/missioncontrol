@@ -1,5 +1,5 @@
 import { CalendarEvent } from '../../core/models/calendar.model';
-import { buildMonth, eventDayKeys } from './calendar-month';
+import { buildMonth, coversDay, eventDayKeys } from './calendar-month';
 
 const event = (fields: Partial<CalendarEvent>): CalendarEvent => ({
   id: 'event',
@@ -61,5 +61,31 @@ describe('calendar month', () => {
     const today = days.find((day) => day.isToday);
     expect(today?.key).toBe('2026-10-21');
     expect(today?.events.map((item) => item.id)).toEqual(['all-day', 'early', 'late']);
+  });
+
+  it('should cover every day of long events, also far after their start', () => {
+    const absence = event({
+      allDay: true,
+      startsAt: '2026-08-01T00:00:00.000Z',
+      endsAt: '2026-11-01T00:00:00.000Z',
+    });
+    const trip = event({ startsAt: localIso(2026, 8, 1, 9), endsAt: localIso(2026, 10, 31, 18) });
+
+    expect(coversDay(absence, '2026-10-27')).toBe(true);
+    expect(coversDay(absence, '2026-11-01')).toBe(false);
+    expect(coversDay(trip, '2026-10-27')).toBe(true);
+    expect(coversDay(trip, '2026-11-01')).toBe(false);
+    expect(
+      buildMonth(new Date(2026, 9, 1), [absence])
+        .filter((day) => day.inMonth)
+        .every((day) => day.events.length === 1),
+    ).toBe(true);
+  });
+
+  it('should treat a timed end at midnight as the end of the previous day', () => {
+    const late = event({ startsAt: localIso(2026, 10, 21, 22), endsAt: localIso(2026, 10, 22, 0) });
+
+    expect(coversDay(late, '2026-10-21')).toBe(true);
+    expect(coversDay(late, '2026-10-22')).toBe(false);
   });
 });

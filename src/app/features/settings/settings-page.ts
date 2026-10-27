@@ -51,6 +51,7 @@ export class SettingsPage {
   protected readonly autoRefreshOptions = AUTO_REFRESH_MINUTES;
 
   protected readonly savedSettings = this.settingsService.settings;
+  protected readonly persisted = this.settingsService.persisted;
   protected readonly shortcuts = this.shortcutService.shortcuts;
   /** Label of the shortcut that could not be opened. */
   protected readonly launchError = signal<string | null>(null);
@@ -122,7 +123,8 @@ export class SettingsPage {
     link.href = url;
     link.download = 'mission-control-settings.json';
     link.click();
-    URL.revokeObjectURL(url);
+    // Some browsers start the download asynchronously; revoking at once can cancel it
+    setTimeout(() => URL.revokeObjectURL(url), 1_000);
     this.backupMessage.set('settings.exported');
   }
 

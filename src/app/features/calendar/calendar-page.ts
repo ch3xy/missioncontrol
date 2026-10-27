@@ -4,7 +4,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   ElementRef,
   inject,
   signal,
@@ -22,10 +21,11 @@ import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { CalendarEvent, isUpcoming } from '../../core/models/calendar.model';
 import { CalendarAdapterService } from '../../core/services/calendar-adapter.service';
+import { ClockService } from '../../core/services/clock.service';
 import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
 import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
-import { buildMonth, eventDayKeys } from './calendar-month';
+import { buildMonth, eventDayKeys, localDateKey } from './calendar-month';
 import { buildWeek, startOfWeek } from './calendar-week';
 
 export type CalendarView = 'week' | 'month' | 'list';
@@ -82,11 +82,13 @@ export class CalendarPage {
   protected readonly view = signal<CalendarView>(readView());
   /** First day of the month shown in the month view. */
   protected readonly month = signal(startOfMonth(new Date()));
-  protected readonly monthDays = computed(() => buildMonth(this.month(), this.events()));
+  protected readonly now = inject(ClockService).now;
+  protected readonly monthDays = computed(() =>
+    buildMonth(this.month(), this.events(), this.now()),
+  );
   protected readonly weekdays = computed(() => this.monthDays().slice(0, 7));
   /** Monday of the week shown in the week view. */
   protected readonly week = signal(startOfWeek(new Date()));
-  protected readonly now = signal(new Date());
   protected readonly weekDays = computed(() => buildWeek(this.week(), this.events(), this.now()));
   protected readonly hasAllDayEvents = computed(() =>
     this.weekDays().some((day) => day.allDay.length > 0),
@@ -114,9 +116,12 @@ export class CalendarPage {
   private readonly weekScroll = viewChild<ElementRef<HTMLElement>>('weekScroll');
   protected readonly eventGroups = computed<CalendarEventGroup[]>(() => {
     const groups = new Map<string, CalendarEvent[]>();
+    const todayKey = localDateKey(this.now());
 
     for (const event of this.events().filter((item) => isUpcoming(item, this.now()))) {
-      const key = eventDayKeys(event)[0];
+      // An event that started earlier and still runs is listed under today
+      const startKey = eventDayKeys(event)[0];
+      const key = startKey < todayKey ? todayKey : startKey;
       groups.set(key, [...(groups.get(key) ?? []), event]);
     }
 
@@ -128,9 +133,6 @@ export class CalendarPage {
 
   constructor() {
     void this.load();
-
-    const timer = setInterval(() => this.now.set(new Date()), 60_000);
-    inject(DestroyRef).onDestroy(() => clearInterval(timer));
 
     // Each time the week view appears, show the working day; earlier and later hours are a scroll away
     afterRenderEffect(() => {
@@ -173,10 +175,13 @@ export class CalendarPage {
 
   private async load(): Promise<void> {
     this.isLoading.set(true);
-    const events = await this.calendarAdapter.getEvents();
-    this.events.set(events);
-    this.lastUpdated.set(new Date());
-    this.isLoading.set(false);
+
+    try {
+      this.events.set(await this.calendarAdapter.getEvents());
+      this.lastUpdated.set(new Date());
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }
 

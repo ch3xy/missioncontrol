@@ -39,7 +39,7 @@ export class DashPage {
   protected readonly progress = computed(() => {
     const summary = this.summary();
 
-    if (!summary) {
+    if (!summary || summary.targetTodayMinutes <= 0) {
       return 0;
     }
 
@@ -65,8 +65,12 @@ export class DashPage {
 
   private async load(): Promise<void> {
     this.isLoading.set(true);
-    this.summary.set(await this.dashAdapter.getSummary());
-    this.lastUpdated.set(new Date());
-    this.isLoading.set(false);
+
+    try {
+      this.summary.set(await this.dashAdapter.getSummary());
+      this.lastUpdated.set(new Date());
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }

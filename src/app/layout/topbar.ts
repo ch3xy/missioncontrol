@@ -1,16 +1,9 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { LucideMenu, LucideMoon, LucideSun } from '@lucide/angular';
 import { I18nService } from '../core/i18n/i18n.service';
 import { TranslatePipe } from '../core/i18n/translate.pipe';
+import { ClockService } from '../core/services/clock.service';
 import { ThemeService } from '../core/services/theme.service';
 
 @Component({
@@ -23,10 +16,9 @@ import { ThemeService } from '../core/services/theme.service';
 export class Topbar {
   protected readonly theme = inject(ThemeService);
   protected readonly i18n = inject(I18nService);
-  private readonly now = signal(new Date());
 
   readonly drawerOpen = input(false);
   readonly openMenu = output();
 
-  protected readonly today = computed(() => this.now());
+  protected readonly today = inject(ClockService).now;
 }

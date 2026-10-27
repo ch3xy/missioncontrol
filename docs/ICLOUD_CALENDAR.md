@@ -162,13 +162,14 @@ For local development, `npm run start` forwards `/missioncontrol/calendars` to t
 mission control expands recurring events itself (with [ical.js](https://github.com/kewisch/ical.js)):
 
 - `RRULE` (daily, weekly, monthly such as "every 2nd Tuesday", yearly; `INTERVAL`, `COUNT`, `UNTIL`)
-  and `RDATE` produce one appointment per occurrence, from today up to one year ahead.
+  and `RDATE` produce one appointment per occurrence, from the start of the month one year back up
+  to the end of the month one year ahead, so the week and month views also show past occurrences.
 - `EXDATE` removes deleted occurrences; a moved or changed single occurrence (`RECURRENCE-ID`)
-  replaces the regular one.
+  replaces the regular one. Events and single occurrences with `STATUS:CANCELLED` are not shown.
 - Times with `TZID` are converted with the `VTIMEZONE` that iCloud and vdirsyncer put into the file,
   so a weekly 09:00 meeting stays at 09:00 across daylight saving time changes.
 
 ## Limitations
 
 - Single (non-recurring) events are shown as delivered; the sync window above keeps past ones out.
-- Cancelled occurrences that iCloud keeps as `STATUS:CANCELLED` (instead of an `EXDATE`) are still shown.
+- Past occurrences only appear as far back as the vdirsyncer sync window reaches (see above).

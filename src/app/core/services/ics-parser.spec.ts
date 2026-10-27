@@ -187,4 +187,121 @@ END:VCALENDAR`);
   it('should throw on text that is not iCalendar', () => {
     expect(() => parseIcsEvents('<!doctype html><html></html>')).toThrow();
   });
+
+  it('should skip cancelled events and cancelled occurrences, also without DTSTART', () => {
+    const events = parseIcsEvents(
+      `BEGIN:VCALENDAR
+BEGIN:VEVENT
+UID:cancelled
+SUMMARY:Called off
+STATUS:CANCELLED
+DTSTART:20261020T090000Z
+END:VEVENT
+BEGIN:VEVENT
+UID:weekly
+SUMMARY:Jour fixe
+DTSTART:20261019T090000Z
+RRULE:FREQ=WEEKLY;COUNT=3
+END:VEVENT
+BEGIN:VEVENT
+UID:weekly
+RECURRENCE-ID:20261026T090000Z
+STATUS:CANCELLED
+END:VEVENT
+END:VCALENDAR`,
+      window('2026-10-01T00:00:00Z', '2027-10-01T00:00:00Z'),
+    );
+
+    expect(events.map((event) => event.startsAt)).toEqual([
+      '2026-10-19T09:00:00.000Z',
+      '2026-11-02T09:00:00.000Z',
+    ]);
+  });
+
+  it('should only apply changed occurrences to the series with the same UID', () => {
+    const events = parseIcsEvents(
+      `BEGIN:VCALENDAR
+BEGIN:VEVENT
+UID:a
+SUMMARY:A
+DTSTART:20261019T090000Z
+RRULE:FREQ=WEEKLY;COUNT=2
+END:VEVENT
+BEGIN:VEVENT
+UID:b
+SUMMARY:B
+DTSTART:20261019T090000Z
+RRULE:FREQ=WEEKLY;COUNT=2
+END:VEVENT
+BEGIN:VEVENT
+UID:b
+RECURRENCE-ID:20261026T090000Z
+SUMMARY:B (moved)
+DTSTART:20261026T110000Z
+END:VEVENT
+END:VCALENDAR`,
+      window('2026-10-01T00:00:00Z', '2027-10-01T00:00:00Z'),
+    );
+
+    expect(events.map((event) => `${event.id} ${event.title} ${event.startsAt}`)).toEqual([
+      'a A 2026-10-19T09:00:00.000Z',
+      'a A 2026-10-26T09:00:00.000Z',
+      'b B 2026-10-19T09:00:00.000Z',
+      'b B (moved) 2026-10-26T11:00:00.000Z',
+    ]);
+  });
+
+  it('should find an occurrence moved into the window from after it', () => {
+    const events = parseIcsEvents(
+      `BEGIN:VCALENDAR
+BEGIN:VEVENT
+UID:weekly
+SUMMARY:Jour fixe
+DTSTART:20261019T090000Z
+RRULE:FREQ=WEEKLY
+END:VEVENT
+BEGIN:VEVENT
+UID:weekly
+RECURRENCE-ID:20261102T090000Z
+SUMMARY:Jour fixe (earlier)
+DTSTART:20261029T090000Z
+END:VEVENT
+END:VCALENDAR`,
+      window('2026-10-19T00:00:00Z', '2026-10-30T00:00:00Z'),
+    );
+
+    expect(events.map((event) => event.title)).toEqual([
+      'Jour fixe',
+      'Jour fixe',
+      'Jour fixe (earlier)',
+    ]);
+  });
+
+  it('should keep different events without UID at the same time apart', () => {
+    const events = parseIcsEvents(`BEGIN:VCALENDAR
+BEGIN:VEVENT
+SUMMARY:First
+DTSTART:20261020T090000Z
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Second
+DTSTART:20261020T090000Z
+END:VEVENT
+END:VCALENDAR`);
+
+    expect(new Set(events.map((event) => event.id)).size).toBe(2);
+  });
+
+  it('should keep the calendar when one VTIMEZONE is broken', () => {
+    const events = parseIcsEvents(`BEGIN:VCALENDAR
+BEGIN:VTIMEZONE
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:event-1
+DTSTART:20261020T090000Z
+END:VEVENT
+END:VCALENDAR`);
+
+    expect(events.map((event) => event.id)).toEqual(['event-1']);
+  });
 });

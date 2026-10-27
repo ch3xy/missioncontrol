@@ -77,4 +77,42 @@ describe('SettingsService', () => {
     expect(service.importSettings(JSON.stringify({ autoRefreshMinutes: 0 }))).toBe(true);
     expect(service.settings().autoRefreshMinutes).toBe(0);
   });
+
+  it('should reject imports that are not a settings object', () => {
+    const service = TestBed.inject(SettingsService);
+    service.updateSettings({ ...DEFAULT_SETTINGS, veloUrl: 'http://localhost:4401' });
+
+    for (const raw of ['null', '[]', '"x"', '42']) {
+      expect(service.importSettings(raw)).toBe(false);
+    }
+    expect(service.settings().veloUrl).toBe('http://localhost:4401');
+  });
+
+  it('should drop values of the wrong type from an import', () => {
+    const service = TestBed.inject(SettingsService);
+
+    expect(
+      service.importSettings(
+        JSON.stringify({ veloApiUrl: 123, calendarSourceUrl: ['a'], veloUrl: false }),
+      ),
+    ).toBe(true);
+    expect(service.settings().veloApiUrl).toBeUndefined();
+    expect(service.settings().calendarSourceUrl).toBeUndefined();
+    expect(service.settings().veloUrl).toBe(DEFAULT_SETTINGS.veloUrl);
+  });
+
+  it('should keep settings for the session when storage is unavailable', () => {
+    const blocked = () => {
+      throw new DOMException('blocked', 'SecurityError');
+    };
+    vi.stubGlobal('localStorage', { getItem: blocked, setItem: blocked });
+    const service = TestBed.inject(SettingsService);
+
+    expect(service.settings()).toEqual(DEFAULT_SETTINGS);
+
+    service.updateSettings({ ...DEFAULT_SETTINGS, veloUrl: 'http://localhost:4401' });
+
+    expect(service.settings().veloUrl).toBe('http://localhost:4401');
+    expect(service.persisted()).toBe(false);
+  });
 });

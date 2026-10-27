@@ -228,4 +228,63 @@ END:VCALENDAR`;
     expect(TestBed.inject(VeloAdapterService).status()?.message).toBe('status.velo.unconfigured');
     expect(TestBed.inject(DashAdapterService).status()?.message).toBe('status.dash.unconfigured');
   });
+
+  it('should reject calendar events with an unparseable date', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        Response.json([{ id: 'x', title: 'X', startsAt: 'not-a-date', source: 'local-json' }]),
+      ),
+    );
+    TestBed.inject(SettingsService).updateSettings({
+      ...DEFAULT_SETTINGS,
+      calendarSource: 'local-json',
+      calendarSourceUrl: 'http://localhost:4500/calendar.json',
+    });
+
+    const adapter = TestBed.inject(CalendarAdapterService);
+
+    expect(await adapter.getEvents()).toEqual([]);
+    expect(adapter.status()?.message).toBe('status.calendar.jsonInvalidShape');
+  });
+
+  it('should report a non-JSON answer as invalid format', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('<!doctype html>')),
+    );
+    TestBed.inject(SettingsService).updateSettings({
+      ...DEFAULT_SETTINGS,
+      calendarSource: 'local-json',
+      calendarSourceUrl: 'http://localhost:4500/calendar.json',
+    });
+
+    const adapter = TestBed.inject(CalendarAdapterService);
+    await adapter.getEvents();
+
+    expect(adapter.status()?.message).toBe('status.calendar.jsonInvalidShape');
+  });
+
+  it('should keep the status of the latest request when an older one finishes later', async () => {
+    const answers: ((response: Response) => void)[] = [];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => new Promise<Response>((resolve) => answers.push(resolve))),
+    );
+    TestBed.inject(SettingsService).updateSettings({
+      ...DEFAULT_SETTINGS,
+      calendarSource: 'local-json',
+      calendarSourceUrl: 'http://localhost:4500/calendar.json',
+    });
+    const adapter = TestBed.inject(CalendarAdapterService);
+
+    const older = adapter.getEvents();
+    const newer = adapter.getEvents();
+    answers[1](Response.json([]));
+    await newer;
+    answers[0](new Response('', { status: 500 }));
+    await older;
+
+    expect(adapter.status()?.kind).toBe('local-json');
+  });
 });

@@ -27,5 +27,8 @@ describe('sourceUrlsValidator', () => {
     expect(validator(new FormControl('webcal://example.test/a.ics'))).toEqual({
       sourceUrls: true,
     });
+    expect(validator(new FormControl('https://user:secret@example.test/a.ics'))).toEqual({
+      sourceUrls: true,
+    });
   });
 });

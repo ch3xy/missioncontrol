@@ -1,5 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { CalendarSource } from '../models/calendar.model';
+import { isRecord } from './local-json-source';
 import {
   AUTO_REFRESH_MINUTES,
   AutoRefreshMinutes,
@@ -9,11 +10,17 @@ import {
 
 const STORAGE_KEY = 'mission-control.settings';
 
+/** Settings as read from storage or an imported file: any field may hold any JSON value. */
+type RawSettings = Partial<Record<keyof MissionControlSettings, unknown>>;
+
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
   private readonly settingsState = signal<MissionControlSettings>(this.readSettings());
+  private readonly persistedState = signal(true);
 
   readonly settings = this.settingsState.asReadonly();
+  /** False when the last change could not be written to LocalStorage and only lasts this session. */
+  readonly persisted = this.persistedState.asReadonly();
   readonly externalUrls = computed(() => ({
     velo: this.settingsState().veloUrl,
     dash: this.settingsState().dashUrl,
@@ -37,7 +44,14 @@ export class SettingsService {
   updateSettings(settings: MissionControlSettings): void {
     const normalized = this.normalizeSettings(settings);
     this.settingsState.set(normalized);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+      this.persistedState.set(true);
+    } catch {
+      // Storage blocked or full: keep the settings for this session and say so
+      this.persistedState.set(false);
+    }
   }
 
   exportSettings(): string {
@@ -45,13 +59,21 @@ export class SettingsService {
   }
 
   importSettings(rawSettings: string): boolean {
+    let parsed: unknown;
+
     try {
-      const parsed = JSON.parse(rawSettings) as Partial<MissionControlSettings>;
-      this.updateSettings({ ...DEFAULT_SETTINGS, ...parsed });
-      return true;
+      parsed = JSON.parse(rawSettings);
     } catch {
       return false;
     }
+
+    // `null`, arrays or plain values would silently reset everything to the defaults
+    if (!isRecord(parsed) || Array.isArray(parsed)) {
+      return false;
+    }
+
+    this.updateSettings({ ...DEFAULT_SETTINGS, ...parsed });
+    return true;
   }
 
   resetSettings(): void {
@@ -59,27 +81,29 @@ export class SettingsService {
   }
 
   private readSettings(): MissionControlSettings {
-    const raw = localStorage.getItem(STORAGE_KEY);
-
-    if (!raw) {
-      return DEFAULT_SETTINGS;
-    }
-
     try {
-      const parsed = JSON.parse(raw) as Partial<MissionControlSettings>;
-      return this.normalizeSettings({ ...DEFAULT_SETTINGS, ...parsed });
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed: unknown = raw ? JSON.parse(raw) : null;
+      return isRecord(parsed)
+        ? this.normalizeSettings({ ...DEFAULT_SETTINGS, ...parsed })
+        : DEFAULT_SETTINGS;
     } catch {
+      // Unreadable JSON or storage access denied (e.g. site data blocked)
       return DEFAULT_SETTINGS;
     }
   }
 
-  private normalizeSettings(settings: MissionControlSettings): MissionControlSettings {
+  /** Imported or stored values are untyped JSON, so every field is checked at runtime. */
+  private normalizeSettings(settings: RawSettings): MissionControlSettings {
     return {
-      ...DEFAULT_SETTINGS,
-      ...settings,
-      veloUrl: settings.veloUrl.trim() || DEFAULT_SETTINGS.veloUrl,
-      dashUrl: settings.dashUrl.trim() || DEFAULT_SETTINGS.dashUrl,
-      sevDeskUrl: settings.sevDeskUrl.trim() || DEFAULT_SETTINGS.sevDeskUrl,
+      veloUrl: text(settings.veloUrl) || DEFAULT_SETTINGS.veloUrl,
+      dashUrl: text(settings.dashUrl) || DEFAULT_SETTINGS.dashUrl,
+      sevDeskUrl: text(settings.sevDeskUrl) || DEFAULT_SETTINGS.sevDeskUrl,
+      calendarSourceUrl: optionalText(settings.calendarSourceUrl),
+      veloSourceUrl: optionalText(settings.veloSourceUrl),
+      dashSourceUrl: optionalText(settings.dashSourceUrl),
+      veloApiUrl: optionalText(settings.veloApiUrl),
+      dashApiUrl: optionalText(settings.dashApiUrl),
       calendarSource: isCalendarSource(settings.calendarSource)
         ? settings.calendarSource
         : DEFAULT_SETTINGS.calendarSource,
@@ -89,12 +113,21 @@ export class SettingsService {
       autoRefreshMinutes: isAutoRefreshMinutes(settings.autoRefreshMinutes)
         ? settings.autoRefreshMinutes
         : DEFAULT_SETTINGS.autoRefreshMinutes,
-      localTool1Label: settings.localTool1Label.trim() || DEFAULT_SETTINGS.localTool1Label,
-      localTool1Url: settings.localTool1Url.trim(),
-      localTool2Label: settings.localTool2Label.trim() || DEFAULT_SETTINGS.localTool2Label,
-      localTool2Url: settings.localTool2Url.trim(),
+      localTool1Label: text(settings.localTool1Label) || DEFAULT_SETTINGS.localTool1Label,
+      localTool1Url: text(settings.localTool1Url),
+      localTool2Label: text(settings.localTool2Label) || DEFAULT_SETTINGS.localTool2Label,
+      localTool2Url: text(settings.localTool2Url),
     };
   }
+}
+
+function text(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+/** Optional source fields stay as entered (several URLs per line); anything but a string is dropped. */
+function optionalText(value: unknown): string | undefined {
+  return typeof value === 'string' ? value : undefined;
 }
 
 /** Also maps the removed `mock` source of older settings to the default. */

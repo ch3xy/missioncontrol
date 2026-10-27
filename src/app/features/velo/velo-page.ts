@@ -56,8 +56,12 @@ export class VeloPage {
 
   private async load(): Promise<void> {
     this.isLoading.set(true);
-    this.summary.set(await this.veloAdapter.getSummary());
-    this.lastUpdated.set(new Date());
-    this.isLoading.set(false);
+
+    try {
+      this.summary.set(await this.veloAdapter.getSummary());
+      this.lastUpdated.set(new Date());
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }

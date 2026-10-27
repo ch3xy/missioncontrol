@@ -12,28 +12,31 @@ export class VeloAdapterService implements VeloAdapter {
   private readonly settingsService = inject(SettingsService);
   private readonly i18n = inject(I18nService);
   private readonly statusState = signal<IntegrationStatus | null>(null);
+  /** Only the latest request may set the status; an older one finishing late is outdated. */
+  private latestRequest = 0;
 
   readonly status = this.statusState.asReadonly();
 
   /** Priority: velo REST API → local JSON. No data without a working source. */
   async getSummary(): Promise<VeloSummary | null> {
+    const request = ++this.latestRequest;
     const apiUrl = this.settingsService.settings().veloApiUrl;
 
     if (apiUrl?.trim()) {
-      return this.readApi(apiUrl);
+      return this.readApi(request, apiUrl);
     }
 
     const url = this.settingsService.settings().veloSourceUrl;
 
     if (!url?.trim()) {
-      this.statusState.set({ kind: 'unconfigured', message: 'status.velo.unconfigured' });
+      this.setStatus(request, { kind: 'unconfigured', message: 'status.velo.unconfigured' });
       return null;
     }
 
     const result = await readLocalJsonResult(url, isVeloSummary);
 
     if (result.data) {
-      this.statusState.set({
+      this.setStatus(request, {
         kind: 'local-json',
         message: 'status.velo.loaded',
         requestedUrl: url,
@@ -41,7 +44,7 @@ export class VeloAdapterService implements VeloAdapter {
       return cloneVeloSummary(result.data);
     }
 
-    this.statusState.set({
+    this.setStatus(request, {
       kind: 'error',
       message: result.error === 'invalid-shape' ? 'status.velo.invalidShape' : 'status.velo.failed',
       requestedUrl: url,
@@ -49,21 +52,31 @@ export class VeloAdapterService implements VeloAdapter {
     return null;
   }
 
-  private async readApi(apiUrl: string): Promise<VeloSummary | null> {
+  private async readApi(request: number, apiUrl: string): Promise<VeloSummary | null> {
     const periodLabel = this.i18n.t('velo.nextDays', { days: VELO_FORECAST_HORIZON_DAYS });
     const result = await readVeloApiSummary(apiUrl, periodLabel);
 
     if (result.data) {
-      this.statusState.set({ kind: 'api', message: 'status.velo.apiLoaded', requestedUrl: apiUrl });
+      this.setStatus(request, {
+        kind: 'api',
+        message: 'status.velo.apiLoaded',
+        requestedUrl: apiUrl,
+      });
       return result.data;
     }
 
-    this.statusState.set({
+    this.setStatus(request, {
       kind: 'error',
       message: VELO_API_ERROR_MESSAGES[result.error ?? 'network'],
       requestedUrl: apiUrl,
     });
     return null;
+  }
+
+  private setStatus(request: number, status: IntegrationStatus): void {
+    if (request === this.latestRequest) {
+      this.statusState.set(status);
+    }
   }
 }
 

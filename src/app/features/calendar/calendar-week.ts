@@ -1,5 +1,5 @@
 import { CalendarEvent } from '../../core/models/calendar.model';
-import { eventDayKeys, localDateKey } from './calendar-month';
+import { coversDay, localDateKey } from './calendar-month';
 
 /** A timed event's part on one day, in minutes since local midnight, laid out next to overlaps. */
 export interface TimedSegment {
@@ -43,7 +43,7 @@ export function buildWeek(weekStart: Date, events: CalendarEvent[], today = new 
       key,
       date,
       isToday: key === todayKey,
-      allDay: events.filter((event) => event.allDay && eventDayKeys(event).includes(key)),
+      allDay: events.filter((event) => event.allDay && coversDay(event, key)),
       timed: layoutDay(timedSegments(date, events)),
     };
   });

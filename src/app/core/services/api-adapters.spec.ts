@@ -81,7 +81,10 @@ describe('REST API adapters', () => {
 
     const summary = await adapter.getSummary();
 
-    expect(fetchMock).toHaveBeenCalledWith('https://arrow.local/velo/api/accounts');
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://arrow.local/velo/api/accounts',
+      expect.anything(),
+    );
     expect(fetchMock).not.toHaveBeenCalledWith(expect.stringContaining('/a3/'));
     expect(summary).toMatchObject({
       currentCashFlow: 1500.5,
@@ -94,6 +97,24 @@ describe('REST API adapters', () => {
       { date: '2026-10-20', value: 1650 },
     ]);
     expect(adapter.status()?.kind).toBe('api');
+  });
+
+  it('should only sum forecast dates that every account covers', async () => {
+    stubApi({
+      ...VELO_ROUTES,
+      '/api/accounts/a2/forecast?horizon=30': {
+        dailyBalances: [
+          { date: '2026-10-20', balance: 450 },
+          { date: '2026-10-21', balance: 400 },
+        ],
+      },
+    });
+    configure({ veloApiUrl: 'https://arrow.local/velo' });
+
+    const summary = await TestBed.inject(VeloAdapterService).getSummary();
+
+    expect(summary?.trend).toEqual([{ date: '2026-10-20', value: 1650 }]);
+    expect(summary?.forecastCashFlow).toBe(1650);
   });
 
   it('should prefer the API over a configured local JSON source', async () => {

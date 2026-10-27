@@ -160,8 +160,9 @@ export const EN = {
   'settings.veloUrl': 'Velo URL',
   'settings.dashUrl': 'Dash URL',
   'settings.sevDeskUrl': 'sevDesk URL',
-  'settings.invalidUrl': 'Use a valid http(s) URL.',
-  'settings.invalidOptionalUrl': 'Use a valid http(s) URL or leave this empty.',
+  'settings.invalidUrl': 'Use a valid http(s) URL without user name or password.',
+  'settings.invalidOptionalUrl':
+    'Use a valid http(s) URL without user name or password, or leave this empty.',
   'settings.calendarSource': 'Calendar source',
   'settings.source.none': 'None',
   'settings.source.ics': 'ICS URL',
@@ -169,7 +170,8 @@ export const EN = {
   'settings.calendarSourceUrl': 'Calendar source URLs',
   'settings.calendarSourceUrlHint':
     'One URL per line, e.g. /missioncontrol/calendars/work.ics for calendars synced to the server.',
-  'settings.invalidSourceUrls': 'Each line must be an http(s) URL or a path starting with /.',
+  'settings.invalidSourceUrls':
+    'Each line must be an http(s) URL without user name or password, or a path starting with /.',
   'settings.veloSourceUrl': 'Velo source URL',
   'settings.dashSourceUrl': 'Dash source URL',
   'settings.optionalPlaceholder': 'Optional placeholder',
@@ -215,6 +217,8 @@ export const EN = {
   'settings.exported': 'Settings export created.',
   'settings.imported': 'Settings imported.',
   'settings.importFailed': 'Settings import failed.',
+  'settings.notPersisted':
+    'The settings could not be stored in the browser (storage blocked or full). They only apply until the page is reloaded.',
   'settings.shortcutPreview': 'Shortcut Preview',
 
   // Theme
@@ -375,8 +379,9 @@ export const DE: Dictionary = {
   'settings.veloUrl': 'Velo-URL',
   'settings.dashUrl': 'Dash-URL',
   'settings.sevDeskUrl': 'sevDesk-URL',
-  'settings.invalidUrl': 'Bitte eine gültige http(s)-URL eingeben.',
-  'settings.invalidOptionalUrl': 'Bitte eine gültige http(s)-URL eingeben oder leer lassen.',
+  'settings.invalidUrl': 'Bitte eine gültige http(s)-URL ohne Benutzername oder Passwort eingeben.',
+  'settings.invalidOptionalUrl':
+    'Bitte eine gültige http(s)-URL ohne Benutzername oder Passwort eingeben oder leer lassen.',
   'settings.calendarSource': 'Kalenderquelle',
   'settings.source.none': 'Keine',
   'settings.source.ics': 'ICS-URL',
@@ -385,7 +390,7 @@ export const DE: Dictionary = {
   'settings.calendarSourceUrlHint':
     'Eine URL pro Zeile, z. B. /missioncontrol/calendars/arbeit.ics für auf den Server synchronisierte Kalender.',
   'settings.invalidSourceUrls':
-    'Jede Zeile muss eine http(s)-URL oder ein Pfad mit / am Anfang sein.',
+    'Jede Zeile muss eine http(s)-URL ohne Benutzername oder Passwort oder ein Pfad mit / am Anfang sein.',
   'settings.veloSourceUrl': 'Velo-Quell-URL',
   'settings.dashSourceUrl': 'Dash-Quell-URL',
   'settings.optionalPlaceholder': 'Optional',
@@ -434,6 +439,8 @@ export const DE: Dictionary = {
   'settings.exported': 'Export der Einstellungen erstellt.',
   'settings.imported': 'Einstellungen importiert.',
   'settings.importFailed': 'Import der Einstellungen fehlgeschlagen.',
+  'settings.notPersisted':
+    'Die Einstellungen konnten nicht im Browser gespeichert werden (Speicher blockiert oder voll). Sie gelten nur bis zum Neuladen der Seite.',
   'settings.shortcutPreview': 'Shortcut-Vorschau',
 
   'theme.light': 'Hell',
