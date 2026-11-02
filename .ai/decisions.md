@@ -3,6 +3,49 @@
 Kurzprotokoll von Produkt- und Architekturentscheidungen, die sich nicht aus dem Code ablesen lassen.
 Neueste oben.
 
+## 2026-11-02 — KI-Nutzungskarte: mögliche Lösung über statische JSON
+
+**Status:** Lösungsvorschlag, vorerst nicht umgesetzt. Die Karte bleibt zurückgestellt (siehe Eintrag vom
+2026-10-19).
+
+**Idee:** Auf dem Dashboard die Nutzung von Claude Code und Codex CLI zeigen, eventuell anstelle der Karte
+„Dash Kunden“ (Eyebrow „Pipeline“). Beim Ersetzen fielen aktive Kunden und offene Projekte vom Dashboard weg;
+das ist noch nicht entschieden.
+
+**Lösungsansatz:** Dasselbe Muster wie bei den iCloud-Kalendern, die App bleibt frontend-only.
+
+1. Ein kleines Skript auf dem Mac liest die lokalen Logs und erzeugt eine `ai-usage.json`, die nur Summen
+   enthält (Tokens, Limits, Zeitstempel). Ein launchd-Job startet es zum Beispiel alle 15 Minuten.
+2. Die Datei kommt per `scp` nach `/missioncontrol/` auf arrow-pi und wird dort statisch ausgeliefert.
+3. Ein Adapter nach dem bestehenden Muster (Setting für die URL, Local-JSON mit Type Guard,
+   `IntegrationStatus`) versorgt die Karte. Sie zeigt Limits als Balken, Tokens pro Tag oder Woche und den
+   Stand der Daten.
+
+**Warum eigenes Skript statt ccusage:**
+
+- Die README von ccusage (Stand 20.0.47) nennt für Claude und Codex Tokens und Kosten sowie für Claude
+  5-Stunden-Blöcke, aber keine Codex-Limits. Die wären der nützlichste Wert und bräuchten ohnehin eigenen Code.
+- Eine Probeauswertung kam für Tokens und Codex-Limits mit rund 40 Zeilen ohne Abhängigkeiten aus.
+- ccusage liefe unbeaufsichtigt mit Zugriff auf alle Logs. Falls es doch dazukommt: Version fest pinnen, nicht
+  über `npx ccusage@latest`.
+- Dollarwerte sind beim Abo nur ein API-Gegenwert, nicht die tatsächlichen Kosten. ccusage selbst wurde nicht
+  ausgeführt, die Angaben beruhen nur auf der README.
+
+**Offene Punkte und Einschränkungen:**
+
+- **Claude-Limits:** Sie stehen nicht in den Logs. Laut Community-Quellen liefert Claude Code sie über die
+  Statusline (`rate_limits.five_hour` und `seven_day`), teils werden sie dort aber als fehlend gemeldet. Das
+  ist auf der eigenen Version noch zu prüfen. Für den Start reichen bei Claude die Tokens.
+- **Veraltete Limits:** Codex schreibt Limits nur während einer Sitzung. Ist `resets_at` vorbei, muss die Karte
+  „abgelaufen“ statt des alten Werts zeigen.
+- **Lücken:** Chats im Browser und in den Desktop-Apps fehlen, bei zugeklapptem Mac bleibt der Stand stehen.
+- **Zugriff:** Die JSON ist wie die `.ics`-Dateien ohne Login für alle lesbar, die mission control erreichen.
+  Deshalb nur Summen, keine Prompts, Pfade oder Projektnamen.
+- **Deploy:** Noch nicht geprüft sind eine mögliche Routen-Änderung in `pi-ops` und der SSH-Zugang für den
+  Upload.
+
+Log-Formate und Datenschutzregeln stehen unter „Erkenntnisse aus dem Prototyp“ im Eintrag vom 2026-10-19.
+
 ## 2026-10-21 — Private iCloud-Kalender über Sync auf dem Server
 
 **Status:** umgesetzt (mission control); Caddy-/Compose-Änderung in `pi-ops` dokumentiert, nicht angewendet.
@@ -37,7 +80,7 @@ Lokale JSON- und ICS-Quellen samt Beispielen in `public/examples/` bleiben erhal
 
 ## 2026-10-19 — KI-Nutzungskarte (Claude / ChatGPT) zurückgestellt
 
-**Status:** zurückgestellt, nicht umgesetzt.
+**Status:** zurückgestellt, nicht umgesetzt. Möglicher Lösungsansatz: siehe Eintrag vom 2026-11-02.
 
 **Wunsch:** Auf dem Dashboard die aktuelle Nutzung der Abos von Claude (Pro) und ChatGPT anzeigen.
 
