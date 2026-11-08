@@ -115,3 +115,5 @@ These values are configurable in Settings.
 ## Playwright regression
 
 Rules and current coverage/planned expansion: [suite rules](docs/PLAYWRIGHT_RULES.md), [strategy](docs/PLAYWRIGHT_STRATEGY.md). Tests belong with the application. Playwright is currently a separate check outside the normal build; see the strategy for the actual setup status and future CI.
+
+Setup and commands for the separate Chromium desktop/mobile suite: [e2e/README.md](e2e/README.md).

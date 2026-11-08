@@ -109,3 +109,10 @@ Review fixes (2026-10-27):
 - Imported and stored settings are checked field by field; files that are not a JSON object are rejected. If LocalStorage is blocked or full, settings apply for the session and Settings shows a warning.
 - URLs with user name or password are rejected, because settings are stored in LocalStorage and exported in plain text. Secret calendar links should not be entered either; iCloud is read through vdirsyncer on the server instead.
 - The velo forecast only sums dates that every EUR account covers.
+
+## Playwright-Suite (08.11.2026)
+
+- Eigenes npm-Paket unter `e2e/`; keine Kopplung an Builds oder Deployments.
+- Chromium Desktop und Pixel-7-Emulation bilden die erste Browserabdeckung; kein Backend wird ergänzt.
+- Ein isolierter Angular-Testserver auf Port 4300 ohne Entwicklungs-Proxys und frische Browserkontexte verhindern Nutzung persönlicher Konfiguration. Externe Browserrequests werden blockiert.
+- Synthetische JSON-/ICS-Antworten dienen gezielter Adapter-/Fehlerprüfung im Browser. Tests gegen dedizierte echte Velo-/Dash-Instanzen bleiben offen und werden nicht als Fullstack-E2E ausgewiesen.

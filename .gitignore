@@ -42,3 +42,11 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Separate Playwright suite and local failure artifacts
+/e2e/node_modules/
+/e2e/test-results/
+/e2e/playwright-report/
+/e2e/blob-report/
+/e2e/.auth/
+/e2e/.env*
