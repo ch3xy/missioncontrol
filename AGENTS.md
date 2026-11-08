@@ -140,3 +140,7 @@ A runnable Angular app with:
 - Configurable external URLs
 - Mock data layer
 - Clean project documentation
+
+## Playwright regression
+
+Read [suite rules](docs/PLAYWRIGHT_RULES.md) and [strategy/coverage matrix](docs/PLAYWRIGHT_STRATEGY.md) for user-visible features and bug fixes. Deliver matching regression tests in this repository and the same PR. A Playwright suite is not installed yet; document that gap and never claim unexecuted checks passed. Future tests use isolated browser storage and dedicated integration fixtures/instances. Playwright remains outside normal builds and deploys until explicitly enabled.

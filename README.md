@@ -111,3 +111,7 @@ These values are configurable in Settings.
 - There is no built-in mock data: without a configured, reachable source a card shows a notice instead of numbers.
 - ICS parsing expands recurring events (RRULE, EXDATE, moved occurrences) from today up to one year ahead; all-day events are shown at 00:00 UTC.
 - No secrets, tokens, API keys, or private URLs should be committed.
+
+## Playwright regression
+
+Rules and current coverage/planned expansion: [suite rules](docs/PLAYWRIGHT_RULES.md), [strategy](docs/PLAYWRIGHT_STRATEGY.md). Tests belong with the application. Playwright is currently a separate check outside the normal build; see the strategy for the actual setup status and future CI.

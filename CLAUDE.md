@@ -22,3 +22,7 @@ Projekt-Regeln und Prioritäten stehen in [AGENTS.md](AGENTS.md) — sie gelten 
 - Node immer über `nvm use` (26.3.1); Checks: `npm run lint`, `npm run test -- --watch=false`, `npm run build`.
 - UI ist deutsch (Standard, de-AT-Formate) und auf Englisch umschaltbar; Texte nur über `core/i18n/translations.ts`.
 - Die Nachbarprojekte `../velo` und `../dash` sind Referenz und werden von hier aus nicht verändert.
+
+## Playwright regression rules
+
+See [docs/PLAYWRIGHT_RULES.md](docs/PLAYWRIGHT_RULES.md) and [docs/PLAYWRIGHT_STRATEGY.md](docs/PLAYWRIGHT_STRATEGY.md). These define regression coverage for visible changes, isolated test data, actual validation reporting and future opt-in CI.
