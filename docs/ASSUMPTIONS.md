@@ -8,7 +8,7 @@ Initial assumptions:
 - Velo runs in the local network or locally.
 - Dash runs in the local network or locally.
 - sevDesk starts as an external shortcut.
-- The MVP should not require a backend.
+- The MVP should not require a backend (since 2026-11-09 a backend exists, see `docs/BACKEND.md`; the frontend still runs on LocalStorage until it is connected).
 - Calendar data starts as mock data.
 - Real integrations can be added later through adapters.
 
@@ -47,7 +47,7 @@ UI language (2026-10-19):
 
 Live data from velo and dash (2026-10-19):
 
-- mission control reads the existing REST APIs of velo and dash read-only; velo and dash stay unchanged. mission control remains frontend-only.
+- mission control reads the existing REST APIs of velo and dash read-only; velo and dash stay unchanged. The frontend still talks to velo and dash directly; the mission control backend (`backend/`, `docs/BACKEND.md`, decision 2026-11-09) is not connected yet.
 - The configured value is the app's base URL (e.g. `https://arrow.local/velo`), because in production each Spring backend serves its frontend and `/api` under one path behind Caddy.
 - Deployment assumption: mission control runs on the same host as velo and dash behind Caddy, so requests are same-origin. Cross-origin access would need CORS in velo/dash (dash: `app.cors.allowed-origins`; velo has no CORS configuration).
 - If mission control itself is served at the root of that host, its own routes `/velo` and `/dash` collide with Caddy's `handle_path /velo*` and `/dash*`; it should get its own path prefix (e.g. `/missioncontrol`).
@@ -75,9 +75,9 @@ Deployment on arrow-pi (2026-10-19):
 
 Private iCloud calendars (2026-10-21):
 
-- iCloud calendars are not shared publicly. A vdirsyncer job on arrow-pi reads them via CalDAV with an app-specific password and writes one `.ics` file per calendar; Caddy serves them under `/missioncontrol/calendars/`. Setup: `docs/ICLOUD_CALENDAR.md`. mission control itself stays frontend-only and never sees the Apple ID credentials.
+- iCloud calendars are not shared publicly. A vdirsyncer job on arrow-pi reads them via CalDAV with an app-specific password and writes one `.ics` file per calendar; Caddy serves them under `/missioncontrol/calendars/`. Setup: `docs/ICLOUD_CALENDAR.md`. The mission control frontend never sees the Apple ID credentials; a CalDAV sync in the backend is planned (`docs/BACKEND.md`).
 - The calendar source URL field takes several URLs, one per line, for both ICS and local JSON. The setting stays a single string (`calendarSourceUrl`), so existing settings and backups keep working unchanged.
-- Besides absolute http(s) URLs, the field accepts paths starting with `/` (same host). Relative paths without `/` are rejected to avoid mistaking `arrow.local/x.ics` for a path.
+- Besides absolute http(s) URLs without user name or password, the field accepts paths starting with a single `/` (same host). Relative paths without `/`, protocol-relative `//host/x` and scheme-less hosts are rejected to avoid mistaking `arrow.local/x.ics` for a path. The backend (`AppSettingsService`) applies the same rule.
 - Sources are loaded in parallel and merged; duplicates (same `id` and `startsAt`) are dropped. If some sources fail, the others are still shown, with a warning (`status.calendar.partiallyLoaded`).
 - An ICS response without `BEGIN:VCALENDAR` is invalid (it is typically the `index.html` fallback of Caddy's `try_files`); an ICS calendar without events is now valid and empty instead of a warning, since a synced calendar can legitimately be empty.
 - The calendars live in `/home/pi/apps/calendars`, not inside `/home/pi/apps/missioncontrol`, because the deploy script rsyncs the build into that directory.
@@ -113,6 +113,6 @@ Review fixes (2026-10-27):
 ## Playwright-Suite (08.11.2026)
 
 - Eigenes npm-Paket unter `e2e/`; keine Kopplung an Builds oder Deployments.
-- Chromium Desktop und Pixel-7-Emulation bilden die erste Browserabdeckung; kein Backend wird ergänzt.
+- Chromium Desktop und Pixel-7-Emulation bilden die erste Browserabdeckung; das Backend (`backend/`, siehe `docs/BACKEND.md`) ist nicht Teil dieser Browserabdeckung.
 - Ein isolierter Angular-Testserver auf Port 4300 ohne Entwicklungs-Proxys und frische Browserkontexte verhindern Nutzung persönlicher Konfiguration. Externe Browserrequests werden blockiert.
 - Synthetische JSON-/ICS-Antworten dienen gezielter Adapter-/Fehlerprüfung im Browser. Tests gegen dedizierte echte Velo-/Dash-Instanzen bleiben offen und werden nicht als Fullstack-E2E ausgewiesen.

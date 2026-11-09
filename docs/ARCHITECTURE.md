@@ -2,7 +2,7 @@
 
 ## Overview
 
-Mission Control is a frontend-only Angular 22 dashboard.
+Mission Control is an Angular 22 dashboard. The frontend works without a backend (LocalStorage); a Spring Boot backend exists under `backend/` but is not connected yet (see `docs/BACKEND.md`, decision 2026-11-09 in `.ai/decisions.md`).
 
 It aggregates information and shortcuts from local tools without owning their data.
 
@@ -25,9 +25,9 @@ Angular App
     └── ShortcutService
 ```
 
-## Frontend-Only Principle
+## Frontend-Only Principle (MVP)
 
-The MVP must not require a backend.
+The MVP must not require a backend. Since 2026-11-09 a backend exists (`backend/`, `docs/BACKEND.md`), but the frontend does not use it yet and keeps running on LocalStorage.
 
 Allowed:
 

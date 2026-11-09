@@ -1,5 +1,7 @@
 # Codex Master Prompt — Autonomous Build
 
+> Stand vor 2026-11-09: Ein Backend ist inzwischen vorhanden, siehe `docs/BACKEND.md`. Prompt unten ist historisch und unverändert.
+
 Use this prompt in Codex to start the implementation.
 
 ```text

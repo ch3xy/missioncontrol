@@ -1,6 +1,6 @@
 # Vergleich velo · dash · mission control
 
-Stand: 2026-10-19. Ziel: Alle drei Arrow-Produkte sollen wie aus einem Guss wirken
+Stand: 2026-11-09. Ziel: Alle drei Arrow-Produkte sollen wie aus einem Guss wirken
 (siehe `docs/arrow-corporate-design.md`). velo und dash werden von hier aus **nicht** verändert.
 
 ## Zweck
@@ -15,7 +15,7 @@ Stand: 2026-10-19. Ziel: Alle drei Arrow-Produkte sollen wie aus einem Guss wirk
 
 | Thema | velo | dash | mission control |
 |---|---|---|---|
-| Backend | Java 25, Spring Boot 4, Flyway | Java 25, Spring Boot 4, Flyway | – (bewusst frontend-only) |
+| Backend | Java 25, Spring Boot 4, Flyway | Java 25, Spring Boot 4, Flyway | Java 25, Spring Boot 4, Flyway (`backend/`, Frontend noch nicht angebunden) |
 | Angular | 19.2 | 22 | 22 ✅ |
 | TypeScript | ~5.7 | ~6.0 | ~6.0 ✅ |
 | Komponentenbibliothek | Angular Material (auf Arrow-Tokens gethemed) | keine, eigene Klassen | keine, eigene Klassen (wie dash) ✅ |

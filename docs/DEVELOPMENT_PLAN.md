@@ -1,5 +1,7 @@
 # Development Plan
 
+> Stand vor 2026-11-09: Ein Backend ist inzwischen vorhanden, siehe `docs/BACKEND.md`. Inhalt unten ist historisch und unverändert.
+
 ## Phase 1 — Foundation
 
 Goal:

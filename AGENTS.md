@@ -11,7 +11,7 @@ It provides a central overview for:
 - sevDesk shortcut
 - Local quick access to tools running in the local network
 
-The app should be implemented as a frontend-only Angular application for the MVP.
+The Angular frontend is the product. A small Spring Boot backend in `backend/` (decision 2026-11-09, see `.ai/decisions.md` and `docs/BACKEND.md`) stores settings and, later, the daily plan and calendar sync.
 
 ## Primary Goal
 
@@ -32,12 +32,12 @@ Prefer a complete, working MVP over waiting for perfect information.
 - SCSS or CSS, no heavy UI framework unless already present
 - LocalStorage for settings
 - Optional IndexedDB only if needed later
-- No backend for MVP
+- Backend: Spring Boot + PostgreSQL in `backend/`, same stack as dash (frontend is not yet wired to it; LocalStorage stays until then)
 
 ## Non-Goals for MVP
 
 Do not implement:
-- A custom backend
+- Features in the backend beyond settings, calendar sync and the daily plan (it stays slim, no second dash)
 - Server-side OAuth
 - Secret storage in frontend code
 - Direct sevDesk API integration with private API keys
@@ -57,7 +57,7 @@ Codex should:
 6. Fix errors it introduced.
 7. Avoid asking for permission unless blocked by missing credentials, destructive actions, or impossible requirements.
 8. Do not use mock data: when a real integration is unconfigured or unavailable, show a notice or warning instead (decision 2026-10-19, see `.ai/decisions.md`).
-9. Keep all changes frontend-only.
+9. Keep the frontend free of secrets; anything secret lives in the backend and is write-only for the API.
 10. Document assumptions in `docs/ASSUMPTIONS.md`.
 
 ## Safety and Boundaries

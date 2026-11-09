@@ -17,7 +17,7 @@ Codex should stop and ask only when:
 - A destructive command would remove user work
 - Credentials or tokens are required
 - A private API requires unavailable access
-- The task cannot be done in a frontend-only app
+- The task cannot be done in the frontend alone (a backend exists under `backend/`, see `docs/BACKEND.md`)
 - There are conflicting instructions that cannot be resolved
 
 If blocked:

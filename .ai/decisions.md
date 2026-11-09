@@ -3,6 +3,37 @@
 Kurzprotokoll von Produkt- und Architekturentscheidungen, die sich nicht aus dem Code ablesen lassen.
 Neueste oben.
 
+## 2026-11-09 — mission control bekommt ein Backend (Spring Boot + PostgreSQL)
+
+**Status:** Grundgerüst umgesetzt (`backend/`, Einstellungen-API, Zugriffsschutz). Das Frontend ist noch nicht
+angebunden, die Tagesplan-Erweiterung folgt.
+
+**Entscheidung:** mission control erhält ein schlankes Backend im selben Stack wie dash und velo (Java 25,
+Spring Boot 4.1, Flyway, PostgreSQL 17, springdoc). Es löst die Entscheidung „frontend-only, kein Backend“ ab.
+
+**Warum:** LocalStorage gilt nur pro Browser und geht mit den Browserdaten verloren. Mehrere Lösungen waren
+Umgehungen dieser Grenze: iCloud-Kalender über vdirsyncer und öffentlich lesbare `.ics`-Dateien (2026-10-21),
+die KI-Nutzungskarte über Skript, `scp` und statische JSON (2026-11-02). Dazu kommt der geplante Tagesplan, der
+auf mehreren Geräten gleich sein soll.
+
+**Abgrenzung:** Der Tagesplan gehört nicht nach dash. Ein dash-Task hängt an einem Projekt und trägt
+Abrechnungsdaten; Einträge wie „Steuerberater anrufen“ haben beides nicht. Eine optionale Verknüpfung auf
+dash-Projekte bleibt später möglich. Das Backend bleibt auf Einstellungen, Kalender-Sync und Tagesplan begrenzt.
+
+**Aufbau:** Eigenes Maven-Projekt unter `backend/`, das Frontend bleibt im Repo-Root (kein Umzug wie bei dash,
+wo das Frontend ins Jar gebaut wird). Auf dem Pi liefert Caddy das Frontend statisch aus und leitet
+`/missioncontrol/api` an das Backend weiter. Details: `docs/BACKEND.md`.
+
+**Zugriffsschutz, Stufe 1 (kein Login):** Das Heimnetz bzw. Tailnet ist die Anmeldung. Zusätzlich prüft das
+Backend bei jeder Anfrage den `Host` (gegen DNS-Rebinding) und, falls vorhanden, den `Origin` (gegen CSRF) gegen
+konfigurierte Listen; es lauscht lokal nur auf Loopback, im Container nur im internen Netz hinter Caddy.
+Secrets (später das CalDAV-Passwort) sind über die API nur schreibbar, nie lesbar. Ein Login, Basic Auth in
+Caddy oder Tailscale-Serve-Identity (Stufe 2) wird getrennt geprüft und ist hier nicht entschieden.
+
+**Folgen:** Die Regeln in `AGENTS.md` (frontend-only, kein Cloud-Sync) sind angepasst. `docs/NO_BACKEND_DECISION.md`
+ist als abgelöst markiert. Noch offen: Anbindung des Frontends, Migration der LocalStorage-Einstellungen,
+Deployment (siehe `docs/BACKEND.md`).
+
 ## 2026-11-02 — KI-Nutzungskarte: mögliche Lösung über statische JSON
 
 **Status:** Lösungsvorschlag, vorerst nicht umgesetzt. Die Karte bleibt zurückgestellt (siehe Eintrag vom

@@ -2,8 +2,8 @@
 
 How to show iCloud calendars in mission control **without sharing them publicly**.
 
-mission control is frontend-only and cannot hold an Apple ID password, and iCloud does not allow
-browser requests from other origins (CORS). A sync job on arrow-pi therefore pulls the calendars via
+The mission control frontend cannot hold an Apple ID password, and iCloud does not allow
+browser requests from other origins (CORS). The backend (`backend/`, `docs/BACKEND.md`) is not connected to the frontend yet, so a sync job on arrow-pi pulls the calendars via
 CalDAV and writes one `.ics` file per calendar. A second step adds each calendar's name and color and
 publishes it under a readable file name. Caddy serves these files next to mission control, so the
 browser reads them same-origin.

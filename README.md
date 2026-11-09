@@ -2,7 +2,7 @@
 
 Mission Control is a local-first Angular 22 dashboard for a freelance software developer.
 
-It is intentionally frontend-only for the MVP. There is no backend, authentication, OAuth flow, cloud sync, or secret storage.
+The Angular frontend still runs on its own with LocalStorage. A slim Spring Boot + PostgreSQL backend lives in `backend/` (see [docs/BACKEND.md](docs/BACKEND.md)); the frontend is not wired to it yet. There is no OAuth flow, and no secret is stored in the frontend.
 
 ## Features
 

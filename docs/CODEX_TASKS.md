@@ -1,5 +1,7 @@
 # Codex Tasks
 
+> Stand vor 2026-11-09: Ein Backend ist inzwischen vorhanden, siehe `docs/BACKEND.md`. Inhalt unten ist historisch und unverändert.
+
 ## Task 1 — Inspect or Bootstrap App
 
 If an Angular app already exists, reuse it.

@@ -40,7 +40,9 @@ Fachliche Details bleiben in `docs/` und werden hier nicht dupliziert:
 | [../docs/UI_UX_SPEC.md](../docs/UI_UX_SPEC.md) | UI/UX-Spezifikation |
 | [../docs/ASSUMPTIONS.md](../docs/ASSUMPTIONS.md) | Getroffene Annahmen |
 | [../docs/MVP_STATUS.md](../docs/MVP_STATUS.md) | Umsetzungsstand |
-| [../docs/NO_BACKEND_DECISION.md](../docs/NO_BACKEND_DECISION.md) | Entscheidung: kein Backend im MVP |
+| [../docs/BACKEND.md](../docs/BACKEND.md) | Backend (Spring Boot + PostgreSQL): Aufbau, Konfiguration, Zugriffsschutz, Tests, Deploy-Stand |
+| [../docs/BACKEND_REVIEW.md](../docs/BACKEND_REVIEW.md) | Übergabe für das Review des Backend-Grundgerüsts: Umfang, Prüfung, Review-Hinweise, offene Punkte |
+| [../docs/NO_BACKEND_DECISION.md](../docs/NO_BACKEND_DECISION.md) | Ursprüngliche Entscheidung „kein Backend“ (abgelöst 2026-11-09) |
 
 ## Verwendung
 
@@ -49,4 +51,4 @@ Jede Datei ist in sich vollständig. Für Design-Fragen gilt die Reihenfolge:
 
 ## Letztes Update
 
-2026-10-19
+2026-11-09

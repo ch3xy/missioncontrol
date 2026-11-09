@@ -1,5 +1,7 @@
 # No-Backend Decision
 
+> **Superseded 2026-11-09.** mission control now has a backend (`backend/`, see `docs/BACKEND.md` and `.ai/decisions.md`). The text below is the original MVP decision and kept for history.
+
 ## Decision
 
 Mission Control should be implemented as a pure frontend application for the MVP.
