@@ -32,7 +32,7 @@ Design and stack alignment with velo/dash (2026-10-19):
 - Widget cards no longer have colored accent dots: semantic colors are reserved for status, so the `accent` input of `app-widget-card` was removed.
 - The UI language was initially kept English; see the language section below.
 - A theme preference (Light/Dark/System) was added as part of the design alignment; it is stored in `missioncontrol-theme` and does not affect existing settings or backups.
-- The sidebar version line reads `version` from `package.json` (`resolveJsonModule`).
+- The sidebar version line reads the version from `backend/pom.xml`, passed in at build time (`scripts/ng-with-build-info.mjs`); `package.json` stays at `0.0.0`.
 - Playwright E2E tests (as in dash) are not set up yet.
 - velo and dash were only read as references and not modified.
 

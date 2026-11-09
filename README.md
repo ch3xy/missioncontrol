@@ -58,16 +58,16 @@ Defaults are `http://localhost:8081` (velo) and `http://localhost:8080` (dash). 
 
 ## Deployment (arrow-pi)
 
-mission control runs on the Pi as a static build served by Caddy under `/missioncontrol/`, next to velo (`/velo`) and dash (`/dash`). The deploy script and Caddy configuration live in the `pi-ops` repository.
+mission control runs on the Pi as a static frontend served by Caddy under `/missioncontrol/` plus the backend container `missioncontrol-api` behind `/missioncontrol/api/`, next to velo (`/velo`) and dash (`/dash`). The release script, compose file and Caddy configuration live in the `pi-ops` repository.
 
 Every deploy is a release. Commit everything first, then run:
 
 ```bash
-scripts/deploy.sh          # npm version patch (commit + tag v<version>), npm run build:pi, deploy via ../pi-ops
-scripts/deploy.sh minor    # patch | minor | major | <version>; minor/major only on request
+scripts/deploy.sh          # releases backend/pom.xml (commit + tag v<version>), builds jar + frontend, deploys both
+scripts/deploy.sh 0.2.0    # explicit version; minor/major only on request
 ```
 
-The release and deploy rules for all Arrow apps live in `../pi-ops/docs/deploy-conventions.md`. The sidebar shows the version from `package.json` and the commit of the deployed build, e.g. `v0.1.0 (Build 7de439b)`; its tooltip shows the build time.
+The release and deploy rules for all Arrow apps live in `../pi-ops/docs/deploy-conventions.md`. The version lives only in `backend/pom.xml` (the `version` in `package.json` stays `0.0.0`). The sidebar shows it with the commit of the deployed build, e.g. `v0.1.0 (Build 7de439b)`; its tooltip shows the build time.
 
 On the server, open `http://arrow.local/missioncontrol/` and use Settings → **APIs dieses Servers verwenden**; requests to velo and dash are then same-origin.
 

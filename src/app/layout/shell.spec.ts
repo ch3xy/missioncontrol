@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { BUILD_INFO } from '../core/build-info';
 import { createMemoryStorage } from '../testing/memory-storage';
 import { Shell } from './shell';
 
@@ -31,7 +32,10 @@ describe('Shell', () => {
     );
     expect(groups).toEqual(['Übersicht', 'Apps']);
     expect(element.querySelector('.nav-footer')?.textContent).toContain('Einstellungen');
-    expect(element.querySelector('.nav-version')?.textContent?.trim()).toMatch(/^v\d+\.\d+\.\d+$/);
+    // Unit tests run without build info (scripts/ng-with-build-info.mjs), so the version is the fallback
+    expect(element.querySelector('.nav-version')?.textContent?.trim()).toBe(
+      `v${BUILD_INFO.version}`,
+    );
   });
 
   it('should persist the collapsed sidebar state', async () => {

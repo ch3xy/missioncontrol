@@ -170,16 +170,17 @@ Umgesetzt: Tabelle `task` (V2) und API `/api/v1/tasks`, Seite „Heute“ (`/tod
 - [ ] Optional später: Verknüpfung mit dash-Projekten (Phase 2), Tagesplan-Karte im Dashboard, andere Tage als
       heute ansehen/planen.
 
-### Deployment (nicht begonnen, `../pi-ops` liegt nicht im Checkout)
+### Deployment (in `../pi-ops` umgesetzt, siehe `docs/BACKEND.md`)
 
-- [ ] Container-Image für das Jar, PostgreSQL-Service im pi-ops-Compose, Port nicht veröffentlichen.
-- [ ] Caddy: Frontend statisch unter `/missioncontrol`, `handle /missioncontrol/api/*` mit
-      `uri strip_prefix /missioncontrol` an das Backend (es erhält `/api/v1/...`; `handle_path /missioncontrol/api*`
-      wäre falsch, es würde auch `/api` abschneiden und 404 liefern), Original-`Host` weiterreichen.
-- [ ] `MC_ALLOWED_HOSTS`, `MC_ALLOWED_ORIGINS`, `MC_BIND_ADDRESS=0.0.0.0`, DB-Zugangsdaten setzen (kein
-      Standardpasswort in Produktion).
-- [ ] Release-Skript analog `scripts/deploy.sh` in dash; Versionsschema abstimmen.
-- [ ] Datenbank-Backups für die neue DB.
+- [x] Container-Image für das Jar (`missioncontrol-api`), Datenbank `missioncontrol` in der gemeinsamen PostgreSQL
+      des pi-ops-Compose, Port nicht veröffentlicht.
+- [x] Caddy: Frontend statisch unter `/missioncontrol`; `handle_path /missioncontrol/api/*` mit
+      `rewrite * /api{path}` an das Backend (es erhält `/api/v1/...`). `handle_path` statt `handle`, damit Caddy die
+      Route nach Pfadlänge vor den SPA-Fallback sortiert; Original-`Host` wird weitergereicht.
+- [x] `MC_ALLOWED_HOSTS`, `MC_ALLOWED_ORIGINS`, `MC_BIND_ADDRESS=0.0.0.0`, DB-Zugangsdaten: in der `.env` auf dem Pi,
+      Vorlage in `pi-ops/docs/server-layout.md` (Ersteinrichtung, kein Standardpasswort).
+- [x] Release-Skript analog `scripts/deploy.sh` in dash; Versionsschema abstimmen (Version aus `backend/pom.xml`).
+- [x] Datenbank-Backups für die neue DB (`PG_DATABASE=missioncontrol scripts/backup-postgres.sh` in pi-ops).
 
 ### Später
 

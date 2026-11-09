@@ -40,7 +40,7 @@ Tailwind, Chart-Bibliotheken (der Trend-Sparkline ist ein eigenes SVG).
   provideLucideConfig({ size: 16, strokeWidth: 1.75 }),
   ```
   Kein `zone.js` in den Polyfills.
-- `tsconfig.json`: `resolveJsonModule` aktiv (Versionsanzeige `v{version}` aus `package.json` in der Sidebar).
+- `tsconfig.json`: `resolveJsonModule` aktiv.
 
 ## Befehle
 
@@ -55,21 +55,22 @@ npm run format         # prettier --write
 ```
 
 `start`, `build`, `build:pi` und `watch` laufen über `scripts/ng-with-build-info.mjs`: Es übergibt Commit,
-„dirty“-Flag und Build-Zeit per `ng … --define MC_BUILD_INFO=…` (gelesen in `core/build-info.ts`). Direkt
-aufgerufenes `ng build` und die Unit-Tests haben keine Build-Info; die Sidebar zeigt dann nur `v<version>`.
+„dirty“-Flag, Build-Zeit und die Version aus `backend/pom.xml` per `ng … --define MC_BUILD_INFO=…` (gelesen in
+`core/build-info.ts`). Direkt aufgerufenes `ng build` und die Unit-Tests haben keine Build-Info; die Sidebar zeigt dann `vdev`.
 
 ## Versionierung
 
-- SemVer in `package.json` ist die einzige Quelle der Version (Gegenstück zur `<version>` in den POMs von velo/dash).
+- `<version>` in `backend/pom.xml` ist die einzige Quelle der Version, für Backend und Frontend (wie in den POMs von velo/dash). `version` in `package.json` bleibt `0.0.0` und wird nicht gepflegt.
 - Die Sidebar zeigt `v<version> (Build <commit>)`, `-dirty` bei uncommitteten Änderungen; der Tooltip zeigt die Build-Zeit.
 - Release und Deploy: **jeder Deploy ist ein Release.** Die Regeln für alle Arrow-Apps stehen zentral in `../pi-ops/docs/deploy-conventions.md`.
 
 ```bash
 git commit ...             # alle Änderungen committen, Working Tree sauber
-scripts/deploy.sh          # npm version patch + build:pi + Deploy; scripts/deploy.sh minor nur auf Ansage
+scripts/deploy.sh          # Patch-Release + Deploy; scripts/deploy.sh 0.2.0 nur auf Ansage
 ```
 
-`npm version` passt `package.json` und `package-lock.json` an, committet und setzt den Tag `v<version>`.
+`pi-ops/scripts/release-maven.sh` gibt die Snapshot-Version frei, committet `Release <version>`, setzt den Tag `v<version>`,
+baut JAR und Frontend aus diesem Commit, setzt den nächsten Snapshot und deployt erst das Backend, dann das Frontend.
 Vor 1.0.0 dürfen auch minor-Versionen Brüche enthalten.
 
 ## Offene Punkte gegenüber dash

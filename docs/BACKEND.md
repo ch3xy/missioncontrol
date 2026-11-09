@@ -84,19 +84,19 @@ With an empty origin list every request that carries an Origin header is refused
 Secrets, once there are any (CalDAV password), are write-only through the API. Stage 2 (Basic Auth in Caddy,
 Tailscale Serve identity headers) is tracked separately and not decided.
 
-## Deployment (open)
+## Deployment
 
-Not wired yet; `../pi-ops` (release scripts, Caddy, compose) is not part of this repository checkout, so nothing was
-changed there. Planned:
+Wired in `../pi-ops` (rules: `docs/deploy-conventions.md`, one-time server setup: `docs/server-layout.md`,
+section "Ersteinrichtung mission-control-Backend").
 
-- Container image for the jar plus a PostgreSQL service in the pi-ops compose file; the backend port is not published,
-  it is reachable only from Caddy in the internal container network.
-- Caddy: serve the frontend statically under `/missioncontrol`; `handle /missioncontrol/api/*` with
-  `uri strip_prefix /missioncontrol` and `reverse_proxy` to the backend, so it receives `/api/v1/...` (not
-  `handle_path /missioncontrol/api*`, which would also strip `/api` and cause 404). The original `Host` is
-  forwarded (Caddy default). Unlike `handle_path /velo*` / `/dash*`, which strip only the app prefix, the
-  backend paths here start with `/api`.
-- Set `MC_ALLOWED_HOSTS` and `MC_ALLOWED_ORIGINS` to the public names of the Pi; set `MC_BIND_ADDRESS=0.0.0.0`.
-- A release script analogous to `scripts/deploy.sh` in dash.
-- The `/missioncontrol/api/*` route must be matched before the static frontend and its SPA fallback, otherwise the
-  fallback answers API calls with `index.html`.
+- The backend runs as container `missioncontrol-api` (`/home/pi/apps/missioncontrol-api`, its own `.env`) on the
+  shared PostgreSQL (database `missioncontrol`). Port 8082 is not published; only Caddy reaches it in the internal
+  container network. The frontend stays a static build served by Caddy, so it keeps working while the backend restarts.
+- Caddy: `handle_path /missioncontrol/api/*` plus `rewrite * /api{path}`, so the backend receives `/api/v1/...`.
+  `handle_path` sorts by path length together with `/missioncontrol/*`, so the API route wins over the SPA fallback.
+  The original `Host` is forwarded (Caddy default).
+- Environment on the Pi: `MC_BIND_ADDRESS=0.0.0.0`, `MC_ALLOWED_HOSTS` and `MC_ALLOWED_ORIGINS` with every name the
+  app is opened under (origins as `http://…`, Caddy listens on port 80 only).
+- Version: `<version>` in `backend/pom.xml` is the single version of mission control; the frontend build reads it
+  (`scripts/ng-with-build-info.mjs`). `scripts/deploy.sh` releases via `pi-ops/scripts/release-maven.sh`, builds jar
+  and frontend from the release commit and deploys the backend first, then the frontend.
