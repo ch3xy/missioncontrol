@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.ch3xy</groupId>
     <artifactId>missioncontrol</artifactId>
-    <version>0.1.7-SNAPSHOT</version>
+    <version>0.1.7</version>
     <name>missioncontrol-backend</name>
     <description>Backend of mission control: settings, calendar sync and the daily plan</description>
 
