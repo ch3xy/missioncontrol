@@ -13,6 +13,7 @@ The Angular frontend stores its settings in a slim Spring Boot + PostgreSQL back
 - Configurable external app URLs for Velo, Dash, and sevDesk
 - Optional local tool shortcuts
 - Backend-stored settings with export/import backup
+- Daily plan „Heute“: tasks with optional estimate, list or board, capacity against the daily target minus appointments, carry-over of unfinished tasks, brain dump
 - Live data from the velo and dash REST APIs (read-only)
 - Optional browser-readable local JSON sources for Calendar, Velo, and Dash
 - Basic browser-readable ICS calendar source support, several calendars merged

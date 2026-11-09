@@ -5,7 +5,7 @@ Neueste oben.
 
 ## 2026-11-09 — Frontend nutzt das Backend für Einstellungen; Tagesplan-Konzept festgelegt
 
-**Status:** Anbindung umgesetzt; Tagesplan entschieden, Umsetzung folgt.
+**Status:** Anbindung umgesetzt; Tagesplan umgesetzt (Seite „Heute“, `/today`, Backend-Modul `task`).
 
 **Einstellungen:** Das Backend ist die einzige Ablage der Einstellungen (`SettingsService` → `SettingsApi`,
 `api/v1/settings` relativ zu `<base href>`). LocalStorage hält nur noch UI-Zustand, der nicht gespeichert werden

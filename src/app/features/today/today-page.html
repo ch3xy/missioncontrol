@@ -1,0 +1,385 @@
+<header class="page-header">
+  <div>
+    <h1>{{ 'today.title' | t }}</h1>
+    <p>{{ today() | date: ('format.dateLong' | t) : undefined : i18n.locale() }}</p>
+  </div>
+  <div class="page-controls">
+    <div class="view-switch" role="group" [attr.aria-label]="'today.view' | t">
+      <button
+        class="btn btn-sm"
+        type="button"
+        [class.is-active]="view() === 'list'"
+        [attr.aria-pressed]="view() === 'list'"
+        (click)="setView('list')"
+      >
+        <svg lucideList></svg>
+        {{ 'today.viewList' | t }}
+      </button>
+      <button
+        class="btn btn-sm"
+        type="button"
+        [class.is-active]="view() === 'board'"
+        [attr.aria-pressed]="view() === 'board'"
+        (click)="setView('board')"
+      >
+        <svg lucideSquareKanban></svg>
+        {{ 'today.viewBoard' | t }}
+      </button>
+    </div>
+    <button class="btn" type="button" [disabled]="plan.busy()" (click)="refresh()">
+      <svg lucideRefreshCw></svg>
+      {{ 'common.refresh' | t }}
+    </button>
+  </div>
+</header>
+
+<app-settings-status-notice (reloaded)="refresh()" />
+
+@if (plan.status() === 'loading') {
+  <p class="hint" role="status">{{ 'today.loading' | t }}</p>
+} @else if (plan.status() === 'unavailable') {
+  <div class="plan-notice" role="alert">
+    <p>{{ 'today.unavailable' | t }}</p>
+    <button class="btn" type="button" (click)="refresh()">{{ 'settings.retry' | t }}</button>
+  </div>
+}
+
+@if (plan.error(); as error) {
+  <div class="plan-notice" role="alert">
+    <p>{{ error.key | t: { detail: error.detail ?? '' } }}</p>
+    <button class="btn btn-sm" type="button" (click)="plan.clearError()">
+      {{ 'today.dismiss' | t }}
+    </button>
+  </div>
+}
+
+@if (plan.carryOver().length > 0) {
+  <app-widget-card
+    [title]="'today.carryOver' | t: { count: plan.carryOver().length }"
+    [eyebrow]="'today.carryOverEyebrow' | t"
+  >
+    <ul class="carry-list" [attr.aria-label]="'today.carryOverList' | t">
+      @for (task of plan.carryOver(); track task.id) {
+        <li class="carry-item">
+          <div>
+            <strong>{{ task.title }}</strong>
+            <small class="muted">
+              {{ task.planDate | date: ('format.date' | t) : undefined : i18n.locale() }}
+              @if (task.estimateMinutes !== null) {
+                · {{ formatMinutes(task.estimateMinutes) }}
+              }
+            </small>
+          </div>
+          <div class="item-actions">
+            <button
+              class="btn btn-sm"
+              type="button"
+              [disabled]="!plan.editable()"
+              [attr.aria-label]="'today.takeOverOne' | t: { title: task.title }"
+              (click)="plan.planToday([task.id])"
+            >
+              <svg lucideCalendarCheck></svg>
+              {{ 'today.takeOver' | t }}
+            </button>
+            <button
+              class="btn btn-sm"
+              type="button"
+              [disabled]="!plan.editable()"
+              [attr.aria-label]="'today.toBacklogOne' | t: { title: task.title }"
+              (click)="plan.toBacklog([task.id])"
+            >
+              <svg lucideInbox></svg>
+              {{ 'today.toBacklog' | t }}
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+    <div class="actions">
+      <button
+        class="btn btn-primary"
+        type="button"
+        [disabled]="!plan.editable()"
+        (click)="takeOverAll()"
+      >
+        {{ 'today.takeOverAll' | t }}
+      </button>
+    </div>
+  </app-widget-card>
+}
+
+<app-widget-card [title]="'today.capacity' | t" [eyebrow]="'today.capacityEyebrow' | t">
+  <div class="capacity">
+    <p class="capacity-figures">
+      {{
+        'today.capacityFigures'
+          | t
+            : {
+                planned: formatMinutes(capacity().plannedMinutes),
+                available: formatMinutes(capacity().availableMinutes),
+                done: formatMinutes(capacity().doneMinutes),
+              }
+      }}
+    </p>
+    <div
+      class="progress capacity-bar"
+      [class.danger]="capacity().overbooked"
+      role="meter"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-valuenow]="plannedShare()"
+      [attr.aria-label]="'today.capacity' | t"
+    >
+      <span [style.width.%]="plannedShare()"></span>
+    </div>
+    <div class="progress ok" role="presentation">
+      <span [style.width.%]="doneShare()"></span>
+    </div>
+    <p class="hint">
+      {{
+        'today.capacityBasis'
+          | t
+            : {
+                target: formatMinutes(capacity().targetMinutes),
+                busy: formatMinutes(capacity().busyMinutes),
+              }
+      }}
+    </p>
+    @if (capacity().overbooked) {
+      <p class="text-error">{{ 'today.overbooked' | t }}</p>
+    }
+    @if (capacity().unestimated > 0) {
+      <p class="hint">{{ 'today.unestimated' | t: { count: capacity().unestimated } }}</p>
+    }
+    <app-integration-notice [status]="calendarStatus()" />
+  </div>
+</app-widget-card>
+
+<app-widget-card [title]="'today.tasks' | t" [eyebrow]="'today.tasksEyebrow' | t">
+  <form class="add-form" [formGroup]="addForm" (ngSubmit)="add()">
+    <label class="field add-title">
+      <span>{{ 'today.newTask' | t }}</span>
+      <input
+        class="input"
+        type="text"
+        maxlength="200"
+        [formControl]="addTitle"
+        [placeholder]="'today.newTaskPlaceholder' | t"
+      />
+    </label>
+    <label class="field">
+      <span>{{ 'today.estimate' | t }}</span>
+      <select class="select" [formControl]="addEstimate">
+        <option [ngValue]="null">{{ 'today.noEstimate' | t }}</option>
+        @for (minutes of estimateOptions; track minutes) {
+          <option [ngValue]="minutes">{{ formatMinutes(minutes) }}</option>
+        }
+      </select>
+    </label>
+    <button class="btn btn-primary" type="submit" [disabled]="!plan.editable()">
+      <svg lucidePlus></svg>
+      {{ 'today.add' | t }}
+    </button>
+  </form>
+
+  @if (plan.status() === 'ready' && plan.tasks().length === 0) {
+    <p class="hint">{{ 'today.empty' | t }}</p>
+  }
+
+  @if (view() === 'list') {
+    <ol class="task-list" [attr.aria-label]="'today.tasks' | t">
+      @for (task of plan.tasks(); track task.id; let first = $first; let last = $last) {
+        <li class="task" [class.is-done]="task.status === 'DONE'">
+          <ng-container
+            *ngTemplateOutlet="taskBody; context: { $implicit: task, first, last, list: true }"
+          />
+        </li>
+      }
+    </ol>
+  } @else {
+    <div class="board">
+      @for (column of columns(); track column.status) {
+        <section
+          class="board-column"
+          [attr.aria-label]="statusKey(column.status) | t"
+          (dragover)="onDragOver($event)"
+          (drop)="onDrop(column.status, $event)"
+        >
+          <h3>
+            {{ statusKey(column.status) | t }}
+            <span class="badge muted">{{ column.tasks.length }}</span>
+          </h3>
+          <ul>
+            @for (task of column.tasks; track task.id) {
+              <li
+                class="task card-task"
+                [class.is-done]="task.status === 'DONE'"
+                [draggable]="plan.editable()"
+                (dragstart)="onDragStart(task, $event)"
+                (dragend)="onDragEnd()"
+              >
+                <ng-container
+                  *ngTemplateOutlet="
+                    taskBody;
+                    context: { $implicit: task, first: true, last: true, list: false }
+                  "
+                />
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  }
+</app-widget-card>
+
+<app-widget-card [title]="'today.backlog' | t" [eyebrow]="'today.backlogEyebrow' | t">
+  <form class="add-form" [formGroup]="dumpForm" (ngSubmit)="addToDump()">
+    <label class="field add-title">
+      <span>{{ 'today.dumpLabel' | t }}</span>
+      <input
+        class="input"
+        type="text"
+        maxlength="200"
+        [formControl]="dumpTitle"
+        [placeholder]="'today.dumpPlaceholder' | t"
+      />
+    </label>
+    <button class="btn" type="submit" [disabled]="!plan.editable()">
+      <svg lucideInbox></svg>
+      {{ 'today.dumpAdd' | t }}
+    </button>
+  </form>
+
+  @if (plan.status() === 'ready' && plan.backlog().length === 0) {
+    <p class="hint">{{ 'today.backlogEmpty' | t }}</p>
+  }
+  <ul class="carry-list" [attr.aria-label]="'today.backlog' | t">
+    @for (task of plan.backlog(); track task.id) {
+      <li class="carry-item">
+        <strong>{{ task.title }}</strong>
+        <div class="item-actions">
+          <button
+            class="btn btn-sm"
+            type="button"
+            [disabled]="!plan.editable()"
+            [attr.aria-label]="'today.planTodayOne' | t: { title: task.title }"
+            (click)="plan.planToday([task.id])"
+          >
+            <svg lucideCalendarCheck></svg>
+            {{ 'today.planToday' | t }}
+          </button>
+          <button
+            class="btn btn-sm btn-icon"
+            type="button"
+            [disabled]="!plan.editable()"
+            [attr.aria-label]="'today.deleteOne' | t: { title: task.title }"
+            (click)="plan.remove(task)"
+          >
+            <svg lucideTrash2></svg>
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+</app-widget-card>
+
+<ng-template #taskBody let-task let-first="first" let-last="last" let-list="list">
+  @if (editingId() === task.id) {
+    <form class="edit-form" [formGroup]="editForm" (ngSubmit)="saveEdit()">
+      <label class="field add-title">
+        <span>{{ 'today.taskTitle' | t }}</span>
+        <input class="input" type="text" maxlength="200" [formControl]="editTitle" />
+      </label>
+      <label class="field">
+        <span>{{ 'today.estimate' | t }}</span>
+        <select class="select" [formControl]="editEstimate">
+          <option [ngValue]="null">{{ 'today.noEstimate' | t }}</option>
+          @for (minutes of editEstimateOptions(); track minutes) {
+            <option [ngValue]="minutes">{{ formatMinutes(minutes) }}</option>
+          }
+        </select>
+      </label>
+      <div class="item-actions">
+        <button class="btn btn-sm btn-primary" type="submit" [disabled]="!plan.editable()">
+          {{ 'today.save' | t }}
+        </button>
+        <button class="btn btn-sm" type="button" (click)="cancelEdit()">
+          {{ 'today.cancel' | t }}
+        </button>
+      </div>
+    </form>
+  } @else {
+    <div class="task-main">
+      <span class="task-title">{{ task.title }}</span>
+      <small class="muted">
+        {{
+          task.estimateMinutes === null
+            ? ('today.noEstimate' | t)
+            : formatMinutes(task.estimateMinutes)
+        }}
+      </small>
+    </div>
+    <div class="item-actions">
+      <select
+        class="select select-sm"
+        [attr.aria-label]="'today.statusOf' | t: { title: task.title }"
+        [disabled]="!plan.editable()"
+        (change)="setStatus(task, $event)"
+      >
+        @for (status of statuses; track status) {
+          <option [value]="status" [selected]="status === task.status">
+            {{ statusKey(status) | t }}
+          </option>
+        }
+      </select>
+      @if (list) {
+        <button
+          class="btn btn-sm btn-icon"
+          type="button"
+          [disabled]="!plan.editable() || first"
+          [attr.aria-label]="'today.moveUp' | t: { title: task.title }"
+          (click)="plan.shift(task, -1)"
+        >
+          <svg lucideArrowUp></svg>
+        </button>
+        <button
+          class="btn btn-sm btn-icon"
+          type="button"
+          [disabled]="!plan.editable() || last"
+          [attr.aria-label]="'today.moveDown' | t: { title: task.title }"
+          (click)="plan.shift(task, 1)"
+        >
+          <svg lucideArrowDown></svg>
+        </button>
+      }
+      <button
+        class="btn btn-sm btn-icon"
+        type="button"
+        [disabled]="!plan.editable()"
+        [attr.aria-label]="'today.editOne' | t: { title: task.title }"
+        (click)="startEdit(task)"
+      >
+        <svg lucidePencil></svg>
+      </button>
+      <button
+        class="btn btn-sm btn-icon"
+        type="button"
+        [disabled]="!plan.editable()"
+        [attr.aria-label]="'today.toBacklogOne' | t: { title: task.title }"
+        (click)="plan.toBacklog([task.id])"
+      >
+        <svg lucideInbox></svg>
+      </button>
+      <button
+        class="btn btn-sm btn-icon"
+        type="button"
+        [disabled]="!plan.editable()"
+        [attr.aria-label]="'today.deleteOne' | t: { title: task.title }"
+        (click)="plan.remove(task)"
+      >
+        <svg lucideTrash2></svg>
+      </button>
+    </div>
+  }
+</ng-template>

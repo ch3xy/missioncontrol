@@ -4,8 +4,8 @@ Slim Spring Boot backend of mission control, same stack and conventions as dash 
 `.ai/decisions.md`). It lives in `backend/` as its own Maven project; the Angular frontend stays in the repo root.
 
 **State:** settings API; the frontend reads and writes its settings here (`SettingsApi`, `api/v1/settings` relative to
-`<base href>`). Without the backend it shows the defaults and a notice, saving is disabled. Next: daily plan (tasks),
-then calendar sync and the AI-usage endpoint.
+`<base href>`). Without the backend it shows the defaults and a notice, saving is disabled. The daily plan (`task` module, page
+`/today`) uses the task API. Next: calendar sync and the AI-usage endpoint.
 
 ## Stack
 
@@ -46,10 +46,23 @@ Playwright starts its own backend: configuration `e2e/backend.yml` (port 8092, n
 
 ## API (v1)
 
-| Method    | Path               | Purpose                                                                      |
-| --------- | ------------------ | ---------------------------------------------------------------------------- |
-| GET       | `/api/v1/health`   | Status, version, git commit                                                  |
-| GET / PUT | `/api/v1/settings` | All mission control settings (PUT replaces, optional fields as empty string) |
+| Method       | Path                              | Purpose                                                                                              |
+| ------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| GET          | `/api/v1/health`                  | Status, version, git commit                                                                          |
+| GET / PUT    | `/api/v1/settings`                | All mission control settings (PUT replaces, optional fields as empty string)                         |
+| GET          | `/api/v1/tasks?date=YYYY-MM-DD`   | Tasks of a day in order; without `date` the brain dump                                               |
+| GET          | `/api/v1/tasks/carry-over?date=…` | Unfinished tasks of earlier days (carry-over suggestions)                                            |
+| POST         | `/api/v1/tasks`                   | New task (`title`, optional `estimateMinutes` 1–1440, `planDate` or `null` for the brain dump), 201  |
+| PUT / DELETE | `/api/v1/tasks/{id}`              | Replace title, estimate (`null` removes it) and status (`OPEN`, `IN_PROGRESS`, `DONE`); delete (204) |
+| POST         | `/api/v1/tasks/move`              | Move tasks to the end of a day (`backlog: false`, `planDate`) or to the brain dump (`backlog: true`) |
+| PUT          | `/api/v1/tasks/order`             | New order of all tasks of a day or the brain dump; 409 if the list is stale                          |
+
+Tasks carry a `version` (optimistic locking): `PUT /api/v1/tasks/{id}` must send the version it is based on,
+otherwise 409 (also when two requests race), so a change from another device is not silently overwritten. Reordering
+does not change the version; moving to another day does (an edit open elsewhere then gets 409). `DELETE` also needs
+`?version=`. `move` and `order` need an explicit
+`backlog` flag (`true` = brain dump without `planDate`, `false` = day with `planDate`); a missing date is never read
+as "brain dump". Reordering accepts at most 5000 tasks per day or brain dump (moves go in batches of 500).
 
 Settings mirror `MissionControlSettings` in `src/app/core/models/settings.model.ts`; the Flyway defaults mirror
 `DEFAULT_SETTINGS`. The service applies the same URL rules as the frontend (`source-urls.ts`): the required URLs

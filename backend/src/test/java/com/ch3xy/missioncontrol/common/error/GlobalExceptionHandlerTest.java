@@ -2,6 +2,7 @@ package com.ch3xy.missioncontrol.common.error;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ProblemDetail;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,6 +24,15 @@ class GlobalExceptionHandlerTest {
 
         assertThat(pd.getStatus()).isEqualTo(409);
         assertThat(pd.getDetail()).isEqualTo("already there");
+    }
+
+    @Test
+    void optimisticLockFailureIs409WithoutInternalText() {
+        ProblemDetail pd = handler.handleOptimisticLock(
+                new ObjectOptimisticLockingFailureException("com.secret.Task", "id-1"));
+
+        assertThat(pd.getStatus()).isEqualTo(409);
+        assertThat(pd.getDetail()).doesNotContain("secret").doesNotContain("id-1");
     }
 
     @Test
