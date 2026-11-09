@@ -1,0 +1,11 @@
+# Local development: ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+# Database credentials match docker-compose.yml; production sets MC_DB_USER / MC_DB_PASSWORD.
+spring:
+  datasource:
+    username: ${MC_DB_USER:missioncontrol}
+    password: ${MC_DB_PASSWORD:missioncontrol}
+
+# 4200 = Angular dev server calling the backend directly, 8082 = Swagger UI of this backend.
+app:
+  access:
+    allowed-origins: ${MC_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:8082}

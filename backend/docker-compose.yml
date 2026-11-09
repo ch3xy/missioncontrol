@@ -1,0 +1,17 @@
+name: missioncontrol-backend
+
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: missioncontrol
+      POSTGRES_USER: missioncontrol
+      POSTGRES_PASSWORD: missioncontrol
+    ports:
+      # Loopback only; 5434 because velo (5432) and dash (5433) use the lower ports on the same machine
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

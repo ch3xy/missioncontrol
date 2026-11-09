@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: missioncontrol
+  datasource:
+    url: ${MC_DB_URL:jdbc:postgresql://localhost:5434/missioncontrol}
+    # No defaults: a missing variable in production must fail at startup (dev values: application-local.yml)
+    username: ${MC_DB_USER}
+    password: ${MC_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+server:
+  port: 8082
+  # Local development listens on loopback only. In the container MC_BIND_ADDRESS is set to 0.0.0.0
+  # and the port is not published; it is reachable only from Caddy in the internal container network
+  # (see docs/BACKEND.md, auth stage 1).
+  address: ${MC_BIND_ADDRESS:127.0.0.1}
+  # Trust X-Forwarded-* from the reverse proxy (Caddy): scheme and host come from X-Forwarded-Proto/-Host.
+  # A path prefix is only seen if Caddy sets X-Forwarded-Prefix (it does not by default; the Caddy config
+  # strips /missioncontrol itself). The host guard uses the raw Host header, not the rewritten server name.
+  forward-headers-strategy: framework
+  error:
+    include-message: never
+    include-binding-errors: never
+
+app:
+  timezone: Europe/Vienna
+  # Auth stage 1: only these Host and Origin values are served (rebinding and CSRF protection).
+  # Loopback hosts are always allowed. Comma separated. Origins default to none (production-safe:
+  # every request carrying an Origin header is refused); the "local" profile adds the dev origins.
+  access:
+    allowed-hosts: ${MC_ALLOWED_HOSTS:}
+    allowed-origins: ${MC_ALLOWED_ORIGINS:}
