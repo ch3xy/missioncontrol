@@ -25,10 +25,31 @@ export const defaultSettings = {
   localTool2Url: '',
 };
 
+/** Days the daily-plan tests use (browser clock fixed to E2E_TODAY); tasks there are removed per test. */
+export const E2E_TODAY = '2026-11-09';
+export const E2E_DAYS = ['2026-11-07', '2026-11-08', E2E_TODAY];
+
 // Every test gets Playwright's fresh context and the default settings in the test backend
 // (tests run serially, see playwright.config.ts). Reject accidental external traffic,
 // including popups; controlled integration responses must use this local origin.
-export const test = base.extend<{ resetSettings: void }>({
+export const test = base.extend<{ resetSettings: void; resetTasks: void }>({
+  resetTasks: [
+    async ({ request }, use) => {
+      // The test backend has its own throw-away database; still only the known test days are cleaned
+      for (const query of [...E2E_DAYS.map((day) => `?date=${day}`), '']) {
+        const list = await request.get(`${backendUrl}/api/v1/tasks${query}`);
+        expect(list.status(), 'list tasks in the test backend').toBe(200);
+        for (const task of (await list.json()) as { id: string; version: number }[]) {
+          const removed = await request.delete(
+            `${backendUrl}/api/v1/tasks/${task.id}?version=${task.version}`,
+          );
+          expect(removed.status(), 'delete a test task').toBe(204);
+        }
+      }
+      await use();
+    },
+    { auto: true },
+  ],
   resetSettings: [
     async ({ request }, use) => {
       const response = await request.put(`${backendUrl}/api/v1/settings`, {

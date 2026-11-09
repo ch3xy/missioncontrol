@@ -159,14 +159,16 @@ Frontend-Code (`src/`), `e2e/`, `proxy.conf.mjs`, `package.json`, `../dash`, `..
 - [x] **Playwright-Tests** gegen ein eigenes Test-Backend (`e2e/backend.yml`, Wegwerf-DB), siehe
       `docs/PLAYWRIGHT_STRATEGY.md`.
 
-### Tagesplan (nächste Erweiterung)
+### Tagesplan (umgesetzt 2026-11-09)
 
 Entschieden am 2026-11-09 (Details in `.ai/decisions.md`): Schätzung optional, Liste und Board per Umschalter
 (Ansicht in LocalStorage), Übernahme unerledigter Aufgaben als Vorschlag, Kapazität = Tagesziel minus Termine.
 
-Geplanter Umfang: Tabelle und API für Aufgaben (Titel, Schätzung, Status, Tag, Reihenfolge), „Heute“-Seite mit
-Fortschritt und Kapazität (Arbeitstag abzüglich Kalendertermine), Übernahme unerledigter Aufgaben als Vorschlag,
-Brain-Dump-Zeile, optional Verknüpfung mit dash-Projekten (Phase 2).
+Umgesetzt: Tabelle `task` (V2) und API `/api/v1/tasks`, Seite „Heute“ (`/today`) mit Liste/Board, Kapazität
+(Tagesziel minus Termine), Übernahme-Vorschlag, Brain-Dump, Bearbeiten, Reihenfolge, Drag-and-drop im Board.
+
+- [ ] Optional später: Verknüpfung mit dash-Projekten (Phase 2), Tagesplan-Karte im Dashboard, andere Tage als
+      heute ansehen/planen.
 
 ### Deployment (in `../pi-ops` umgesetzt, siehe `docs/BACKEND.md`)
 

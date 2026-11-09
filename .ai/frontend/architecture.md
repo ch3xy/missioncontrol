@@ -79,6 +79,7 @@ Nur UI-Zustand; die Einstellungen liegen im Backend.
 | `missioncontrol-theme`             | `light` / `dark` / `system`              |
 | `missioncontrol-nav-collapsed`     | `true` / `false`                         |
 | `missioncontrol-lang`              | `de` / `en`                              |
+| `missioncontrol-today-view`        | `list` / `board` (Seite „Heute“)         |
 
 Jeder Zugriff ist in `try/catch` gekapselt (Private Mode, blockierter Storage).
 

@@ -8,6 +8,7 @@ import {
   LucideExternalLink,
   LucideIcon,
   LucideLayoutDashboard,
+  LucideListTodo,
   LucideReceipt,
   LucideSettings,
   LucideTimer,
@@ -68,6 +69,7 @@ export class Sidebar {
       label: this.i18n.t('nav.group.overview'),
       items: [
         { label: this.i18n.t('nav.dashboard'), icon: LucideLayoutDashboard, route: '/' },
+        { label: this.i18n.t('nav.today'), icon: LucideListTodo, route: '/today' },
         { label: this.i18n.t('nav.calendar'), icon: LucideCalendarDays, route: '/calendar' },
       ],
     },

@@ -11,6 +11,7 @@ Implemented:
 - Dashboard widgets for Calendar, Velo, Dash time, Dash customers, and Quick Access
 - Dashboard refresh action with last-updated timestamp
 - Detail pages for Calendar, Velo, and Dash
+- Daily plan „Heute“ (`/today`): tasks with optional estimate, list or board view, capacity (daily target minus appointments), carry-over suggestions, brain dump; stored in the backend
 - Calendar detail refresh with event start/end time display
 - Calendar agenda groups appointments by date
 - Velo and Dash detail refresh actions with last-updated timestamps
@@ -57,7 +58,7 @@ Still intentionally placeholder-only:
 - sevDesk remains an external shortcut only
 - Without a configured, reachable source a card shows a notice instead of data
 - ICS import supports basic `VEVENT` parsing from a browser-readable URL
-- The frontend does not use the backend yet (`docs/BACKEND.md`); no authentication, cloud sync, OAuth, or secret storage is included
+- Settings and the daily plan are stored in the backend (`docs/BACKEND.md`); no authentication (access protection stage 1 only), OAuth, or secret storage is included
 
 ## Next Useful Improvements
 

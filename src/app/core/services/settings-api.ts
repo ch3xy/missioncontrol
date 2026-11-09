@@ -1,12 +1,8 @@
 import { Injectable } from '@angular/core';
-import { FETCH_TIMEOUT_MS, isRecord } from './local-json-source';
+import { backendRequest, backendUrl } from './backend-request';
 
-/**
- * Resolved against <base href>: `/api/v1/settings` in development (proxied to the backend),
- * `/missioncontrol/api/v1/settings` on the server (Caddy forwards it to the backend).
- */
 export function settingsApiUrl(): string {
-  return new URL('api/v1/settings', document.baseURI).href;
+  return backendUrl('settings');
 }
 
 export type SettingsApiResult =
@@ -20,57 +16,23 @@ export type SettingsApiResult =
 @Injectable({ providedIn: 'root' })
 export class SettingsApi {
   async get(): Promise<SettingsApiResult> {
-    return this.request({ headers: { Accept: 'application/json' }, cache: 'no-store' });
+    return toSettingsResult(await backendRequest('settings', { cache: 'no-store' }));
   }
 
   async put(body: unknown): Promise<SettingsApiResult> {
-    return this.request({
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(body),
-    });
-  }
-
-  private async request(init: RequestInit): Promise<SettingsApiResult> {
-    let response: Response;
-
-    try {
-      response = await fetch(settingsApiUrl(), {
-        ...init,
-        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      });
-    } catch {
-      return { kind: 'unavailable' };
-    }
-
-    if (response.status === 403) {
-      return { kind: 'forbidden' };
-    }
-
-    // Refused by a reachable backend, with RFC 7807 Problem Details: 400 unreadable JSON,
-    // 409 conflict, 422 validation
-    if ([400, 409, 422].includes(response.status)) {
-      return { kind: 'invalid', detail: await problemDetail(response) };
-    }
-
-    if (!response.ok) {
-      return { kind: 'unavailable' };
-    }
-
-    try {
-      return { kind: 'ok', payload: await response.json() };
-    } catch {
-      // e.g. an HTML fallback page instead of JSON
-      return { kind: 'unavailable' };
-    }
+    return toSettingsResult(
+      await backendRequest('settings', { method: 'PUT', body: JSON.stringify(body) }),
+    );
   }
 }
 
-async function problemDetail(response: Response): Promise<string> {
-  try {
-    const payload: unknown = await response.json();
-    return isRecord(payload) && typeof payload['detail'] === 'string' ? payload['detail'] : '';
-  } catch {
-    return '';
+function toSettingsResult(result: Awaited<ReturnType<typeof backendRequest>>): SettingsApiResult {
+  switch (result.kind) {
+    case 'conflict':
+      return { kind: 'invalid', detail: result.detail };
+    case 'not-found':
+      return { kind: 'unavailable' };
+    default:
+      return result;
   }
 }

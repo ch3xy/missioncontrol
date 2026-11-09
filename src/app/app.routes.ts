@@ -13,6 +13,11 @@ export const routes: Routes = [
         title: 'title.dashboard',
       },
       {
+        path: 'today',
+        loadComponent: () => import('./features/today/today-page').then((m) => m.TodayPage),
+        title: 'title.today',
+      },
+      {
         path: 'calendar',
         loadComponent: () =>
           import('./features/calendar/calendar-page').then((m) => m.CalendarPage),
