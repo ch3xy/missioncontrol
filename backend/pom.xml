@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.ch3xy</groupId>
     <artifactId>missioncontrol</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.6-SNAPSHOT</version>
     <name>missioncontrol-backend</name>
     <description>Backend of mission control: settings, calendar sync and the daily plan</description>
 
@@ -132,4 +132,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Release build (pi-ops scripts/release-maven.sh builds with -Pprod). Nothing to switch yet; the
+             frontend is built and deployed separately from the repository root. -->
+        <profile>
+            <id>prod</id>
+        </profile>
+    </profiles>
 </project>

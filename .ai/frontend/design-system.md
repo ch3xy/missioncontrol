@@ -38,7 +38,7 @@ Semantikfarben nur für Status (ok/warn/danger/info), nie zur Dekoration.
 | Gruppen | „Overview“ (Dashboard, Calendar), „Apps“ (velo, dash, sevDesk extern) — Label 10px uppercase |
 | Nav-Item | 48px hoch, Radius 10, Icon 20px; aktiv: `--brand-soft` + `--brand` |
 | Footer | Settings, gedämpft, direkt unter der Liste |
-| Version | `v{version}` aus `package.json`, 11px, ganz unten |
+| Version | `v{version}` aus `backend/pom.xml` (Build-Info), 11px, ganz unten |
 | Topbar | 64px, Datum links, Theme-Toggle rechts (Icon 18px) |
 | Content | Padding 24px (mobil 16px) |
 | Mobil ≤ 640px | Off-Canvas-Drawer 280px / max. 85vw, Backdrop `rgba(15,23,42,.4)`, Menü-Button, Escape schließt |

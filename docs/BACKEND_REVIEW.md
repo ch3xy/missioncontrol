@@ -176,7 +176,7 @@ Brain-Dump-Zeile, optional Verknüpfung mit dash-Projekten (Phase 2).
       wäre falsch, es würde auch `/api` abschneiden und 404 liefern), Original-`Host` weiterreichen.
 - [ ] `MC_ALLOWED_HOSTS`, `MC_ALLOWED_ORIGINS`, `MC_BIND_ADDRESS=0.0.0.0`, DB-Zugangsdaten setzen (kein
       Standardpasswort in Produktion).
-- [ ] Release-Skript analog `scripts/deploy.sh` in dash; Versionsschema abstimmen.
+- [x] Release-Skript analog `scripts/deploy.sh` in dash; Versionsschema abstimmen (Version aus `backend/pom.xml`).
 - [ ] Datenbank-Backups für die neue DB.
 
 ### Später
