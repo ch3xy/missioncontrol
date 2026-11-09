@@ -24,6 +24,8 @@ export class CalendarAdapterService implements CalendarAdapter {
    */
   async getEvents(): Promise<CalendarEvent[]> {
     const request = ++this.latestRequest;
+    // The sources come from the settings, which the backend delivers after the first render
+    await this.settingsService.whenLoaded();
     const settings = this.settingsService.settings();
     const source = settings.calendarSource;
 

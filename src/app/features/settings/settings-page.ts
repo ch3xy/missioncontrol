@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideDownload, LucideRotateCcw, LucideSave, LucideUpload } from '@lucide/angular';
 import { I18nService, LANGUAGE_LABELS, LANGUAGES } from '../../core/i18n/i18n.service';
@@ -11,10 +18,11 @@ import {
   MissionControlSettings,
 } from '../../core/models/settings.model';
 import { ShortcutService } from '../../core/services/shortcut.service';
-import { SettingsService } from '../../core/services/settings.service';
+import { SaveResult, SettingsService } from '../../core/services/settings.service';
 import { THEME_MODE_LABELS, ThemeMode, ThemeService } from '../../core/services/theme.service';
 import { httpUrlValidator } from '../../core/validators/http-url.validator';
 import { sourceUrlsValidator } from '../../core/validators/source-urls.validator';
+import { SettingsStatusNotice } from '../../shared/components/settings-status-notice/settings-status-notice';
 import { QuickAccessTile } from '../../shared/components/quick-access-tile/quick-access-tile';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 
@@ -27,6 +35,7 @@ const bundledExample = (file: string): string => new URL(`examples/${file}`, doc
   imports: [
     ReactiveFormsModule,
     QuickAccessTile,
+    SettingsStatusNotice,
     WidgetCard,
     LucideDownload,
     LucideRotateCcw,
@@ -51,7 +60,15 @@ export class SettingsPage {
   protected readonly autoRefreshOptions = AUTO_REFRESH_MINUTES;
 
   protected readonly savedSettings = this.settingsService.settings;
-  protected readonly persisted = this.settingsService.persisted;
+  protected readonly status = this.settingsService.status;
+  protected readonly saving = signal(false);
+  /** Outcome of the last save, reset, import or preset. */
+  protected readonly saveResult = signal<SaveResult | null>(null);
+  /**
+   * Inputs and actions only work with loaded settings and no pending save: edits before the first
+   * answer would be overwritten by it, and edits during a save by its result.
+   */
+  protected readonly editable = computed(() => this.status() === 'ready' && !this.saving());
   protected readonly shortcuts = this.shortcutService.shortcuts;
   /** Label of the shortcut that could not be opened. */
   protected readonly launchError = signal<string | null>(null);
@@ -88,7 +105,16 @@ export class SettingsPage {
     dashSourceUrl: ['', [httpUrlValidator({ optional: true })]],
     veloApiUrl: ['', [httpUrlValidator({ optional: true })]],
     dashApiUrl: ['', [httpUrlValidator({ optional: true })]],
-    dailyTargetHours: [8, [Validators.required, Validators.min(0.5), Validators.max(24)]],
+    // At most two decimals, as stored by the backend
+    dailyTargetHours: [
+      8,
+      [
+        Validators.required,
+        Validators.min(0.5),
+        Validators.max(24),
+        Validators.pattern(/^\d+(\.\d{1,2})?$/),
+      ],
+    ],
     autoRefreshMinutes: [5 as AutoRefreshMinutes],
     localTool1Label: ['Local Tool 1', [Validators.required]],
     localTool1Url: ['', [httpUrlValidator({ optional: true })]],
@@ -98,23 +124,36 @@ export class SettingsPage {
 
   constructor() {
     this.form.patchValue(this.savedSettings());
+    effect(() => {
+      if (this.editable()) {
+        this.form.enable({ emitEvent: false });
+      } else {
+        this.form.disable({ emitEvent: false });
+      }
+    });
+    // The backend answers after the first render; the form is disabled until then
+    void this.settingsService.whenLoaded().then(() => this.form.reset(this.savedSettings()));
   }
 
-  protected save(): void {
-    if (this.form.invalid) {
+  protected async save(): Promise<void> {
+    if (!this.editable() || this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.settingsService.updateSettings(this.form.getRawValue());
+    await this.persist(() => this.settingsService.updateSettings(this.form.getRawValue()));
   }
 
-  protected reset(): void {
-    this.settingsService.resetSettings();
-    this.form.reset(this.savedSettings());
+  protected async reset(): Promise<void> {
+    await this.persist(() => this.settingsService.resetSettings());
   }
 
   protected exportSettings(): void {
+    // Without loaded settings the export would only contain the defaults
+    if (this.status() !== 'ready') {
+      return;
+    }
+
     const blob = new Blob([this.settingsService.exportSettings()], {
       type: 'application/json',
     });
@@ -132,16 +171,31 @@ export class SettingsPage {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
 
-    if (!file) {
+    if (!file || !this.editable()) {
+      input.value = '';
       return;
     }
 
     const reader = new FileReader();
-    reader.onload = () => {
-      const didImport = this.settingsService.importSettings(String(reader.result ?? ''));
-      this.form.reset(this.savedSettings());
-      this.backupMessage.set(didImport ? 'settings.imported' : 'settings.importFailed');
+    reader.onload = async () => {
       input.value = '';
+      this.backupMessage.set(null);
+      this.saveResult.set(null);
+      this.saving.set(true);
+      const result = await this.settingsService.importSettings(String(reader.result ?? ''));
+      this.saving.set(false);
+
+      if (!result) {
+        this.backupMessage.set('settings.importFailed');
+        return;
+      }
+
+      this.saveResult.set(result);
+      await this.syncForm(result);
+
+      if (result.ok) {
+        this.backupMessage.set('settings.imported');
+      }
     };
     reader.onerror = () => {
       this.backupMessage.set('settings.importFailed');
@@ -151,7 +205,7 @@ export class SettingsPage {
   }
 
   protected useBundledJsonExamples(): void {
-    this.applyAndSave({
+    void this.applyAndSave({
       calendarSource: 'local-json',
       calendarSourceUrl: bundledExample('calendar.json'),
       veloSourceUrl: bundledExample('velo.json'),
@@ -160,7 +214,7 @@ export class SettingsPage {
   }
 
   protected useBundledIcsExample(): void {
-    this.applyAndSave({
+    void this.applyAndSave({
       calendarSource: 'ics',
       calendarSourceUrl: bundledExample('calendar.ics'),
     });
@@ -168,7 +222,7 @@ export class SettingsPage {
 
   /** On the server, velo and dash run on the same host as mission control under /velo and /dash. */
   protected useServerApis(): void {
-    this.applyAndSave({
+    void this.applyAndSave({
       veloApiUrl: `${location.origin}/velo`,
       dashApiUrl: `${location.origin}/dash`,
     });
@@ -179,15 +233,43 @@ export class SettingsPage {
     this.launchError.set(didOpen ? null : shortcut.label);
   }
 
-  private applyAndSave(settings: Partial<MissionControlSettings>): void {
+  private async applyAndSave(settings: Partial<MissionControlSettings>): Promise<void> {
+    if (!this.editable()) {
+      return;
+    }
+
     this.form.patchValue(settings);
+    this.form.markAsDirty();
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.settingsService.updateSettings(this.form.getRawValue());
-    this.form.reset(this.savedSettings());
+    await this.persist(() => this.settingsService.updateSettings(this.form.getRawValue()));
+  }
+
+  /** Saves through the backend with the form locked until the answer. */
+  private async persist(action: () => Promise<SaveResult>): Promise<void> {
+    this.saving.set(true);
+    this.saveResult.set(null);
+    const result = await action();
+    this.saving.set(false);
+    this.saveResult.set(result);
+    await this.syncForm(result);
+  }
+
+  /** After a save the form shows the stored values; after a refused one it keeps the input for correction. */
+  private async syncForm(result: SaveResult): Promise<void> {
+    if (result.ok) {
+      this.form.reset(this.savedSettings());
+    } else if (result.reason === 'unavailable') {
+      // The service reloads after an unconfirmed save; show what the backend really has
+      await this.settingsService.whenLoaded();
+
+      if (this.status() === 'ready') {
+        this.form.reset(this.savedSettings());
+      }
+    }
   }
 }

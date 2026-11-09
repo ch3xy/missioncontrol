@@ -9,11 +9,13 @@ import { ShortcutService } from '../../core/services/shortcut.service';
 import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
 import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
+import { SettingsStatusNotice } from '../../shared/components/settings-status-notice/settings-status-notice';
 
 @Component({
   selector: 'app-dash-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    SettingsStatusNotice,
     DatePipe,
     DecimalPipe,
     IntegrationNotice,

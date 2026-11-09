@@ -1,22 +1,29 @@
 import { TestBed } from '@angular/core/testing';
-import { createMemoryStorage } from '../../testing/memory-storage';
 import { DEFAULT_SETTINGS } from '../models/settings.model';
+import { InMemorySettingsApi } from '../../testing/in-memory-settings-api';
+import { SettingsApi, SettingsApiResult, settingsApiUrl } from './settings-api';
 import { SettingsService } from './settings.service';
 
 describe('SettingsService', () => {
-  beforeEach(() => {
-    vi.stubGlobal('localStorage', createMemoryStorage());
-    TestBed.configureTestingModule({});
-  });
+  function api(): InMemorySettingsApi {
+    return TestBed.inject(SettingsApi) as InMemorySettingsApi;
+  }
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
+  async function loadedService(): Promise<SettingsService> {
+    const service = TestBed.inject(SettingsService);
+    await service.whenLoaded();
+    return service;
+  }
 
-  it('should expose default external urls', () => {
+  it('should expose default external urls before and after loading', async () => {
     const service = TestBed.inject(SettingsService);
 
+    expect(service.status()).toBe('loading');
     expect(service.settings()).toEqual(DEFAULT_SETTINGS);
+
+    await service.whenLoaded();
+
+    expect(service.status()).toBe('ready');
     expect(service.externalUrls()).toEqual({
       velo: DEFAULT_SETTINGS.veloUrl,
       dash: DEFAULT_SETTINGS.dashUrl,
@@ -26,32 +33,133 @@ describe('SettingsService', () => {
     });
   });
 
-  it('should persist updated settings', () => {
-    const service = TestBed.inject(SettingsService);
-
-    service.updateSettings({
+  it('should load the settings stored in the backend and map empty strings to undefined', async () => {
+    api().stored = {
       ...DEFAULT_SETTINGS,
       veloUrl: 'http://localhost:4301',
-      dashUrl: 'http://localhost:4302',
-      sevDeskUrl: 'https://example.test',
+      calendarSourceUrl: '',
+      veloApiUrl: 'https://arrow.local/velo',
+      dailyTargetHours: 7.5,
+    };
+
+    const service = await loadedService();
+
+    expect(service.settings().veloUrl).toBe('http://localhost:4301');
+    expect(service.settings().calendarSourceUrl).toBeUndefined();
+    expect(service.settings().veloApiUrl).toBe('https://arrow.local/velo');
+    expect(service.settings().dailyTargetHours).toBe(7.5);
+  });
+
+  it('should save through the backend and send every optional field as a string', async () => {
+    const service = await loadedService();
+
+    const result = await service.updateSettings({
+      ...DEFAULT_SETTINGS,
+      veloUrl: 'http://localhost:4301',
       localTool1Label: 'Docs',
       localTool1Url: 'http://localhost:8080',
     });
 
-    const freshService = TestBed.inject(SettingsService);
-    expect(freshService.settings().veloUrl).toBe('http://localhost:4301');
-    expect(freshService.localTools()[0]).toEqual({
+    expect(result).toEqual({ ok: true });
+    expect(api().requests.at(-1)).toMatchObject({
+      veloUrl: 'http://localhost:4301',
+      calendarSourceUrl: '',
+      veloSourceUrl: '',
+      dashSourceUrl: '',
+      veloApiUrl: '',
+      dashApiUrl: '',
+    });
+    expect(service.localTools()[0]).toEqual({
       id: 'local-tool-1',
       label: 'Docs',
       url: 'http://localhost:8080',
     });
-    expect(localStorage.getItem('mission-control.settings')).toContain('localhost:4301');
   });
 
-  it('should export and import settings JSON', () => {
-    const service = TestBed.inject(SettingsService);
+  it('should keep the defaults and refuse saving when the backend is unavailable', async () => {
+    api().available = false;
+    const service = await loadedService();
 
-    service.updateSettings({
+    expect(service.status()).toBe('unavailable');
+    expect(service.settings()).toEqual(DEFAULT_SETTINGS);
+
+    const result = await service.updateSettings({ ...DEFAULT_SETTINGS, veloUrl: 'http://x.test' });
+
+    expect(result).toEqual({ ok: false, reason: 'unavailable' });
+    expect(service.settings().veloUrl).toBe(DEFAULT_SETTINGS.veloUrl);
+  });
+
+  it('should become ready after a successful reload', async () => {
+    api().available = false;
+    const service = await loadedService();
+    api().available = true;
+
+    await service.reload();
+
+    expect(service.status()).toBe('ready');
+  });
+
+  it('should report validation errors of the backend and keep the stored settings', async () => {
+    const service = await loadedService();
+    vi.spyOn(api(), 'put').mockResolvedValue({
+      kind: 'invalid',
+      detail: 'veloUrl: must be an http or https URL',
+    });
+
+    const result = await service.updateSettings({ ...DEFAULT_SETTINGS, veloUrl: 'http://x.test' });
+
+    expect(result).toEqual({
+      ok: false,
+      reason: 'invalid',
+      detail: 'veloUrl: must be an http or https URL',
+    });
+    expect(service.settings().veloUrl).toBe(DEFAULT_SETTINGS.veloUrl);
+  });
+
+  it('should ignore a load answer that arrives after a newer save', async () => {
+    const service = await loadedService();
+    let answerSave: (result: SettingsApiResult) => void = () => undefined;
+    let answerLoad: (result: SettingsApiResult) => void = () => undefined;
+    vi.spyOn(api(), 'put').mockReturnValueOnce(new Promise((resolve) => (answerSave = resolve)));
+    vi.spyOn(api(), 'get').mockReturnValueOnce(new Promise((resolve) => (answerLoad = resolve)));
+
+    const save = service.updateSettings({ ...DEFAULT_SETTINGS, veloUrl: 'http://new.test' });
+    const reload = service.reload();
+    answerSave({ kind: 'ok', payload: { ...DEFAULT_SETTINGS, veloUrl: 'http://new.test' } });
+    await save;
+    answerLoad({ kind: 'ok', payload: { ...DEFAULT_SETTINGS, veloUrl: 'http://old.test' } });
+    await reload;
+
+    expect(service.settings().veloUrl).toBe('http://new.test');
+  });
+
+  it('should not save before the settings are loaded', async () => {
+    const service = TestBed.inject(SettingsService);
+    const put = vi.spyOn(api(), 'put');
+
+    expect(await service.updateSettings(DEFAULT_SETTINGS)).toEqual({
+      ok: false,
+      reason: 'unavailable',
+    });
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('should reload after a save whose outcome is unknown', async () => {
+    const service = await loadedService();
+    vi.spyOn(api(), 'put').mockResolvedValue({ kind: 'unavailable' });
+    const get = vi.spyOn(api(), 'get');
+
+    await service.updateSettings({ ...DEFAULT_SETTINGS, veloUrl: 'http://x.test' });
+    await service.whenLoaded();
+
+    expect(get).toHaveBeenCalled();
+    expect(service.status()).toBe('ready');
+  });
+
+  it('should export and import settings JSON', async () => {
+    const service = await loadedService();
+
+    await service.updateSettings({
       ...DEFAULT_SETTINGS,
       veloUrl: 'http://localhost:4401',
       localTool1Label: 'NAS',
@@ -59,60 +167,104 @@ describe('SettingsService', () => {
     });
     const exportedSettings = service.exportSettings();
 
-    service.resetSettings();
+    await service.resetSettings();
     expect(service.settings().veloUrl).toBe(DEFAULT_SETTINGS.veloUrl);
 
-    expect(service.importSettings(exportedSettings)).toBe(true);
+    expect(await service.importSettings(exportedSettings)).toEqual({ ok: true });
     expect(service.settings().veloUrl).toBe('http://localhost:4401');
     expect(service.settings().localTool1Label).toBe('NAS');
-    expect(service.importSettings('{broken')).toBe(false);
+    expect(await service.importSettings('{broken')).toBeNull();
   });
 
-  it('should fall back to the default refresh interval for unknown values', () => {
-    const service = TestBed.inject(SettingsService);
+  it('should fall back to the default refresh interval for unknown values', async () => {
+    const service = await loadedService();
 
-    expect(service.importSettings(JSON.stringify({ autoRefreshMinutes: 7 }))).toBe(true);
+    await service.importSettings(JSON.stringify({ autoRefreshMinutes: 7 }));
     expect(service.settings().autoRefreshMinutes).toBe(DEFAULT_SETTINGS.autoRefreshMinutes);
 
-    expect(service.importSettings(JSON.stringify({ autoRefreshMinutes: 0 }))).toBe(true);
+    await service.importSettings(JSON.stringify({ autoRefreshMinutes: 0 }));
     expect(service.settings().autoRefreshMinutes).toBe(0);
   });
 
-  it('should reject imports that are not a settings object', () => {
-    const service = TestBed.inject(SettingsService);
-    service.updateSettings({ ...DEFAULT_SETTINGS, veloUrl: 'http://localhost:4401' });
+  it('should reject imports that are not a settings object', async () => {
+    const service = await loadedService();
+    await service.updateSettings({ ...DEFAULT_SETTINGS, veloUrl: 'http://localhost:4401' });
 
     for (const raw of ['null', '[]', '"x"', '42']) {
-      expect(service.importSettings(raw)).toBe(false);
+      expect(await service.importSettings(raw)).toBeNull();
     }
     expect(service.settings().veloUrl).toBe('http://localhost:4401');
   });
 
-  it('should drop values of the wrong type from an import', () => {
-    const service = TestBed.inject(SettingsService);
+  it('should drop values of the wrong type from an import', async () => {
+    const service = await loadedService();
 
-    expect(
-      service.importSettings(
-        JSON.stringify({ veloApiUrl: 123, calendarSourceUrl: ['a'], veloUrl: false }),
-      ),
-    ).toBe(true);
+    await service.importSettings(
+      JSON.stringify({ veloApiUrl: 123, calendarSourceUrl: ['a'], veloUrl: false }),
+    );
+
     expect(service.settings().veloApiUrl).toBeUndefined();
     expect(service.settings().calendarSourceUrl).toBeUndefined();
     expect(service.settings().veloUrl).toBe(DEFAULT_SETTINGS.veloUrl);
   });
 
-  it('should keep settings for the session when storage is unavailable', () => {
-    const blocked = () => {
-      throw new DOMException('blocked', 'SecurityError');
-    };
-    vi.stubGlobal('localStorage', { getItem: blocked, setItem: blocked });
-    const service = TestBed.inject(SettingsService);
+  it('should resolve the API against the base href', () => {
+    expect(settingsApiUrl()).toBe(new URL('api/v1/settings', document.baseURI).href);
+  });
+});
 
-    expect(service.settings()).toEqual(DEFAULT_SETTINGS);
+describe('SettingsApi', () => {
+  afterEach(() => vi.unstubAllGlobals());
 
-    service.updateSettings({ ...DEFAULT_SETTINGS, veloUrl: 'http://localhost:4401' });
+  function realApi(): SettingsApi {
+    TestBed.overrideProvider(SettingsApi, { useFactory: () => new SettingsApi() });
+    return TestBed.inject(SettingsApi);
+  }
 
-    expect(service.settings().veloUrl).toBe('http://localhost:4401');
-    expect(service.persisted()).toBe(false);
+  it('should map the backend answers', async () => {
+    const answers = [
+      Response.json({ veloUrl: 'http://a.test' }),
+      Response.json({ detail: 'dailyTargetHours: must be at most 24' }, { status: 422 }),
+      Response.json({ detail: 'Origin not allowed' }, { status: 403 }),
+      new Response('', { status: 503 }),
+      new Response('<!doctype html>'),
+    ];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => answers.shift()),
+    );
+    const api = realApi();
+
+    expect(await api.get()).toEqual({ kind: 'ok', payload: { veloUrl: 'http://a.test' } });
+    expect(await api.put({})).toEqual({
+      kind: 'invalid',
+      detail: 'dailyTargetHours: must be at most 24',
+    });
+    expect(await api.put({})).toEqual({ kind: 'forbidden' });
+    expect(await api.get()).toEqual({ kind: 'unavailable' });
+    expect(await api.get()).toEqual({ kind: 'unavailable' });
+  });
+
+  it('should report a network error as unavailable', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        throw new TypeError('Failed to fetch');
+      }),
+    );
+
+    expect(await realApi().get()).toEqual({ kind: 'unavailable' });
+  });
+
+  it('should send PUT with a JSON body', async () => {
+    const fetchMock = vi.fn(async () => Response.json({}));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await realApi().put({ veloUrl: 'http://a.test' });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      settingsApiUrl(),
+      expect.objectContaining({ method: 'PUT', body: '{"veloUrl":"http://a.test"}' }),
+    );
   });
 });

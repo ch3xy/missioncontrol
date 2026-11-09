@@ -8,4 +8,4 @@ spring:
 # 4200 = Angular dev server calling the backend directly, 8082 = Swagger UI of this backend.
 app:
   access:
-    allowed-origins: ${MC_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:8082}
+    allowed-origins: ${MC_ALLOWED_ORIGINS:http://localhost:4200,http://127.0.0.1:4200,http://localhost:8082}

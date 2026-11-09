@@ -3,6 +3,7 @@ import { createMemoryStorage } from '../../testing/memory-storage';
 import { DEFAULT_SETTINGS } from '../models/settings.model';
 import { SettingsService } from './settings.service';
 import { ShortcutService } from './shortcut.service';
+import { configureSettings } from '../../testing/configure-settings';
 
 describe('ShortcutService', () => {
   beforeEach(() => {
@@ -25,8 +26,8 @@ describe('ShortcutService', () => {
     ]);
   });
 
-  it('should expose configured local tool shortcuts', () => {
-    TestBed.inject(SettingsService).updateSettings({
+  it('should expose configured local tool shortcuts', async () => {
+    await configureSettings({
       ...DEFAULT_SETTINGS,
       localTool1Label: 'NAS',
       localTool1Url: 'http://localhost:8080',

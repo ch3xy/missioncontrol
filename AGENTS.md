@@ -30,9 +30,9 @@ Prefer a complete, working MVP over waiting for perfect information.
 - Angular routing
 - Reactive forms or signal forms where appropriate
 - SCSS or CSS, no heavy UI framework unless already present
-- LocalStorage for settings
+- Settings in the backend; LocalStorage only for UI state (theme, language, view toggles)
 - Optional IndexedDB only if needed later
-- Backend: Spring Boot + PostgreSQL in `backend/`, same stack as dash (frontend is not yet wired to it; LocalStorage stays until then)
+- Backend: Spring Boot + PostgreSQL in `backend/`, same stack as dash
 
 ## Non-Goals for MVP
 

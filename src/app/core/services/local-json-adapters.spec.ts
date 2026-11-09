@@ -5,6 +5,7 @@ import { CalendarAdapterService } from './calendar-adapter.service';
 import { DashAdapterService } from './dash-adapter.service';
 import { SettingsService } from './settings.service';
 import { VeloAdapterService } from './velo-adapter.service';
+import { configureSettings } from '../../testing/configure-settings';
 
 describe('local JSON adapters', () => {
   beforeEach(() => {
@@ -30,7 +31,7 @@ describe('local JSON adapters', () => {
         ]),
       ),
     );
-    TestBed.inject(SettingsService).updateSettings({
+    await configureSettings({
       ...DEFAULT_SETTINGS,
       calendarSource: 'local-json',
       calendarSourceUrl: 'http://localhost:4500/calendar.json',
@@ -68,7 +69,7 @@ describe('local JSON adapters', () => {
       });
     });
     vi.stubGlobal('fetch', fetchMock);
-    TestBed.inject(SettingsService).updateSettings({
+    await configureSettings({
       ...DEFAULT_SETTINGS,
       veloSourceUrl: 'http://localhost:4500/velo.json',
       dashSourceUrl: 'http://localhost:4500/dash.json',
@@ -88,7 +89,7 @@ describe('local JSON adapters', () => {
       'fetch',
       vi.fn(async () => Response.json({ invalid: true })),
     );
-    TestBed.inject(SettingsService).updateSettings({
+    await configureSettings({
       ...DEFAULT_SETTINGS,
       calendarSource: 'local-json',
       calendarSourceUrl: 'http://localhost:4500/broken-calendar.json',
@@ -118,7 +119,7 @@ END:VCALENDAR
 `),
       ),
     );
-    TestBed.inject(SettingsService).updateSettings({
+    await configureSettings({
       ...DEFAULT_SETTINGS,
       calendarSource: 'ics',
       calendarSourceUrl: 'http://localhost:4500/calendar.ics',
@@ -152,7 +153,7 @@ END:VCALENDAR`;
         : new Response(calendar('private', '20260618T090000Z')),
     );
     vi.stubGlobal('fetch', fetchMock);
-    TestBed.inject(SettingsService).updateSettings({
+    await configureSettings({
       ...DEFAULT_SETTINGS,
       calendarSource: 'ics',
       calendarSourceUrl:
@@ -177,7 +178,7 @@ END:VCALENDAR`;
             ),
       ),
     );
-    TestBed.inject(SettingsService).updateSettings({
+    await configureSettings({
       ...DEFAULT_SETTINGS,
       calendarSource: 'ics',
       calendarSourceUrl: '/calendars/ok.ics\n/calendars/missing.ics',
@@ -199,7 +200,7 @@ END:VCALENDAR`;
         'fetch',
         vi.fn(async () => new Response(body)),
       );
-      TestBed.inject(SettingsService).updateSettings({
+      await configureSettings({
         ...DEFAULT_SETTINGS,
         calendarSource: 'ics',
         calendarSourceUrl: '/calendars/empty.ics',
@@ -236,7 +237,7 @@ END:VCALENDAR`;
         Response.json([{ id: 'x', title: 'X', startsAt: 'not-a-date', source: 'local-json' }]),
       ),
     );
-    TestBed.inject(SettingsService).updateSettings({
+    await configureSettings({
       ...DEFAULT_SETTINGS,
       calendarSource: 'local-json',
       calendarSourceUrl: 'http://localhost:4500/calendar.json',
@@ -253,7 +254,7 @@ END:VCALENDAR`;
       'fetch',
       vi.fn(async () => new Response('<!doctype html>')),
     );
-    TestBed.inject(SettingsService).updateSettings({
+    await configureSettings({
       ...DEFAULT_SETTINGS,
       calendarSource: 'local-json',
       calendarSourceUrl: 'http://localhost:4500/calendar.json',
@@ -271,7 +272,7 @@ END:VCALENDAR`;
       'fetch',
       vi.fn(() => new Promise<Response>((resolve) => answers.push(resolve))),
     );
-    TestBed.inject(SettingsService).updateSettings({
+    await configureSettings({
       ...DEFAULT_SETTINGS,
       calendarSource: 'local-json',
       calendarSourceUrl: 'http://localhost:4500/calendar.json',
@@ -280,6 +281,8 @@ END:VCALENDAR`;
 
     const older = adapter.getEvents();
     const newer = adapter.getEvents();
+    // Both requests first wait for the settings, so the fetches start a few microtasks later
+    await vi.waitFor(() => expect(answers).toHaveLength(2));
     answers[1](Response.json([]));
     await newer;
     answers[0](new Response('', { status: 500 }));

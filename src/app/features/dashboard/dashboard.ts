@@ -24,6 +24,7 @@ import { ShortcutService } from '../../core/services/shortcut.service';
 import { VeloAdapterService } from '../../core/services/velo-adapter.service';
 import { IntegrationNotice } from '../../shared/components/integration-notice/integration-notice';
 import { QuickAccessTile } from '../../shared/components/quick-access-tile/quick-access-tile';
+import { SettingsStatusNotice } from '../../shared/components/settings-status-notice/settings-status-notice';
 import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { TrendLine } from '../../shared/components/trend-line/trend-line';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
@@ -39,6 +40,7 @@ import { coversDay, localDateKey } from '../calendar/calendar-month';
     IntegrationNotice,
     RouterLink,
     QuickAccessTile,
+    SettingsStatusNotice,
     SourceBadge,
     TrendLine,
     WidgetCard,

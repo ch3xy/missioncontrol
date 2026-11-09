@@ -8,7 +8,7 @@ Initial assumptions:
 - Velo runs in the local network or locally.
 - Dash runs in the local network or locally.
 - sevDesk starts as an external shortcut.
-- The MVP should not require a backend (since 2026-11-09 a backend exists, see `docs/BACKEND.md`; the frontend still runs on LocalStorage until it is connected).
+- Originally the MVP had no backend. Since 2026-11-09 the backend stores the settings (`docs/BACKEND.md`); without it the app runs only with the defaults and saving disabled.
 - Calendar data starts as mock data.
 - Real integrations can be added later through adapters.
 
@@ -16,7 +16,7 @@ Implementation assumptions:
 
 - External Velo, Dash, and sevDesk entries are launch shortcuts only.
 - Default URLs are `http://localhost:4201`, `http://localhost:4202`, and `https://my.sevdesk.de`.
-- Settings are stored only in browser LocalStorage.
+- Settings are stored in the backend (since 2026-11-09). Existing LocalStorage settings are not migrated; the JSON export/import of older versions can be used to carry them over. LocalStorage only keeps UI state (theme, language, views).
 - Calendar, Velo, and Dash data are provided by typed mock adapters for now.
 - Placeholder source URL fields exist in Settings so later local JSON or ICS adapters can be added without changing the UI.
 - Local JSON source URLs are optional placeholders and fall back to mock data when a request fails or the response shape is invalid.
@@ -106,8 +106,8 @@ Review fixes (2026-10-27):
 - `STATUS:CANCELLED` hides events and single occurrences; a cancelled occurrence without `DTSTART` acts like an `EXDATE`. Changed occurrences are only related to the series with the same `UID`.
 - Every fetch (local JSON, REST APIs, ICS) is aborted after 15 seconds. The dashboard updates each card as soon as its source answers; a failing load no longer leaves the refresh blocked.
 - Times of day (top bar date, "Today", highlighted day) follow a shared clock that ticks every minute, so an open tab rolls over at midnight.
-- Imported and stored settings are checked field by field; files that are not a JSON object are rejected. If LocalStorage is blocked or full, settings apply for the session and Settings shows a warning.
-- URLs with user name or password are rejected, because settings are stored in LocalStorage and exported in plain text. Secret calendar links should not be entered either; iCloud is read through vdirsyncer on the server instead.
+- Imported and stored settings are checked field by field; files that are not a JSON object are rejected. If the backend cannot be reached, the defaults apply, saving is disabled and Dashboard and Settings show a notice with a retry button.
+- URLs with user name or password are rejected, because settings are stored and exported in plain text. Secret calendar links should not be entered either; iCloud is read through vdirsyncer on the server instead.
 - The velo forecast only sums dates that every EUR account covers.
 
 ## Playwright-Suite (08.11.2026)

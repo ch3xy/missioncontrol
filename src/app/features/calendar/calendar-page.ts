@@ -27,6 +27,7 @@ import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 import { buildMonth, eventDayKeys, localDateKey } from './calendar-month';
 import { buildWeek, startOfWeek } from './calendar-week';
+import { SettingsStatusNotice } from '../../shared/components/settings-status-notice/settings-status-notice';
 
 export type CalendarView = 'week' | 'month' | 'list';
 const CALENDAR_VIEWS: CalendarView[] = ['week', 'month', 'list'];
@@ -48,6 +49,7 @@ interface CalendarEventGroup {
   selector: 'app-calendar-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    SettingsStatusNotice,
     DatePipe,
     IntegrationNotice,
     SourceBadge,

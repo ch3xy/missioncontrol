@@ -2,7 +2,7 @@
 
 Mission Control is a local-first Angular 22 dashboard for a freelance software developer.
 
-The Angular frontend still runs on its own with LocalStorage. A slim Spring Boot + PostgreSQL backend lives in `backend/` (see [docs/BACKEND.md](docs/BACKEND.md)); the frontend is not wired to it yet. There is no OAuth flow, and no secret is stored in the frontend.
+The Angular frontend stores its settings in a slim Spring Boot + PostgreSQL backend in `backend/` (see [docs/BACKEND.md](docs/BACKEND.md)), so they are the same on every device. LocalStorage only keeps UI state such as theme, language and views. There is no OAuth flow, and no secret is stored in the frontend.
 
 ## Features
 
@@ -12,7 +12,7 @@ The Angular frontend still runs on its own with LocalStorage. A slim Spring Boot
 - Detail pages for Calendar (read-only week view (default, 06:00–18:00 in view), month view or list, with calendar colors), Velo, and Dash
 - Configurable external app URLs for Velo, Dash, and sevDesk
 - Optional local tool shortcuts
-- LocalStorage-backed settings with export/import backup
+- Backend-stored settings with export/import backup
 - Live data from the velo and dash REST APIs (read-only)
 - Optional browser-readable local JSON sources for Calendar, Velo, and Dash
 - Basic browser-readable ICS calendar source support, several calendars merged

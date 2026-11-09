@@ -1,0 +1,28 @@
+.loading {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+  padding: var(--sp-3);
+  border-radius: var(--radius-sm);
+  background: var(--warn-bg);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+
+  p {
+    flex: 1 1 16rem;
+    margin: 0;
+  }
+}
+
+.notice__icon {
+  display: inline-flex;
+  color: var(--warn);
+}

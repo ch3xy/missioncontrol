@@ -23,6 +23,8 @@
   </div>
 </header>
 
+<app-settings-status-notice (reloaded)="refresh()" />
+
 <app-integration-notice [status]="status()" />
 
 @if (summary(); as data) {

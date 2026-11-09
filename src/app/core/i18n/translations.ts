@@ -155,7 +155,7 @@ export const EN = {
   // Settings
   'settings.title': 'Settings',
   'settings.lead':
-    'Configure local shortcuts and placeholder source URLs. Values stay in browser LocalStorage.',
+    'Configure local shortcuts and source URLs. The settings are stored in the mission control backend and apply on every device.',
   'settings.externalApps': 'External Applications',
   'settings.veloUrl': 'Velo URL',
   'settings.dashUrl': 'Dash URL',
@@ -182,7 +182,8 @@ export const EN = {
   'settings.veloApiUrl': 'velo API URL',
   'settings.dashApiUrl': 'dash API URL',
   'settings.dailyTargetHours': 'Daily target (hours)',
-  'settings.invalidTargetHours': 'Enter a value between 0.5 and 24.',
+  'settings.invalidTargetHours': 'Enter a value between 0.5 and 24 with at most two decimals.',
+  'settings.storageEyebrow': 'Backend',
   'settings.autoRefresh': 'Background refresh',
   'settings.autoRefreshHint':
     'The dashboard reloads its data periodically while it is open. It pauses while the tab is in the background and catches up when you return.',
@@ -217,8 +218,16 @@ export const EN = {
   'settings.exported': 'Settings export created.',
   'settings.imported': 'Settings imported.',
   'settings.importFailed': 'Settings import failed.',
-  'settings.notPersisted':
-    'The settings could not be stored in the browser (storage blocked or full). They only apply until the page is reloaded.',
+  'settings.saved': 'Settings saved.',
+  'settings.saveInvalid': 'The backend rejected the settings: {detail}',
+  'settings.saveUnavailable':
+    'The backend did not confirm the save (not reachable or unexpected answer). The stored settings are loaded again.',
+  'settings.saveForbidden':
+    'The backend refuses requests from this address (host or origin not allowed). Check the backend configuration.',
+  'settings.loading': 'Loading settings …',
+  'settings.unavailable':
+    'The settings could not be loaded from the backend. The defaults apply and nothing can be saved.',
+  'settings.retry': 'Load again',
   'settings.shortcutPreview': 'Shortcut Preview',
 
   // Theme
@@ -374,7 +383,7 @@ export const DE: Dictionary = {
 
   'settings.title': 'Einstellungen',
   'settings.lead':
-    'Lokale Shortcuts und Quell-URLs konfigurieren. Die Werte bleiben im LocalStorage des Browsers.',
+    'Lokale Shortcuts und Quell-URLs konfigurieren. Die Einstellungen liegen im Backend von mission control und gelten auf allen Geräten.',
   'settings.externalApps': 'Externe Anwendungen',
   'settings.veloUrl': 'Velo-URL',
   'settings.dashUrl': 'Dash-URL',
@@ -401,7 +410,9 @@ export const DE: Dictionary = {
   'settings.veloApiUrl': 'velo-API-URL',
   'settings.dashApiUrl': 'dash-API-URL',
   'settings.dailyTargetHours': 'Tagesziel (Stunden)',
-  'settings.invalidTargetHours': 'Bitte einen Wert zwischen 0,5 und 24 eingeben.',
+  'settings.invalidTargetHours':
+    'Bitte einen Wert zwischen 0,5 und 24 mit höchstens zwei Nachkommastellen eingeben.',
+  'settings.storageEyebrow': 'Backend',
   'settings.autoRefresh': 'Hintergrundaktualisierung',
   'settings.autoRefreshHint':
     'Das Dashboard lädt seine Daten regelmäßig neu, solange es geöffnet ist. Im Hintergrund-Tab pausiert es und holt die Aktualisierung bei der Rückkehr nach.',
@@ -439,8 +450,16 @@ export const DE: Dictionary = {
   'settings.exported': 'Export der Einstellungen erstellt.',
   'settings.imported': 'Einstellungen importiert.',
   'settings.importFailed': 'Import der Einstellungen fehlgeschlagen.',
-  'settings.notPersisted':
-    'Die Einstellungen konnten nicht im Browser gespeichert werden (Speicher blockiert oder voll). Sie gelten nur bis zum Neuladen der Seite.',
+  'settings.saved': 'Einstellungen gespeichert.',
+  'settings.saveInvalid': 'Das Backend hat die Einstellungen abgelehnt: {detail}',
+  'settings.saveForbidden':
+    'Das Backend lehnt Anfragen von dieser Adresse ab (Host oder Origin nicht erlaubt). Bitte die Backend-Konfiguration prüfen.',
+  'settings.saveUnavailable':
+    'Das Backend hat das Speichern nicht bestätigt (nicht erreichbar oder unerwartete Antwort). Der gespeicherte Stand wird neu geladen.',
+  'settings.loading': 'Einstellungen werden geladen …',
+  'settings.unavailable':
+    'Die Einstellungen konnten nicht vom Backend geladen werden. Es gelten die Standardwerte, Speichern ist nicht möglich.',
+  'settings.retry': 'Erneut laden',
   'settings.shortcutPreview': 'Shortcut-Vorschau',
 
   'theme.light': 'Hell',

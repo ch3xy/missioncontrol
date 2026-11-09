@@ -111,3 +111,9 @@ form {
   color: var(--text-muted);
   font-size: var(--fs-xs);
 }
+
+/* The label carries the button look; a disabled input does not open the file picker */
+.file-button.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

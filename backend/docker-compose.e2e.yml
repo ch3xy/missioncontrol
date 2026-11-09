@@ -1,0 +1,20 @@
+# Throw-away database for the Playwright suite (profile e2e). Data lives in tmpfs and is gone
+# with `docker compose -f docker-compose.e2e.yml down`.
+name: missioncontrol-e2e
+
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: missioncontrol_e2e
+      POSTGRES_USER: missioncontrol_e2e
+      POSTGRES_PASSWORD: missioncontrol_e2e
+    ports:
+      - "127.0.0.1:5435:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U missioncontrol_e2e -d missioncontrol_e2e"]
+      interval: 1s
+      timeout: 3s
+      retries: 30

@@ -1,0 +1,9 @@
+@if (status() === 'loading') {
+  <p class="loading" role="status">{{ 'settings.loading' | t }}</p>
+} @else if (status() === 'unavailable') {
+  <div class="notice" role="alert">
+    <span class="notice__icon"><svg lucideTriangleAlert [size]="16"></svg></span>
+    <p>{{ 'settings.unavailable' | t }}</p>
+    <button class="btn" type="button" (click)="retry()">{{ 'settings.retry' | t }}</button>
+  </div>
+}

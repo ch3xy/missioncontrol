@@ -2,7 +2,7 @@
 
 ## Current State
 
-Mission Control is a runnable Angular 22 MVP. The frontend runs on LocalStorage; a backend exists under `backend/` but is not connected yet (`docs/BACKEND.md`).
+Mission Control is a runnable Angular 22 MVP. The settings are stored in the backend under `backend/` (`docs/BACKEND.md`).
 
 Implemented:
 
@@ -14,7 +14,7 @@ Implemented:
 - Calendar detail refresh with event start/end time display
 - Calendar agenda groups appointments by date
 - Velo and Dash detail refresh actions with last-updated timestamps
-- Settings page with LocalStorage persistence and reset to defaults
+- Settings page with backend persistence, reset to defaults and a notice when the backend is unavailable
 - Settings shortcut preview using the same Quick Access tiles as the dashboard
 - Settings presets for bundled JSON and ICS example sources
 - Settings export/import for local backup and restore

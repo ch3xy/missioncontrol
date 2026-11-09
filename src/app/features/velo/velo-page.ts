@@ -10,11 +10,13 @@ import { IntegrationNotice } from '../../shared/components/integration-notice/in
 import { SOURCE_LABELS, SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { TrendLine } from '../../shared/components/trend-line/trend-line';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
+import { SettingsStatusNotice } from '../../shared/components/settings-status-notice/settings-status-notice';
 
 @Component({
   selector: 'app-velo-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    SettingsStatusNotice,
     CurrencyPipe,
     DatePipe,
     IntegrationNotice,

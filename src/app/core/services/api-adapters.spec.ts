@@ -4,6 +4,7 @@ import { DEFAULT_SETTINGS } from '../models/settings.model';
 import { DashAdapterService } from './dash-adapter.service';
 import { SettingsService } from './settings.service';
 import { VeloAdapterService } from './velo-adapter.service';
+import { configureSettings } from '../../testing/configure-settings';
 
 type Routes = Record<string, unknown>;
 
@@ -70,13 +71,13 @@ describe('REST API adapters', () => {
     vi.unstubAllGlobals();
   });
 
-  function configure(settings: Partial<typeof DEFAULT_SETTINGS>): void {
-    TestBed.inject(SettingsService).updateSettings({ ...DEFAULT_SETTINGS, ...settings });
+  async function configure(settings: Partial<typeof DEFAULT_SETTINGS>): Promise<void> {
+    await configureSettings({ ...DEFAULT_SETTINGS, ...settings });
   }
 
   it('should sum the EUR accounts and forecasts from the velo API', async () => {
     const fetchMock = stubApi(VELO_ROUTES);
-    configure({ veloApiUrl: 'https://arrow.local/velo/' });
+    await configure({ veloApiUrl: 'https://arrow.local/velo/' });
     const adapter = TestBed.inject(VeloAdapterService);
 
     const summary = await adapter.getSummary();
@@ -109,7 +110,7 @@ describe('REST API adapters', () => {
         ],
       },
     });
-    configure({ veloApiUrl: 'https://arrow.local/velo' });
+    await configure({ veloApiUrl: 'https://arrow.local/velo' });
 
     const summary = await TestBed.inject(VeloAdapterService).getSummary();
 
@@ -119,7 +120,7 @@ describe('REST API adapters', () => {
 
   it('should prefer the API over a configured local JSON source', async () => {
     const fetchMock = stubApi(VELO_ROUTES);
-    configure({
+    await configure({
       veloApiUrl: 'https://arrow.local/velo',
       veloSourceUrl: 'http://localhost:4200/examples/velo.json',
     });
@@ -131,7 +132,7 @@ describe('REST API adapters', () => {
 
   it('should show no data and a warning when velo has no EUR account', async () => {
     stubApi({ '/api/accounts': [{ id: 'a3', currentBalance: 1, currency: 'USD' }] });
-    configure({ veloApiUrl: 'https://arrow.local/velo' });
+    await configure({ veloApiUrl: 'https://arrow.local/velo' });
     const adapter = TestBed.inject(VeloAdapterService);
 
     const summary = await adapter.getSummary();
@@ -150,7 +151,7 @@ describe('REST API adapters', () => {
         throw new TypeError('Failed to fetch');
       }),
     );
-    configure({ veloApiUrl: 'https://arrow.local/velo' });
+    await configure({ veloApiUrl: 'https://arrow.local/velo' });
     const adapter = TestBed.inject(VeloAdapterService);
 
     const summary = await adapter.getSummary();
@@ -161,7 +162,7 @@ describe('REST API adapters', () => {
 
   it('should read time, clients and projects from the dash API', async () => {
     stubApi(DASH_ROUTES);
-    configure({ dashApiUrl: 'https://arrow.local/dash', dailyTargetHours: 7.5 });
+    await configure({ dashApiUrl: 'https://arrow.local/dash', dailyTargetHours: 7.5 });
     const adapter = TestBed.inject(DashAdapterService);
 
     const summary = await adapter.getSummary();
@@ -178,7 +179,7 @@ describe('REST API adapters', () => {
 
   it('should show no data and a warning when the dash API returns an unexpected shape', async () => {
     stubApi({ ...DASH_ROUTES, '/api/v1/dashboard': { today: null } });
-    configure({ dashApiUrl: 'https://arrow.local/dash' });
+    await configure({ dashApiUrl: 'https://arrow.local/dash' });
     const adapter = TestBed.inject(DashAdapterService);
 
     const summary = await adapter.getSummary();

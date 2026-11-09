@@ -3,8 +3,9 @@
 Slim Spring Boot backend of mission control, same stack and conventions as dash (decision 2026-11-09 in
 `.ai/decisions.md`). It lives in `backend/` as its own Maven project; the Angular frontend stays in the repo root.
 
-**State:** skeleton with the settings API. The frontend does not use it yet (it still reads and writes LocalStorage).
-Next: daily plan (tasks), then calendar sync and the AI-usage endpoint.
+**State:** settings API; the frontend reads and writes its settings here (`SettingsApi`, `api/v1/settings` relative to
+`<base href>`). Without the backend it shows the defaults and a notice, saving is disabled. Next: daily plan (tasks),
+then calendar sync and the AI-usage endpoint.
 
 ## Stack
 
@@ -20,23 +21,28 @@ docker compose up -d        # PostgreSQL on 127.0.0.1:5434 (velo uses 5432, dash
 ./mvnw verify               # unit + integration tests (needs Docker)
 ```
 
+Frontend: `npm start` proxies `/api` to `http://localhost:8082` (`proxy.conf.mjs`, override with `MC_API_TARGET`).
+
+Playwright starts its own backend: configuration `e2e/backend.yml` (port 8092, not part of the jar) on a throw-away PostgreSQL from
+`docker-compose.e2e.yml` (port 5435, tmpfs), removed by the global teardown. See `e2e/README.md`.
+
 - API: `http://localhost:8082/api/v1/...`, OpenAPI at `/v3/api-docs`, Swagger UI at `/swagger-ui/index.html`
 - Errors are RFC 7807 Problem Details (422 for validation, 409 for conflicts), as in dash. Only the backend's own
   `ValidationException` (422) and `ConflictException` (409) carry their message to the client; any other exception,
   including `IllegalArgumentException` and `IllegalStateException`, ends in a generic 500 "Internal error".
 - Without the `local` profile no browser origin is allowed (production-safe). The profile
-  (`application-local.yml`) allows `http://localhost:4200` (Angular dev server) and `http://localhost:8082` (Swagger UI).
+  (`application-local.yml`) allows `http://localhost:4200` and `http://127.0.0.1:4200` (Angular dev server) and `http://localhost:8082` (Swagger UI).
 - Tests start their own PostgreSQL via Testcontainers. Docker Engine 29 needs a newer API version than Testcontainers
   1.21 sends; the pom sets `-Dapi.version=1.44` for the test JVM (`docker.api.version`).
 
 ## Configuration (environment)
 
-| Variable                                      | Default                                                                                           | Meaning                                                                                                                  |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `MC_DB_URL` / `MC_DB_USER` / `MC_DB_PASSWORD` | URL `localhost:5434/missioncontrol`; user/password no default (profile `local`: `missioncontrol`) | Database                                                                                                                 |
-| `MC_BIND_ADDRESS`                             | `127.0.0.1`                                                                                       | Listen address; `0.0.0.0` only inside the container network                                                              |
-| `MC_ALLOWED_HOSTS`                            | empty (loopback only)                                                                             | Allowed `Host` names, comma separated, e.g. `arrow.local,arrow-pi.tailnet.ts.net`; IPv6 in square brackets (`[fe80::1]`) |
-| `MC_ALLOWED_ORIGINS`                          | empty (no browser origin); `local` profile: `http://localhost:4200,http://localhost:8082`         | Allowed browser origins, comma separated, e.g. `https://arrow.local`                                                     |
+| Variable                                      | Default                                                                                                         | Meaning                                                                                                                  |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `MC_DB_URL` / `MC_DB_USER` / `MC_DB_PASSWORD` | URL `localhost:5434/missioncontrol`; user/password no default (profile `local`: `missioncontrol`)               | Database                                                                                                                 |
+| `MC_BIND_ADDRESS`                             | `127.0.0.1`                                                                                                     | Listen address; `0.0.0.0` only inside the container network                                                              |
+| `MC_ALLOWED_HOSTS`                            | empty (loopback only)                                                                                           | Allowed `Host` names, comma separated, e.g. `arrow.local,arrow-pi.tailnet.ts.net`; IPv6 in square brackets (`[fe80::1]`) |
+| `MC_ALLOWED_ORIGINS`                          | empty (no browser origin); `local` profile: `http://localhost:4200,http://127.0.0.1:4200,http://localhost:8082` | Allowed browser origins, comma separated, e.g. `https://arrow.local`                                                     |
 
 ## API (v1)
 
@@ -79,4 +85,5 @@ changed there. Planned:
   backend paths here start with `/api`.
 - Set `MC_ALLOWED_HOSTS` and `MC_ALLOWED_ORIGINS` to the public names of the Pi; set `MC_BIND_ADDRESS=0.0.0.0`.
 - A release script analogous to `scripts/deploy.sh` in dash.
-- The dev proxy (`proxy.conf.mjs`) gets a `/missioncontrol/api` entry once the frontend uses the backend.
+- The `/missioncontrol/api/*` route must be matched before the static frontend and its SPA fallback, otherwise the
+  fallback answers API calls with `index.html`.

@@ -153,18 +153,16 @@ Frontend-Code (`src/`), `e2e/`, `proxy.conf.mjs`, `package.json`, `../dash`, `..
 - [ ] **URL-Prüfung Frontend/Backend endgültig angleichen:** `new URL()` (Frontend) und `java.net.URI` (Backend)
       unterscheiden sich bei Hosts mit Unterstrich, IDN-Hosts, Leerzeichen im Pfad und `https://@host`. Beim Anbinden
       eine gemeinsame, strengere Regel festlegen und in beiden Seiten testen.
-- [ ] **Frontend an das Backend anbinden:** `SettingsService` liest/schreibt per HTTP statt LocalStorage;
-      Migration vorhandener LocalStorage-Einstellungen (Import beim ersten Start); Fehler-/Offline-Zustand anzeigen
-      (Regel: keine Mock-Daten, sondern Hinweis); Eintrag `/missioncontrol/api` in `proxy.conf.mjs`.
-- [ ] **Playwright-Tests** für die sichtbaren Änderungen, sobald das Frontend angebunden ist
-      (`docs/PLAYWRIGHT_RULES.md`).
+- [x] **Frontend an das Backend anbinden:** `SettingsService` liest/schreibt über `SettingsApi`; keine Migration
+      der LocalStorage-Einstellungen (Entscheidung 2026-11-09, Export/Import reicht); Hinweis mit „Erneut laden“,
+      wenn das Backend nicht erreichbar ist; `/api` in `proxy.conf.mjs`.
+- [x] **Playwright-Tests** gegen ein eigenes Test-Backend (`e2e/backend.yml`, Wegwerf-DB), siehe
+      `docs/PLAYWRIGHT_STRATEGY.md`.
 
 ### Tagesplan (nächste Erweiterung)
 
-Unbeantwortet aus der Konzeptphase:
-
-- Schätzung pro Aufgabe Pflicht oder optional? (Ohne Schätzung kein Kapazitätsbalken.)
-- Liste mit drei Zuständen (offen, in Arbeit, erledigt) oder echte Board-Spalten mit Drag-and-drop?
+Entschieden am 2026-11-09 (Details in `.ai/decisions.md`): Schätzung optional, Liste und Board per Umschalter
+(Ansicht in LocalStorage), Übernahme unerledigter Aufgaben als Vorschlag, Kapazität = Tagesziel minus Termine.
 
 Geplanter Umfang: Tabelle und API für Aufgaben (Titel, Schätzung, Status, Tag, Reihenfolge), „Heute“-Seite mit
 Fortschritt und Kapazität (Arbeitstag abzüglich Kalendertermine), Übernahme unerledigter Aufgaben als Vorschlag,

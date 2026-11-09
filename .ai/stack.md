@@ -1,6 +1,6 @@
 # Tech-Stack
 
-mission control besteht aus dem Angular-Frontend (Repo-Root) und einem schlanken Backend unter `backend/` (Spring Boot + PostgreSQL, siehe `docs/BACKEND.md`). Das Frontend ist noch nicht an das Backend angebunden und nutzt weiter LocalStorage. Die ursprüngliche Entscheidung „kein Backend“ (`docs/NO_BACKEND_DECISION.md`) ist durch den Eintrag vom 2026-11-09 in `decisions.md` abgelöst.
+mission control besteht aus dem Angular-Frontend (Repo-Root) und einem schlanken Backend unter `backend/` (Spring Boot + PostgreSQL, siehe `docs/BACKEND.md`). Das Frontend liest und speichert die Einstellungen über das Backend; LocalStorage hält nur UI-Zustand. Die ursprüngliche Entscheidung „kein Backend“ (`docs/NO_BACKEND_DECISION.md`) ist durch den Eintrag vom 2026-11-09 in `decisions.md` abgelöst.
 Der Frontend-Stack ist bewusst **identisch mit dash** (`dash/frontend`), damit Wissen, Snippets und
 Konfiguration zwischen den Projekten austauschbar sind.
 

@@ -20,6 +20,8 @@ export class VeloAdapterService implements VeloAdapter {
   /** Priority: velo REST API → local JSON. No data without a working source. */
   async getSummary(): Promise<VeloSummary | null> {
     const request = ++this.latestRequest;
+    // The sources come from the settings, which the backend delivers after the first render
+    await this.settingsService.whenLoaded();
     const apiUrl = this.settingsService.settings().veloApiUrl;
 
     if (apiUrl?.trim()) {

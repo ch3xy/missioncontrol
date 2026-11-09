@@ -15,9 +15,14 @@ npm --prefix e2e test
 [Playwright](https://playwright.dev/docs/test-configuration).
 
 Playwright startet und beendet eine eigene Angular-Instanz unter
-`http://127.0.0.1:4300`. Ein belegter Port führt zum Fehler; bestehende Server
-werden nicht wiederverwendet. Die leere Proxy-Konfiguration verhindert Zugriff
-auf die Entwicklungs-Proxys. Jeder Test erhält einen frischen Browserkontext;
+`http://127.0.0.1:4300` und ein eigenes Backend (`backend/` mit
+`e2e/backend.yml`, Port 8092) auf einer Wegwerf-PostgreSQL (`backend/docker-compose.e2e.yml`,
+Port 5435). Dafür sind **Docker und Java 25** nötig; der Global Teardown
+entfernt die Datenbank wieder. Ein belegter Port führt zum Fehler; bestehende
+Server werden nicht wiederverwendet. Die Proxy-Konfiguration leitet nur `/api`
+an dieses Test-Backend und verhindert Zugriff auf die Entwicklungs-Proxys.
+Die Einstellungen sind global, deshalb laufen die Tests seriell und setzen sie
+vor jedem Test per API zurück. Jeder Test erhält einen frischen Browserkontext;
 externe Browserrequests werden blockiert. Keine persönlichen Einstellungen,
 Kalender oder anderen Apps werden verändert. JSON-/ICS-Antworten werden nur in
 gezielten Integrationstests abgefangen; das ist keine Fullstack-E2E-Abdeckung.

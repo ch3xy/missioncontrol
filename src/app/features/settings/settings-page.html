@@ -5,7 +5,9 @@
   </div>
 </header>
 
-<app-widget-card [title]="'settings.externalApps' | t" eyebrow="LocalStorage">
+<app-settings-status-notice (reloaded)="form.reset(savedSettings())" />
+
+<app-widget-card [title]="'settings.externalApps' | t" [eyebrow]="'settings.storageEyebrow' | t">
   <form [formGroup]="form" (ngSubmit)="save()">
     <label class="field">
       <span>{{ 'settings.veloUrl' | t }}</span>
@@ -83,10 +85,10 @@
     </label>
 
     <div class="preset-actions">
-      <button class="btn" type="button" (click)="useBundledJsonExamples()">
+      <button class="btn" type="button" [disabled]="!editable()" (click)="useBundledJsonExamples()">
         {{ 'settings.useJsonExamples' | t }}
       </button>
-      <button class="btn" type="button" (click)="useBundledIcsExample()">
+      <button class="btn" type="button" [disabled]="!editable()" (click)="useBundledIcsExample()">
         {{ 'settings.useIcsExample' | t }}
       </button>
     </div>
@@ -138,7 +140,7 @@
     </label>
 
     <div class="preset-actions">
-      <button class="btn" type="button" (click)="useServerApis()">
+      <button class="btn" type="button" [disabled]="!editable()" (click)="useServerApis()">
         {{ 'settings.useServerApis' | t }}
       </button>
     </div>
@@ -206,11 +208,11 @@
     </div>
 
     <div class="actions">
-      <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid || !editable()">
         <svg lucideSave></svg>
         {{ 'settings.save' | t }}
       </button>
-      <button class="btn" type="button" (click)="reset()">
+      <button class="btn" type="button" [disabled]="!editable()" (click)="reset()">
         <svg lucideRotateCcw></svg>
         {{ 'settings.reset' | t }}
       </button>
@@ -218,8 +220,18 @@
   </form>
 
   <p class="saved">{{ savedMessage() }}</p>
-  @if (!persisted()) {
-    <p class="text-error">{{ 'settings.notPersisted' | t }}</p>
+  @if (saveResult(); as result) {
+    @if (result.ok) {
+      <p class="saved" role="status">{{ 'settings.saved' | t }}</p>
+    } @else if (result.reason === 'invalid') {
+      <p class="text-error" role="alert">
+        {{ 'settings.saveInvalid' | t: { detail: result.detail || '–' } }}
+      </p>
+    } @else if (result.reason === 'forbidden') {
+      <p class="text-error" role="alert">{{ 'settings.saveForbidden' | t }}</p>
+    } @else {
+      <p class="text-error" role="alert">{{ 'settings.saveUnavailable' | t }}</p>
+    }
   }
   <p class="hint">{{ sourceHint() }}</p>
 </app-widget-card>
@@ -263,14 +275,24 @@
 
 <app-widget-card [title]="'settings.backup' | t" [eyebrow]="'settings.localFile' | t">
   <div class="backup-actions">
-    <button class="btn btn-primary" type="button" (click)="exportSettings()">
+    <button
+      class="btn btn-primary"
+      type="button"
+      [disabled]="status() !== 'ready'"
+      (click)="exportSettings()"
+    >
       <svg lucideDownload></svg>
       {{ 'settings.export' | t }}
     </button>
-    <label class="btn file-button">
+    <label class="btn file-button" [class.is-disabled]="!editable()">
       <svg lucideUpload></svg>
       <span>{{ 'settings.import' | t }}</span>
-      <input type="file" accept="application/json,.json" (change)="importSettings($event)" />
+      <input
+        type="file"
+        accept="application/json,.json"
+        [disabled]="!editable()"
+        (change)="importSettings($event)"
+      />
     </label>
   </div>
 

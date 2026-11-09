@@ -26,6 +26,8 @@
   </div>
 </header>
 
+<app-settings-status-notice (reloaded)="refresh()" />
+
 <section class="dashboard-grid">
   <app-widget-card class="span-4" [title]="'dashboard.calendar' | t" [eyebrow]="'common.today' | t">
     @if (calendarSource(); as source) {

@@ -9,13 +9,13 @@ Stand: 2026-11-09. Ziel: Alle drei Arrow-Produkte sollen wie aus einem Guss wirk
 |---|---|---|---|
 | Fachlich | Cashflow-Forecast, Finanzen | Zeiterfassung, Kunden, Projekte, Reports | Cockpit: Kalender, Zusammenfassungen aus velo/dash, Shortcuts |
 | Descriptor im Logo | „cash flow“ | „time tracking“ | „cockpit“ |
-| Datenhaltung | PostgreSQL | PostgreSQL | LocalStorage + REST-APIs von velo/dash, Local-JSON/ICS |
+| Datenhaltung | PostgreSQL | PostgreSQL | PostgreSQL (Einstellungen) + REST-APIs von velo/dash, Local-JSON/ICS |
 
 ## Tech-Stack
 
 | Thema | velo | dash | mission control |
 |---|---|---|---|
-| Backend | Java 25, Spring Boot 4, Flyway | Java 25, Spring Boot 4, Flyway | Java 25, Spring Boot 4, Flyway (`backend/`, Frontend noch nicht angebunden) |
+| Backend | Java 25, Spring Boot 4, Flyway | Java 25, Spring Boot 4, Flyway | Java 25, Spring Boot 4, Flyway (`backend/`) |
 | Angular | 19.2 | 22 | 22 ✅ |
 | TypeScript | ~5.7 | ~6.0 | ~6.0 ✅ |
 | Komponentenbibliothek | Angular Material (auf Arrow-Tokens gethemed) | keine, eigene Klassen | keine, eigene Klassen (wie dash) ✅ |

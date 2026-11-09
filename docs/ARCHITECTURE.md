@@ -2,7 +2,7 @@
 
 ## Overview
 
-Mission Control is an Angular 22 dashboard. The frontend works without a backend (LocalStorage); a Spring Boot backend exists under `backend/` but is not connected yet (see `docs/BACKEND.md`, decision 2026-11-09 in `.ai/decisions.md`).
+Mission Control is an Angular 22 dashboard. The settings are stored in a slim Spring Boot backend under `backend/` (see `docs/BACKEND.md`, decision 2026-11-09 in `.ai/decisions.md`).
 
 It aggregates information and shortcuts from local tools without owning their data.
 
@@ -27,12 +27,13 @@ Angular App
 
 ## Frontend-Only Principle (MVP)
 
-The MVP must not require a backend. Since 2026-11-09 a backend exists (`backend/`, `docs/BACKEND.md`), but the frontend does not use it yet and keeps running on LocalStorage.
+Originally the MVP had no backend. Since 2026-11-09 the backend (`backend/`, `docs/BACKEND.md`) is the only store of the settings; without it the app still starts, but only with the defaults, saving disabled and a notice.
 
 Allowed:
 
 - Static mock data
-- Browser LocalStorage
+- mission control backend (settings)
+- Browser LocalStorage (UI state only)
 - Opening local web apps in new tabs
 - Fetching public/local JSON endpoints if CORS allows it
 - User-configurable URLs
@@ -87,7 +88,7 @@ Later:
 Use:
 
 - Angular signals for UI state
-- LocalStorage for user settings
+- Backend for user settings, LocalStorage for UI state
 - Typed adapter services for data sources
 
 ## Routing

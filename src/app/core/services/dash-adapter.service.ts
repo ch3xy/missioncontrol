@@ -17,6 +17,8 @@ export class DashAdapterService implements DashAdapter {
   /** Priority: dash REST API → local JSON. No data without a working source. */
   async getSummary(): Promise<DashSummary | null> {
     const request = ++this.latestRequest;
+    // The sources come from the settings, which the backend delivers after the first render
+    await this.settingsService.whenLoaded();
     const { dashApiUrl, dailyTargetHours } = this.settingsService.settings();
 
     if (dashApiUrl?.trim()) {

@@ -5,6 +5,7 @@ import { DashAdapterService } from '../../core/services/dash-adapter.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { createMemoryStorage } from '../../testing/memory-storage';
 import { Dashboard } from './dashboard';
+import { configureSettings } from '../../testing/configure-settings';
 
 describe('Dashboard background refresh', () => {
   let hidden = false;
@@ -24,7 +25,10 @@ describe('Dashboard background refresh', () => {
 
   async function createDashboard(autoRefreshMinutes: 0 | 5) {
     TestBed.configureTestingModule({ providers: [provideRouter([])] });
-    TestBed.inject(SettingsService).updateSettings({ ...DEFAULT_SETTINGS, autoRefreshMinutes });
+    await configureSettings({
+      ...DEFAULT_SETTINGS,
+      autoRefreshMinutes,
+    });
     const getSummary = vi.spyOn(TestBed.inject(DashAdapterService), 'getSummary');
 
     const fixture = TestBed.createComponent(Dashboard);

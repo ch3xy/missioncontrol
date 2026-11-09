@@ -51,6 +51,8 @@
   </div>
 </header>
 
+<app-settings-status-notice (reloaded)="refresh()" />
+
 <app-widget-card [title]="title()" [eyebrow]="statusLabel()">
   <div class="month-toolbar">
     @if (source(); as source) {

@@ -50,7 +50,10 @@ sevDesk ist kein Route-Ziel, sondern ein externer Link über `ShortcutService.op
 
 - Lokaler UI-State ausschließlich über `signal()` / `computed()`; Komponenten sind `OnPush`.
 - Zoneless: asynchrone Ergebnisse (Adapter-Promises) **immer** in Signals schreiben, nie in Plain-Felder.
-- `SettingsService` hält die Einstellungen als Signal und persistiert in LocalStorage.
+- `SettingsService` hält die Einstellungen als Signal; Quelle ist das Backend (`SettingsApi`, `GET`/`PUT api/v1/settings`
+  relativ zu `<base href>`). `status` ist `loading | ready | unavailable`; bis zur Antwort und ohne Backend gelten
+  die Standardwerte, Speichern ist dann gesperrt (`app-settings-status-notice` zeigt den Hinweis). Adapter warten mit
+  `whenLoaded()`, bevor sie Quellen lesen.
 - `ThemeService` hält `mode` (`light | dark | system`) und das effektive `theme`; setzt `data-theme` auf `<html>`.
 - `I18nService` hält `lang` (`de | en`, Standard `de`) und `locale` (`de-AT | en-US`); setzt `lang` auf `<html>`.
 
@@ -69,9 +72,10 @@ sevDesk ist kein Route-Ziel, sondern ein externer Link über `ShortcutService.op
 
 ## LocalStorage-Schlüssel
 
+Nur UI-Zustand; die Einstellungen liegen im Backend.
+
 | Schlüssel                          | Inhalt                                   |
 | ---------------------------------- | ---------------------------------------- |
-| Settings-Key des `SettingsService` | Externe URLs, Datenquellen, lokale Tools |
 | `missioncontrol-theme`             | `light` / `dark` / `system`              |
 | `missioncontrol-nav-collapsed`     | `true` / `false`                         |
 | `missioncontrol-lang`              | `de` / `en`                              |
@@ -97,4 +101,6 @@ Caddy auf einem Host (same-origin, kein CORS); im Dev-Server spiegelt `proxy.con
 
 - Vitest über `ng test`; Specs liegen neben den Dateien (`*.spec.ts`).
 - LocalStorage in Specs mit `vi.stubGlobal('localStorage', createMemoryStorage())` ersetzen.
+- Die Settings-API ersetzt `src/test-providers.ts` (`providersFile` in `angular.json`) für alle Specs durch
+  `InMemorySettingsApi`; `updateSettings` ist asynchron und wird in Specs mit `await` aufgerufen.
 - `feature-pages.spec.ts` ist der Smoke-Test für alle Seiten.

@@ -1,0 +1,16 @@
+# Backend configuration for Playwright only, loaded by e2e/playwright.config.ts with
+# --spring.config.additional-location (not part of the jar): own port and the throw-away database
+# from backend/docker-compose.e2e.yml, so the suite never touches development or production data.
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5435/missioncontrol_e2e
+    username: missioncontrol_e2e
+    password: missioncontrol_e2e
+
+server:
+  port: 8092
+
+# The Angular test server (127.0.0.1:4300) proxies /api here and keeps the browser origin.
+app:
+  access:
+    allowed-origins: http://127.0.0.1:4300

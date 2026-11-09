@@ -3,10 +3,34 @@
 Kurzprotokoll von Produkt- und Architekturentscheidungen, die sich nicht aus dem Code ablesen lassen.
 Neueste oben.
 
+## 2026-11-09 — Frontend nutzt das Backend für Einstellungen; Tagesplan-Konzept festgelegt
+
+**Status:** Anbindung umgesetzt; Tagesplan entschieden, Umsetzung folgt.
+
+**Einstellungen:** Das Backend ist die einzige Ablage der Einstellungen (`SettingsService` → `SettingsApi`,
+`api/v1/settings` relativ zu `<base href>`). LocalStorage hält nur noch UI-Zustand, der nicht gespeichert werden
+muss (Theme, Sprache, eingeklappte Navigation, gewählte Ansichten). Ohne erreichbares Backend gelten die
+Standardwerte, Speichern ist gesperrt und Dashboard/Einstellungen zeigen einen Hinweis mit „Erneut laden“ (keine
+Mock-Daten). Bestehende LocalStorage-Einstellungen werden **nicht** migriert; wer sie braucht, nutzt Export/Import.
+
+**E2E:** Playwright läuft gegen ein echtes Test-Backend (`e2e/backend.yml`, Port 8092, Wegwerf-PostgreSQL auf 5435) statt
+gegen eine gefakte API. Weil die Einstellungen global sind, laufen die Tests seriell und setzen sie vorher per API
+zurück.
+
+**Tagesplan:**
+
+- Schätzung pro Aufgabe ist **optional**; ungeschätzte Aufgaben zählen nicht zur Kapazität und werden gezählt
+  angezeigt.
+- Darstellung als **Liste (offen, in Arbeit, erledigt) und als Board**, per Umschalter wechselbar; die gewählte
+  Ansicht liegt in LocalStorage.
+- Unerledigte Aufgaben vom Vortag erscheinen als **Vorschlag zur Übernahme** (alle, einzeln oder zurück in den
+  Brain-Dump).
+- **Kapazität = Tagesziel minus Kalendertermine des Tages** (ganztägige ausgenommen, Überlappungen einmal).
+
 ## 2026-11-09 — mission control bekommt ein Backend (Spring Boot + PostgreSQL)
 
-**Status:** Grundgerüst umgesetzt (`backend/`, Einstellungen-API, Zugriffsschutz). Das Frontend ist noch nicht
-angebunden, die Tagesplan-Erweiterung folgt.
+**Status:** Grundgerüst umgesetzt (`backend/`, Einstellungen-API, Zugriffsschutz); Frontend angebunden (Eintrag
+oben), die Tagesplan-Erweiterung folgt.
 
 **Entscheidung:** mission control erhält ein schlankes Backend im selben Stack wie dash und velo (Java 25,
 Spring Boot 4.1, Flyway, PostgreSQL 17, springdoc). Es löst die Entscheidung „frontend-only, kein Backend“ ab.
