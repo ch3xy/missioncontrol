@@ -29,6 +29,8 @@
 <app-settings-status-notice (reloaded)="refresh()" />
 
 <section class="dashboard-grid">
+  <app-today-widget class="span-8" [events]="events()" />
+
   <app-widget-card class="span-4" [title]="'dashboard.calendar' | t" [eyebrow]="'common.today' | t">
     @if (calendarSource(); as source) {
       <app-source-badge [source]="source" />
@@ -66,7 +68,7 @@
   </app-widget-card>
 
   <app-widget-card
-    class="span-4"
+    class="span-6"
     [title]="'dashboard.veloCashFlow' | t"
     [eyebrow]="'common.forecast' | t"
   >
@@ -89,7 +91,7 @@
     }
   </app-widget-card>
 
-  <app-widget-card class="span-4" [title]="'dashboard.dashTime' | t" [eyebrow]="'common.today' | t">
+  <app-widget-card class="span-6" [title]="'dashboard.dashTime' | t" [eyebrow]="'common.today' | t">
     <app-integration-notice [status]="dashStatus()" />
     @if (dash(); as summary) {
       <app-source-badge [source]="summary.source" />

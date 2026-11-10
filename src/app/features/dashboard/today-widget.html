@@ -1,0 +1,149 @@
+<app-widget-card [title]="'todayWidget.title' | t" [eyebrow]="'todayWidget.eyebrow' | t">
+  @if (plan.status() === 'loading') {
+    <p class="hint" role="status">{{ 'today.loading' | t }}</p>
+  } @else if (plan.status() === 'unavailable') {
+    <div class="plan-notice" role="alert">
+      <p>{{ 'today.unavailable' | t }}</p>
+      <button class="btn btn-sm" type="button" (click)="reload()">
+        {{ 'settings.retry' | t }}
+      </button>
+    </div>
+  }
+
+  @if (plan.error(); as error) {
+    <div class="plan-notice" role="alert">
+      <p>{{ error.key | t: { detail: error.detail ?? '' } }}</p>
+      <button class="btn btn-sm" type="button" (click)="plan.clearError()">
+        {{ 'today.dismiss' | t }}
+      </button>
+    </div>
+  }
+
+  <form class="quick-add" [formGroup]="form" (ngSubmit)="add(false)">
+    <input
+      class="input"
+      [attr.aria-label]="'today.newTask' | t"
+      type="text"
+      maxlength="200"
+      [formControl]="title"
+      [placeholder]="'todayWidget.placeholder' | t"
+    />
+    <button class="btn btn-primary" type="submit" [disabled]="!plan.editable()">
+      <svg lucidePlus></svg>
+      {{ 'today.add' | t }}
+    </button>
+    <button
+      class="btn btn-icon"
+      type="button"
+      [disabled]="!plan.editable()"
+      [attr.aria-label]="'today.dumpAdd' | t"
+      [title]="'today.dumpAdd' | t"
+      (click)="add(true)"
+    >
+      <svg lucideInbox></svg>
+    </button>
+  </form>
+
+  @if (plan.carryOver().length > 0) {
+    <div class="carry-hint">
+      <span>{{ 'todayWidget.carryOver' | t: { count: plan.carryOver().length } }}</span>
+      <button
+        class="btn btn-sm"
+        type="button"
+        [disabled]="!plan.editable()"
+        (click)="takeOverAll()"
+      >
+        {{ 'today.takeOverAll' | t }}
+      </button>
+    </div>
+  }
+
+  @if (plan.status() === 'ready') {
+    @if (plan.tasks().length === 0) {
+      <p class="hint">{{ 'today.empty' | t }}</p>
+    } @else {
+      <p class="summary">
+        <strong>{{
+          'todayWidget.progress' | t: { done: doneCount(), total: plan.tasks().length }
+        }}</strong>
+        @if (allDone()) {
+          · {{ 'todayWidget.allDone' | t }}
+        }
+      </p>
+      <div
+        class="progress"
+        [class.danger]="capacity().overbooked"
+        role="meter"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-valuenow]="plannedShare()"
+        [attr.aria-label]="'today.capacity' | t"
+      >
+        <span [style.width.%]="plannedShare()"></span>
+      </div>
+      <p class="hint capacity-line" [class.text-error]="capacity().overbooked">
+        {{
+          'today.capacityFigures'
+            | t
+              : {
+                  planned: formatMinutes(capacity().plannedMinutes),
+                  available: formatMinutes(capacity().availableMinutes),
+                  done: formatMinutes(capacity().doneMinutes),
+                }
+        }}
+      </p>
+    }
+  }
+
+  <ul class="mini-tasks" [attr.aria-label]="'today.tasks' | t">
+    @for (task of visibleTasks(); track task.id) {
+      <li class="mini-task" [class.is-done]="task.status === 'DONE'">
+        <button
+          class="check"
+          type="button"
+          [disabled]="!plan.editable()"
+          [attr.aria-pressed]="task.status === 'DONE'"
+          [attr.aria-label]="
+            (task.status === 'DONE' ? 'todayWidget.reopen' : 'todayWidget.markDone')
+              | t: { title: task.title }
+          "
+          (click)="toggleDone(task)"
+        >
+          @if (task.status === 'DONE') {
+            <svg lucideCircleCheck></svg>
+          } @else {
+            <svg lucideCircle></svg>
+          }
+        </button>
+        <span class="mini-title">{{ task.title }}</span>
+        @if (task.estimateMinutes !== null) {
+          <small class="muted">{{ formatMinutes(task.estimateMinutes) }}</small>
+        }
+        @if (task.status === 'IN_PROGRESS') {
+          <span class="badge info">{{ 'today.status.IN_PROGRESS' | t }}</span>
+        } @else if (task.status === 'OPEN') {
+          <button
+            class="btn btn-sm btn-icon"
+            type="button"
+            [disabled]="!plan.editable()"
+            [attr.aria-label]="'todayWidget.start' | t: { title: task.title }"
+            [title]="'todayWidget.startShort' | t"
+            (click)="start(task)"
+          >
+            <svg lucidePlay></svg>
+          </button>
+        }
+      </li>
+    }
+  </ul>
+
+  <div class="footer">
+    @if (hiddenCount() > 0) {
+      <span class="muted">{{ 'todayWidget.more' | t: { count: hiddenCount() } }}</span>
+    }
+    @if (plan.backlog().length > 0) {
+      <span class="muted">{{ 'todayWidget.backlog' | t: { count: plan.backlog().length } }}</span>
+    }
+    <a class="card-link" routerLink="/today">{{ 'todayWidget.open' | t }}</a>
+  </div>
+</app-widget-card>

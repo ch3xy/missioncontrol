@@ -7,6 +7,7 @@ import {
   effect,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideRefreshCw, LucideSettings } from '@lucide/angular';
@@ -29,6 +30,7 @@ import { SourceBadge } from '../../shared/components/source-badge/source-badge';
 import { TrendLine } from '../../shared/components/trend-line/trend-line';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 import { coversDay, localDateKey } from '../calendar/calendar-month';
+import { TodayWidget } from './today-widget';
 
 @Component({
   selector: 'app-dashboard',
@@ -42,6 +44,7 @@ import { coversDay, localDateKey } from '../calendar/calendar-month';
     QuickAccessTile,
     SettingsStatusNotice,
     SourceBadge,
+    TodayWidget,
     TrendLine,
     WidgetCard,
     LucideRefreshCw,
@@ -61,6 +64,7 @@ export class Dashboard {
   private readonly document = inject(DOCUMENT);
   private readonly clock = inject(ClockService);
 
+  private readonly todayWidget = viewChild(TodayWidget);
   protected readonly events = signal<CalendarEvent[]>([]);
   protected readonly velo = signal<VeloSummary | null>(null);
   protected readonly dash = signal<DashSummary | null>(null);
@@ -160,6 +164,8 @@ export class Dashboard {
         this.calendarAdapter.getEvents().then((events) => this.events.set(events)),
         this.veloAdapter.getSummary().then((velo) => this.velo.set(velo)),
         this.dashAdapter.getSummary().then((dash) => this.dash.set(dash)),
+        // Also for the automatic refresh, so tasks changed on another device do not stay stale
+        this.todayWidget()?.reload(),
       ]);
       this.lastUpdated.set(new Date());
     } finally {

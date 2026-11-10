@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { DEFAULT_SETTINGS } from '../../core/models/settings.model';
 import { DashAdapterService } from '../../core/services/dash-adapter.service';
+import { TaskApi } from '../../core/services/task-api';
 import { SettingsService } from '../../core/services/settings.service';
 import { createMemoryStorage } from '../../testing/memory-storage';
 import { Dashboard } from './dashboard';
@@ -47,6 +48,15 @@ describe('Dashboard background refresh', () => {
 
     await vi.advanceTimersByTimeAsync(5 * 60_000);
     expect(getSummary).toHaveBeenCalledTimes(3);
+  });
+
+  it('should reload the daily plan with the automatic refresh', async () => {
+    await createDashboard(5);
+    const list = vi.spyOn(TestBed.inject(TaskApi), 'list');
+
+    await vi.advanceTimersByTimeAsync(5 * 60_000);
+
+    expect(list).toHaveBeenCalled();
   });
 
   it('should pause while hidden and catch up when visible again', async () => {

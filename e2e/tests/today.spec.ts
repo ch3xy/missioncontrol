@@ -264,3 +264,35 @@ test('Bearbeiten nach Änderung auf einem anderen Gerät überschreibt nichts', 
   await expect(page.getByLabel('Titel', { exact: true })).toHaveCount(0);
   await expect(taskList(page).getByText('E2E Anderes Gerät', { exact: true })).toBeVisible();
 });
+
+test('Übersicht: Mini-Tagesplan mit Schnellaktionen', async ({ page }) => {
+  await page.clock.setFixedTime(new Date(`${E2E_TODAY}T09:00:00Z`));
+  await page.goto('/');
+  const widget = page.locator('app-today-widget');
+  await expect(widget.getByRole('heading', { name: 'Heute', exact: true })).toBeVisible();
+  await expect(widget.getByText('Für heute ist noch nichts geplant.')).toBeVisible();
+
+  await widget.getByLabel('Neue Aufgabe', { exact: true }).fill('E2E Übersicht Aufgabe');
+  await widget.getByRole('button', { name: 'Hinzufügen', exact: true }).click();
+  const list = widget.getByRole('list', { name: 'Aufgaben', exact: true });
+  await expect(list.getByText('E2E Übersicht Aufgabe', { exact: true })).toBeVisible();
+  await expect(widget.getByText('0 von 1 Aufgaben erledigt')).toBeVisible();
+
+  await widget.getByLabel('Neue Aufgabe', { exact: true }).fill('E2E Übersicht Idee');
+  await widget.getByRole('button', { name: 'In den Brain-Dump', exact: true }).click();
+  await expect(widget.getByText('Brain-Dump: 1')).toBeVisible();
+  await expect(list.getByText('E2E Übersicht Idee')).toHaveCount(0);
+
+  await widget.getByRole('button', { name: '„E2E Übersicht Aufgabe“ starten' }).click();
+  await expect(widget.getByText('In Arbeit', { exact: true })).toBeVisible();
+
+  await widget
+    .getByRole('button', { name: '„E2E Übersicht Aufgabe“ als erledigt markieren' })
+    .click();
+  await expect(widget.getByText('1 von 1 Aufgaben erledigt')).toBeVisible();
+
+  await page.reload();
+  await expect(widget.getByText('1 von 1 Aufgaben erledigt')).toBeVisible();
+  await widget.getByRole('link', { name: 'Tagesplan öffnen' }).click();
+  await expect(page).toHaveURL('/today');
+});
