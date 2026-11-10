@@ -84,3 +84,12 @@ export function formatMinutes(minutes: number): string {
   const rest = minutes % 60;
   return `${hours}:${String(rest).padStart(2, '0')} h`;
 }
+
+/** Share of `whole` for a progress bar, capped at 100 %. */
+export function share(part: number, whole: number): number {
+  if (whole <= 0) {
+    return part > 0 ? 100 : 0;
+  }
+
+  return Math.min(100, Math.round((part / whole) * 100));
+}

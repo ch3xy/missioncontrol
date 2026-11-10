@@ -1,6 +1,6 @@
 import { CalendarEvent } from '../../core/models/calendar.model';
 import { Task } from '../../core/models/task.model';
-import { busyMinutes, capacity, formatMinutes } from './capacity';
+import { busyMinutes, capacity, formatMinutes, share } from './capacity';
 
 const day = new Date(2026, 10, 9, 12);
 const local = (hour: number, minute = 0, date = 9) =>
@@ -84,5 +84,17 @@ describe('formatMinutes', () => {
     expect(formatMinutes(45)).toBe('45 min');
     expect(formatMinutes(90)).toBe('1:30 h');
     expect(formatMinutes(480)).toBe('8:00 h');
+  });
+});
+
+describe('share', () => {
+  it('should round and cap at 100 %', () => {
+    expect(share(45, 180)).toBe(25);
+    expect(share(300, 180)).toBe(100);
+  });
+
+  it('should show a full bar for time without anything available and an empty one for nothing', () => {
+    expect(share(30, 0)).toBe(100);
+    expect(share(0, 0)).toBe(0);
   });
 });

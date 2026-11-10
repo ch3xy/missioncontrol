@@ -10,7 +10,8 @@
     </div>
   }
 
-  @if (plan.error(); as error) {
+  <!-- While the plan is unavailable its notice already says so; a second alert would only repeat it -->
+  @if (plan.status() !== 'unavailable' && plan.error(); as error) {
     <div class="plan-notice" role="alert">
       <p>{{ error.key | t: { detail: error.detail ?? '' } }}</p>
       <button class="btn btn-sm" type="button" (click)="plan.clearError()">

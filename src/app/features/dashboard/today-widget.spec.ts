@@ -3,17 +3,20 @@ import { provideRouter } from '@angular/router';
 import { TaskApi } from '../../core/services/task-api';
 import { InMemoryTaskApi } from '../../testing/in-memory-task-api';
 import { createMemoryStorage } from '../../testing/memory-storage';
-import { localDateKey } from '../calendar/calendar-month';
 import { TodayWidget } from './today-widget';
 
 describe('TodayWidget', () => {
-  const today = localDateKey(new Date());
+  const today = '2026-11-10';
 
   beforeEach(() => {
+    // Only the date is faked, so the day does not change during a test run over midnight
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2026, 10, 10, 12, 0));
     vi.stubGlobal('localStorage', createMemoryStorage());
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
   });
 
@@ -134,18 +137,29 @@ describe('TodayWidget', () => {
 
   it('should show the reason of a failed change and dismiss it', async () => {
     const { api, element, settle } = await render();
+    // Changed on another device in the meantime: saving the old version ends in a conflict
+    api.tasks.find((task) => task.title === 'Angebot schreiben')!.version++;
+
+    element.querySelector<HTMLButtonElement>('button[aria-label^="„Angebot schreiben“"]')?.click();
+    await settle();
+    expect(element.querySelectorAll('[role="alert"]')).toHaveLength(1);
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain(
+      'Der Plan hat sich inzwischen geändert',
+    );
+
+    element.querySelector<HTMLButtonElement>('[role="alert"] button')?.click();
+    await settle();
+    expect(element.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('should show only one alert when the backend fails during a change', async () => {
+    const { api, element, settle } = await render();
     api.available = false;
 
     element.querySelector<HTMLButtonElement>('button[aria-label^="„Angebot schreiben“"]')?.click();
     await settle();
-    // The reload after the failed change fails as well, so the unavailable notice is shown too
-    expect(element.textContent).toContain('Das Backend hat die Änderung nicht bestätigt');
 
-    api.available = true;
-    [...element.querySelectorAll<HTMLButtonElement>('[role="alert"] button')]
-      .find((button) => button.textContent?.trim() === 'Schließen')
-      ?.click();
-    await settle();
-    expect(element.textContent).not.toContain('Das Backend hat die Änderung nicht bestätigt');
+    expect(element.querySelectorAll('[role="alert"]')).toHaveLength(1);
+    expect(element.textContent).toContain('Der Tagesplan konnte nicht vom Backend');
   });
 });

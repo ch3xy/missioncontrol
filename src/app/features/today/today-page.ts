@@ -33,7 +33,7 @@ import { IntegrationNotice } from '../../shared/components/integration-notice/in
 import { SettingsStatusNotice } from '../../shared/components/settings-status-notice/settings-status-notice';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 import { localDateKey } from '../calendar/calendar-month';
-import { busyMinutes, capacity, formatMinutes } from './capacity';
+import { busyMinutes, capacity, formatMinutes, share } from './capacity';
 import { DailyPlanStore } from './daily-plan.store';
 
 export const TODAY_VIEW_STORAGE_KEY = 'missioncontrol-today-view';
@@ -305,14 +305,6 @@ export class TodayPage {
       this.events.set(events);
     }
   }
-}
-
-function share(part: number, whole: number): number {
-  if (whole <= 0) {
-    return part > 0 ? 100 : 0;
-  }
-
-  return Math.min(100, Math.round((part / whole) * 100));
 }
 
 function readView(): TodayView {

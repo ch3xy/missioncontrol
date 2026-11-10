@@ -54,9 +54,12 @@ describe('Dashboard background refresh', () => {
     await createDashboard(5);
     const list = vi.spyOn(TestBed.inject(TaskApi), 'list');
 
-    await vi.advanceTimersByTimeAsync(5 * 60_000);
+    await vi.advanceTimersByTimeAsync(5 * 60_000 - 1);
+    expect(list).not.toHaveBeenCalled();
 
-    expect(list).toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    // Tasks of today and the brain dump
+    expect(list).toHaveBeenCalledTimes(2);
   });
 
   it('should pause while hidden and catch up when visible again', async () => {

@@ -23,7 +23,7 @@ import { ClockService } from '../../core/services/clock.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { WidgetCard } from '../../shared/components/widget-card/widget-card';
 import { localDateKey } from '../calendar/calendar-month';
-import { busyMinutes, capacity, formatMinutes } from '../today/capacity';
+import { busyMinutes, capacity, formatMinutes, share } from '../today/capacity';
 import { DailyPlanStore } from '../today/daily-plan.store';
 
 /** Tasks shown in the widget; the rest is one click away on the daily plan page. */
@@ -139,13 +139,4 @@ export class TodayWidget {
   protected takeOverAll(): void {
     void this.plan.planToday(this.plan.carryOver().map((task) => task.id));
   }
-}
-
-/** Share of the available time for a bar, capped at 100 %. */
-function share(part: number, whole: number): number {
-  if (whole <= 0) {
-    return part > 0 ? 100 : 0;
-  }
-
-  return Math.min(100, Math.round((part / whole) * 100));
 }

@@ -296,3 +296,38 @@ test('Übersicht: Mini-Tagesplan mit Schnellaktionen', async ({ page }) => {
   await widget.getByRole('link', { name: 'Tagesplan öffnen' }).click();
   await expect(page).toHaveURL('/today');
 });
+
+test('Übersicht: Backend fällt während einer Änderung aus, ein Hinweis und erneutes Laden', async ({
+  page,
+  request,
+}) => {
+  const created = await request.post(`${backendUrl}/api/v1/tasks`, {
+    data: { title: 'E2E Übersicht Ausfall', estimateMinutes: 30, planDate: E2E_TODAY },
+  });
+  expect(created.status()).toBe(201);
+  await page.clock.setFixedTime(new Date(`${E2E_TODAY}T09:00:00Z`));
+  await page.goto('/');
+  const widget = page.locator('app-today-widget');
+  await expect(widget.getByText('E2E Übersicht Ausfall', { exact: true })).toBeVisible();
+
+  await page.route('**/api/v1/tasks**', (route) => route.abort('connectionrefused'));
+  await widget
+    .getByRole('button', { name: '„E2E Übersicht Ausfall“ als erledigt markieren' })
+    .click();
+  const notice = widget
+    .getByRole('alert')
+    .filter({ hasText: 'Der Tagesplan konnte nicht vom Backend geladen werden.' });
+  await expect(notice).toBeVisible();
+  await expect(widget.getByRole('alert')).toHaveCount(1);
+  await expect(widget.getByRole('button', { name: 'Hinzufügen', exact: true })).toBeDisabled();
+
+  await page.unroute('**/api/v1/tasks**');
+  await notice.getByRole('button', { name: 'Erneut laden', exact: true }).click();
+  // The hidden message about the failed change is shown again until it is dismissed
+  await expect(notice).toHaveCount(0);
+  await expect(widget.getByRole('alert')).toContainText('Das Backend hat die Änderung nicht');
+  await widget.getByRole('button', { name: 'Schließen', exact: true }).click();
+  await expect(widget.getByRole('alert')).toHaveCount(0);
+  await expect(widget.getByText('0 von 1 Aufgaben erledigt')).toBeVisible();
+  await expect(widget.getByRole('button', { name: 'Hinzufügen', exact: true })).toBeEnabled();
+});
