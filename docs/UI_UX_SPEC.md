@@ -26,7 +26,8 @@ Desktop layout:
 │         ├────────────────────────────────────│
 │         │ Dashboard Widget Grid              │
 │         │                                    │
-│         │ Calendar | Velo Cash Flow | Dash   │
+│         │ Daily plan (8) | Calendar (4)      │
+│         │ Velo Cash Flow | Dash Time         │
 │         │ Customers | Quick Access           │
 └──────────────────────────────────────────────┘
 ```
@@ -49,6 +50,19 @@ Behavior:
 - Active route is visually highlighted
 
 ## Dashboard Widgets
+
+### Daily Plan Widget (central)
+
+Top left, 8 of 12 columns: the most important widget, above pipeline and quick access. Mini version of the page „Heute“ (`/today`); everything else (estimates, editing, ordering, board) stays there.
+
+Shows:
+
+- Quick capture field: Enter or „Add“ puts the task into today, the inbox button into the brain dump
+- „x of y tasks done“, capacity bar (planned vs. available, appointments deducted) and figures
+- Up to 6 tasks, in progress first, then open, then done (a mistaken tick can be undone); „+n more“ for the rest
+- Per task: check button (done / reopen), start button for open tasks, estimate if set
+- Hint „n open from earlier days“ with „Take over all“; brain dump count; link „Open daily plan“
+- The notice of the plan page when the backend is unreachable (one alert at a time; inputs locked)
 
 ### Calendar Widget
 
@@ -110,7 +124,7 @@ Inter Variable, self-hosted through `@fontsource-variable/inter` (no font CDN). 
 Desktop:
 
 - Sidebar 240px (collapsible to 72px)
-- 3 column widget grid (12-column base)
+- 12-column widget grid: daily plan 8 + calendar 4, velo 6 + dash time 6, customers 6 + quick access 6
 
 Tablet (≤ 1080px):
 

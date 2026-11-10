@@ -26,6 +26,11 @@ zurück.
 - Unerledigte Aufgaben vom Vortag erscheinen als **Vorschlag zur Übernahme** (alle, einzeln oder zurück in den
   Brain-Dump).
 - **Kapazität = Tagesziel minus Kalendertermine des Tages** (ganztägige ausgenommen, Überlappungen einmal).
+- **Mini-Version auf der Übersicht (2026-11-10):** Der Tagesplan ist wichtiger als Pipeline und Schnellzugriff und steht
+  deshalb zentral oben auf der Übersicht (`app-today-widget`, 8 von 12 Spalten, daneben der Kalender). Das Widget kann
+  nur Anlegen (heute oder Brain-Dump), Starten, Erledigen und Übernehmen; Schätzung, Bearbeiten, Reihenfolge und Board
+  bleiben auf `/today`. Es nutzt denselben `DailyPlanStore` (keine zweite Backend-Anbindung) und lädt beim Aktualisieren
+  der Übersicht mit, auch beim automatischen.
 
 ## 2026-11-09 — mission control bekommt ein Backend (Spring Boot + PostgreSQL)
 

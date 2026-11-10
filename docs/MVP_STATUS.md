@@ -8,10 +8,11 @@ Implemented:
 
 - Visual 3 app shell with dark sidebar, compact header, and responsive widget grid
 - Keyboard skip link and visible focus states
-- Dashboard widgets for Calendar, Velo, Dash time, Dash customers, and Quick Access
+- Dashboard widgets for the daily plan (mini version), Calendar, Velo, Dash time, Dash customers, and Quick Access
 - Dashboard refresh action with last-updated timestamp
 - Detail pages for Calendar, Velo, and Dash
 - Daily plan „Heute“ (`/today`): tasks with optional estimate, list or board view, capacity (daily target minus appointments), carry-over suggestions, brain dump; stored in the backend
+- Mini daily plan on the overview (`app-today-widget`): quick capture into today or the brain dump, start/done per task, progress and capacity bar, carry-over hint; reloads with the overview refresh
 - Calendar detail refresh with event start/end time display
 - Calendar agenda groups appointments by date
 - Velo and Dash detail refresh actions with last-updated timestamps

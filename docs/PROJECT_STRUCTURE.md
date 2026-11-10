@@ -28,7 +28,7 @@ src/
 │   │   ├── sidebar.component.ts
 │   │   └── topbar.component.ts
 │   ├── features/
-│   │   ├── dashboard/
+│   │   ├── dashboard/        # incl. today-widget (mini daily plan)
 │   │   ├── calendar/
 │   │   ├── velo/
 │   │   ├── dash/

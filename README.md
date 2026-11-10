@@ -8,12 +8,12 @@ The Angular frontend stores its settings in a slim Spring Boot + PostgreSQL back
 
 - App shell in the shared Arrow product design (velo/dash): collapsible sidebar, compact top bar, light/dark/system theme
 - German UI by default (de-AT date and number formats), switchable to English in Settings
-- Dashboard widgets for Calendar, Velo cash flow, Dash time tracking, Dash customers, and Quick Access
+- Dashboard widgets for the daily plan (central, mini version with quick actions), Calendar, Velo cash flow, Dash time tracking, Dash customers, and Quick Access
 - Detail pages for Calendar (read-only week view (default, 06:00–18:00 in view), month view or list, with calendar colors), Velo, and Dash
 - Configurable external app URLs for Velo, Dash, and sevDesk
 - Optional local tool shortcuts
 - Backend-stored settings with export/import backup
-- Daily plan „Heute“: tasks with optional estimate, list or board, capacity against the daily target minus appointments, carry-over of unfinished tasks, brain dump
+- Daily plan „Heute“: tasks with optional estimate, list or board, capacity against the daily target minus appointments, carry-over of unfinished tasks, brain dump; a mini version sits at the top of the overview
 - Live data from the velo and dash REST APIs (read-only)
 - Optional browser-readable local JSON sources for Calendar, Velo, and Dash
 - Basic browser-readable ICS calendar source support, several calendars merged

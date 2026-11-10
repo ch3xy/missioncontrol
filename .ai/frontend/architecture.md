@@ -22,7 +22,7 @@ src/
     │   ├── services/          # Adapter, SettingsService, ShortcutService, ThemeService
     │   └── validators/        # httpUrlValidator
     ├── features/
-    │   ├── dashboard/         # Übersicht (Widget-Grid)
+    │   ├── dashboard/         # Übersicht (Widget-Grid), `today-widget` = Mini-Tagesplan (nutzt `DailyPlanStore` aus `today/`)
     │   ├── calendar/          # Wochenansicht (Standard, 06:00–18:00 sichtbar), Monatsansicht und Agenda-Liste, Ansicht in `missioncontrol-calendar-view`
     │   ├── velo/              # Cashflow-Zusammenfassung
     │   ├── dash/              # Zeit-/Kunden-Zusammenfassung
