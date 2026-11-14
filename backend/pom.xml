@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>25</java.version>
-        <testcontainers.version>1.21.1</testcontainers.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
         <!-- Docker Engine 29 rejects the API version 1.32 that Testcontainers 1.21 sends by default.
              Override with -Ddocker.api.version=... for other engines. -->
         <docker.api.version>1.44</docker.api.version>
