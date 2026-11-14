@@ -1,0 +1,63 @@
+name: CI
+# Test and build only; no deploy. Releases and deploys stay local (scripts/deploy.sh).
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      # Same build as a release, but with tests (Testcontainers; Docker is available on the runner)
+      - name: Maven verify
+        run: ./mvnw -B -ntp -Pprod verify
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: surefire-reports
+          path: backend/target/surefire-reports/
+          retention-days: 7
+      - uses: actions/upload-artifact@v7
+        with:
+          name: missioncontrol-jar
+          path: backend/target/missioncontrol.jar
+          retention-days: 7
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # Vitest via @angular/build:unit-test, no browser
+      - name: Unit tests
+        run: npx ng test --watch=false
+      # Same build as the deploy (base href /missioncontrol/)
+      - name: Build
+        run: npm run build:pi
+      - uses: actions/upload-artifact@v7
+        with:
+          name: missioncontrol-frontend
+          path: dist/missioncontrol/browser/
+          retention-days: 7
